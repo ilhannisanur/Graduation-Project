@@ -94,24 +94,101 @@ Duygulu ses katman katman geliştirilecek. Her katman tek başına çalışır, 
 
 ## Modüller
 
-Herkes panodan istediği görevi seçebilir; her modülün öncelikle ilgilenen bir sorumlusu vardır.
+Her modülün bir sorumlusu vardır; sorumlu o alanı takip eder ve kararlarını verir. Issue'lar atanmamış açılır, herkes her sprintte kendini atar: önce kendi modülünden, gerekirse diğerlerinden. Sprint yükü tahmini puanlarla dengelenir, PR'lar çapraz incelenir. Modüllerin 1. dönem iş yükü yaklaşık eşittir ve her birinde bir yapay zekâ parçası vardır.
 
 | Modül | Kapsam | Sorumlu |
 |---|---|---|
-| 🎙️ Speech | Duygulu ses (TTS), prozodi, sesten duygu tanıma; 2. dönemde konuşma tanıma ve telefon | Nisa Nur Aklan |
-| 📻 Radio Engine | Müzik kataloğu ve analizi, şarkı seçimi, kişiselleştirme, yayın planlayıcı, istek kuyruğu, ses karıştırma, yayın akışı | Nisanur İlhan |
-| 🧠 Platform & Content | Backend API, kullanıcılar ve izinler, web/PWA, yönetim paneli, LLM metinleri, hava durumu ve haber | Azra İdiz |
+| 🧠 DJ Brain & Emotion | Anın duygusunu belirleme (metin), sesten duygu tanıma ile kalite kontrolü, LLM metin servisi, yönetmen (anonsun tonu ve süresi), haber hattı ve tekrarları azaltma, hava durumu, güvenlik filtresi, yazılı istekleri anlama, değerlendirme ölçümleri | Nisa Nur Aklan |
+| 🎙️ Voice & Broadcast | Duygulu ses (TTS), prozodi kontrolü, yayın planlayıcı (kullanıcı başına sıra), ses karıştırma (geçişler, ses seviyesi), HLS akışı, yedek içerik; 2. dönemde konuşma tanıma ve telefon | Azra İdiz |
+| 🎵 Music & Platform | Müzik kataloğu ve lisanslar, müzik analizi (ruh hâli, enerji), şarkı seçimi ve kişiselleştirme, "neden bu şarkı?", istek kuyruğu, backend API, kullanıcılar ve KVKK, web/PWA oynatıcı, yönetim paneli; 2. dönemde avatarlar | Nisanur İlhan |
 
-## Klasör Yapısı (taslak)
+**Modüller arası sınır:** DJ Brain her anons için ne söyleneceğine, hangi duyguyla ve ne kadar sürede söyleneceğine karar verir. Voice & Broadcast anonsları seslendirir, şarkılarla birlikte kullanıcı başına sıraya dizer ve yayınlar. Music & Platform şarkıları, kullanıcıları ve istekleri sağlar. Bu sınır ortak bir veri sözleşmesiyle tanımlanır.
+
+## Klasör Yapısı
 
 ```
 Graduation-Project/
-├── backend/    FastAPI uygulaması (API, Radio Engine, içerik, veritabanı)
-├── web/        React + TypeScript web arayüzü
-├── speech/     duygulu ses servisi (ayrı Python ortamı)
-├── scripts/    yardımcı script'ler (ör. müzik indirme)
-└── docs/       rapor, araştırma ve toplantı notları
+├── backend/                FastAPI uygulaması (Python 3.12)
+│   ├── app/
+│   │   ├── api/            router'lar (health, dj)
+│   │   ├── core/           ayarlar (.env) ve loglama
+│   │   ├── db/             veritabanı oturumu ve temel model
+│   │   ├── radio/          müzik, seçim ve yayın mantığı (şimdilik boş)
+│   │   ├── content/llm/    LLMClient arayüzü ve GeminiClient
+│   │   └── speech_client/  ses servisine bağlanacak arayüz (şimdilik boş)
+│   ├── alembic/            veritabanı migration'ları
+│   └── tests/              pytest testleri
+├── web/                    React + TypeScript (Vite) web arayüzü
+├── speech/                 duygulu ses servisi (ayrı Python ortamı, şimdilik sadece README)
+├── scripts/                yardımcı script'ler (ör. müzik indirme)
+├── docs/                   rapor, araştırma ve toplantı notları
+└── docker-compose.yml      PostgreSQL
 ```
+
+## Kurulum ve çalıştırma
+
+Gerekenler: Windows 11, Python 3.12, Node.js (LTS), Docker Desktop. Komutlar PowerShell içindir ve repo kök klasöründen başlar.
+
+### 1. Veritabanı (PostgreSQL)
+
+Docker Desktop açık olmalı.
+
+```powershell
+docker compose up -d
+```
+
+Postgres, bilgisayarında **5433** portundan erişilir (5432 başka bir Postgres ile çakışmasın diye). Kullanıcı, parola ve veritabanı adı: `radio`.
+
+### 2. Backend
+
+```powershell
+cd backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+copy .env.example .env
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+Backend `http://localhost:8000` adresinde çalışır. Kontrol: `http://localhost:8000/api/health`. API belgesi: `http://localhost:8000/docs`.
+
+### 3. Gemini API anahtarı
+
+1. [Google AI Studio](https://aistudio.google.com/apikey) adresine gir ve **Create API key** ile ücretsiz bir anahtar al.
+2. `backend/.env` dosyasında `GEMINI_API_KEY=` satırının sonuna yapıştır.
+3. Backend'i yeniden başlat.
+
+Anahtar yoksa `/api/dj/preview` uygun bir hata mesajıyla 503 döner. `.env` dosyasını **asla commit'leme**.
+
+### 4. Web
+
+Yeni bir terminalde:
+
+```powershell
+cd web
+npm install
+npm run dev
+```
+
+Arayüz `http://localhost:5173` adresinde açılır. `/api` istekleri otomatik olarak backend'e (8000) yönlenir.
+
+### Testler
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+pytest
+ruff check .
+ruff format --check .
+
+cd ..\web
+npm run lint
+npm run format:check
+npm run build
+```
+
+Testler gerçek Gemini API'sine istek atmaz ve veritabanı gerektirmez.
 
 ## Çalışma Kuralları
 

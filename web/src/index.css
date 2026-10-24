@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+}

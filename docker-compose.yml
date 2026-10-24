@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: radio
+      POSTGRES_PASSWORD: radio
+      POSTGRES_DB: radio
+    ports:
+      - "5433:5432" # host 5433 -> container 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

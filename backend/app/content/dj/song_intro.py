@@ -9,7 +9,7 @@ def fallback_song_intro(track: Track) -> AnnouncementSpec:
     text = f"Up next, {track.title} by {track.artist}."
     word_count = len(text.split())
     seconds = max(MIN_SECONDS, word_count / WORDS_PER_SECOND)
-    
+
     return AnnouncementSpec(
         kind=AnnouncementKind.SONG_INTRO,
         text=text,

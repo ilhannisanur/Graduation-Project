@@ -141,6 +141,13 @@ class BroadcastPlanner:
         self._cancel_background(session)
         logger.info("session %s closed", session_id)
 
+    def close_user_sessions(self, user_id: str) -> int:
+        """Close every session of a user (their account was deleted). Returns how many."""
+        ids = [s.session_id for s in self._sessions.values() if s.user_id == user_id]
+        for session_id in ids:
+            self.close_session(session_id)
+        return len(ids)
+
     async def aclose(self) -> None:
         """Cancel all background work (call on application shutdown)."""
         sessions = list(self._sessions.values())

@@ -12,6 +12,10 @@ COOKIE_NAME = "radio_auth"
 COOKIE_PATH = "/api"
 
 
+def clear_login_cookie(response: Response) -> None:
+    response.delete_cookie(COOKIE_NAME, path=COOKIE_PATH, httponly=True, samesite="lax")
+
+
 def _set_login_cookie(response: Response, token: str) -> None:
     # HttpOnly: page scripts cannot read it. SameSite=Lax: other sites cannot make the browser
     # send it with POST/PUT/DELETE, which covers CSRF for our state-changing endpoints.
@@ -47,7 +51,7 @@ def user_out(user: UserRow) -> UserOut:
 @router.post("/register", status_code=201)
 def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> UserOut:
     try:
-        user = service.register(db, body.username, body.password)
+        user = service.register(db, body.username, body.password, body.preference_learning)
     except service.UsernameTaken:
         raise HTTPException(status_code=409, detail="This username is taken") from None
     token = service.start_session(db, user)
@@ -78,4 +82,4 @@ def logout(
     if token:
         service.end_session(db, token)
         db.commit()
-    response.delete_cookie(COOKIE_NAME, path=COOKIE_PATH, httponly=True, samesite="lax")
+    clear_login_cookie(response)

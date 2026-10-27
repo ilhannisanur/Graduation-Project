@@ -12,6 +12,21 @@ export type Option = { value: string; label: string }
 
 export type ProfileOptions = { genres: Option[]; languages: Option[]; news_topics: Option[] }
 
+export type ConsentState = {
+  description: string
+  granted: boolean
+  notice_version: string | null
+  updated_at: string | null
+}
+
+export type Consents = { preference_learning: ConsentState }
+
+export type PrivacyNotice = {
+  version: string
+  sections: { title: string; text: string }[]
+  consents: Record<string, string>
+}
+
 export class ApiError extends Error {
   status: number
 

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { api, type User } from './api.ts'
+import PrivacyNotice from './PrivacyNotice.tsx'
 
 type Mode = 'login' | 'register'
 
@@ -12,6 +13,8 @@ export default function AuthPanel({ onLoggedIn }: { onLoggedIn: (user: User) => 
   const [mode, setMode] = useState<Mode>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  // Optional consent: never ticked in advance.
+  const [learning, setLearning] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,9 +23,13 @@ export default function AuthPanel({ onLoggedIn }: { onLoggedIn: (user: User) => 
     setBusy(true)
     setError(null)
     try {
+      const body =
+        mode === 'register'
+          ? { username, password, preference_learning: learning }
+          : { username, password }
       const user = await api<User>(`/api/auth/${mode}`, {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(body),
       })
       setPassword('')
       onLoggedIn(user)
@@ -68,6 +75,19 @@ export default function AuthPanel({ onLoggedIn }: { onLoggedIn: (user: User) => 
           minLength={registering ? 8 : undefined}
           required
         />
+        {registering && (
+          <>
+            <label>
+              <input
+                type="checkbox"
+                checked={learning}
+                onChange={(e) => setLearning(e.target.checked)}
+              />{' '}
+              Learn from what I listen to (optional, you can change this later)
+            </label>
+            <PrivacyNotice />
+          </>
+        )}
         <button type="submit" disabled={busy}>
           {busy ? 'Please wait…' : registering ? 'Create account' : 'Sign in'}
         </button>

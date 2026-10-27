@@ -19,7 +19,7 @@ from .planner import (
 )
 from .ports import AnnouncementDirector, MusicSource, SpeechSynthesizer
 from .router import router
-from .wiring import configure_planner, get_planner, shutdown_planner
+from .wiring import configure_planner, current_planner, get_planner, shutdown_planner
 
 __all__ = [
     "AnnouncementDirector",
@@ -39,6 +39,7 @@ __all__ = [
     "TooManySessions",
     "TrackInfo",
     "configure_planner",
+    "current_planner",
     "get_planner",
     "router",
     "shutdown_planner",

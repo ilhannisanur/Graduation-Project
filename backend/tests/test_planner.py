@@ -305,6 +305,19 @@ def test_sessions_are_independent_and_expire():
     assert count == 1
 
 
+def test_close_user_sessions_closes_only_that_users_sessions():
+    planner = make_planner()
+    mine = [planner.create_session(user_id="usr_a") for _ in range(2)]
+    other = planner.create_session(user_id="usr_b")
+
+    assert planner.close_user_sessions("usr_a") == 2
+
+    for session in mine:
+        with pytest.raises(SessionNotFound):
+            planner.get_session(session.session_id)
+    assert planner.get_session(other.session_id) is other
+
+
 def test_settings_validation():
     with pytest.raises(ValueError):
         PlannerSettings(songs_per_announcement=0)

@@ -25,6 +25,11 @@ def configure_planner(planner: BroadcastPlanner | None) -> None:
     _planner = planner
 
 
+def current_planner() -> BroadcastPlanner | None:
+    """The planner if it is connected, else None (for callers that can do without it)."""
+    return _planner
+
+
 def get_planner() -> BroadcastPlanner:
     if _planner is None:
         raise HTTPException(

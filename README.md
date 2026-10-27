@@ -173,6 +173,28 @@ npm run dev
 
 Arayüz `http://localhost:5173` adresinde açılır. `/api` istekleri otomatik olarak backend'e (8000) yönlenir.
 
+### 5. Müzik kataloğu
+
+Radyonun çalacağı Creative Commons şarkıları indirip veritabanına aktarır. Backend klasöründe, venv açıkken yapılır; veritabanı çalışıyor ve `alembic upgrade head` uygulanmış olmalı.
+
+1. [Jamendo geliştirici portalından](https://devportal.jamendo.com) ücretsiz bir `client_id` al.
+2. `backend/.env` dosyasında `JAMENDO_CLIENT_ID=` satırının sonuna yapıştır.
+3. Şarkıları indir (yaklaşık 400 şarkı, 1 GB; internet hızına göre uzun sürebilir). Yarıda kalırsa aynı komut kaldığı yerden devam eder:
+
+```powershell
+python -m app.music.download
+```
+
+4. İndirilenleri veritabanına aktar. Tekrar çalıştırmak güvenlidir; aynı şarkı ikinci kez eklenmez:
+
+```powershell
+python -m app.music.import_catalog
+```
+
+5. Kontrol: `http://localhost:8000/api/tracks?limit=5` şarkıları listeler.
+
+Dosyalar repo kökündeki `data/music/` altına iner ve commit'lenmez. Lisans seçimi ve kaynak ayrıntıları için [docs/muzik-kaynagi.md](docs/muzik-kaynagi.md).
+
 ### Testler
 
 ```powershell
@@ -188,7 +210,7 @@ npm run format:check
 npm run build
 ```
 
-Testler gerçek Gemini API'sine istek atmaz ve veritabanı gerektirmez.
+Testler gerçek Gemini veya Jamendo API'sine istek atmaz. Veritabanı testleri Postgres çalışıyorsa (adım 1 ve `alembic upgrade head`) koşar, yoksa atlanır.
 
 ## Çalışma Kuralları
 

@@ -26,11 +26,15 @@ def _set_login_cookie(response: Response, token: str) -> None:
     )
 
 
-def current_user(
+def optional_user(
     db: Session = Depends(get_db),
     token: str | None = Cookie(default=None, alias=COOKIE_NAME),
-) -> UserRow:
-    user = service.user_for_token(db, token) if token else None
+) -> UserRow | None:
+    """The logged-in user, or None for a guest. Never trusts a user id sent by the client."""
+    return service.user_for_token(db, token) if token else None
+
+
+def current_user(user: UserRow | None = Depends(optional_user)) -> UserRow:
     if user is None:
         raise HTTPException(status_code=401, detail="Not logged in")
     return user

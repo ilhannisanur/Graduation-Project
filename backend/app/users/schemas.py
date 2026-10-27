@@ -33,6 +33,8 @@ class RegisterRequest(BaseModel):
 
     username: str
     password: str = Field(min_length=PASSWORD_MIN, max_length=PASSWORD_MAX)
+    # Optional consent; never pre-ticked (explicit consent cannot be a default "yes").
+    preference_learning: bool = False
 
     @field_validator("username")
     @classmethod
@@ -124,3 +126,35 @@ class ProfileOptions(BaseModel):
     genres: list[Option]
     languages: list[Option]
     news_topics: list[Option]
+
+
+class ConsentState(BaseModel):
+    description: str
+    granted: bool
+    notice_version: str | None  # None: never decided
+    updated_at: datetime | None
+
+
+class ConsentsUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    preference_learning: bool
+
+
+class NoticeSection(BaseModel):
+    title: str
+    text: str
+
+
+class PrivacyNotice(BaseModel):
+    version: str
+    sections: list[NoticeSection]
+    consents: dict[str, str]  # kind -> what the listener agrees to
+
+
+class DeleteAccountRequest(BaseModel):
+    """The password is asked again so a forgotten open tab cannot delete the account."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    password: str = Field(max_length=PASSWORD_MAX)

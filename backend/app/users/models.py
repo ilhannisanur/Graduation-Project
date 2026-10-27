@@ -1,7 +1,18 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text, func, text
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Identity,
+    Integer,
+    String,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -60,3 +71,17 @@ class UserProfileRow(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+
+
+class ConsentRow(Base):
+    """One consent decision. Rows are only added, never changed: the latest row per kind is
+    the current choice, and the history shows when and under which notice it was given."""
+
+    __tablename__ = "user_consents"
+
+    id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(64))  # see app.users.privacy.CONSENT_KINDS
+    granted: Mapped[bool] = mapped_column(Boolean)
+    notice_version: Mapped[str] = mapped_column(String(32))  # the privacy notice shown
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

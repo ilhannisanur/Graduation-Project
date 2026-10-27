@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api, type User } from './api.ts'
 import AuthPanel from './AuthPanel.tsx'
 import DevPanel from './DevPanel.tsx'
+import PrivacyPanel from './PrivacyPanel.tsx'
 import ProfilePanel from './ProfilePanel.tsx'
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
             </button>
           </p>
           <ProfilePanel onSignedOut={signedOut} />
+          <PrivacyPanel onSignedOut={signedOut} onAccountDeleted={signedOut} />
         </>
       )}
 

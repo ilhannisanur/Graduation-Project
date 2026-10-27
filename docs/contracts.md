@@ -149,6 +149,16 @@ Dinleyiciye kişisel bir yayın üretmek için kullanılan bağlam. Music & Plat
 }
 ```
 
+Profilden `ListenerContext` yalnızca `app.users.context.listener_context()` ile üretilir. Fonksiyon hesabı değil profili alır; kullanıcı adı, kullanıcı kimliği ve sevilen sanatçılar bağlama girmez. Değer listeleri (`preferred_genres`, `news_topics`) `app/users/options.py`'deki sabit seçeneklerdendir.
+
+## Kullanıcı kimliği
+
+Kullanıcı hesapları Music & Platform'dadır (ayrıntılar: [kullanicilar.md](kullanicilar.md)). Diğer modüller kullanıcıyı yalnızca `user_id` ile tanır (`"usr_"` + 12 onaltılık karakter, ör. `"usr_3f9a1c0b7d2e"`).
+
+- Backend'de giriş yapmış kullanıcı `app.api.auth.current_user` bağımlılığıyla alınır; giriş yoksa 401 döner.
+- Kullanıcıya ait veri tutan her tablo `users.id`'ye `ON DELETE CASCADE` ile bağlanır; hesap silinince veri de silinir.
+- Yayın oturumu (planlayıcının `session_id`'si) ile giriş oturumu (`auth_sessions`) farklı şeylerdir; yayın oturumu `user_id`'yi taşır.
+
 ## RequestIntent ve SongRequest
 
 Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (istek kuyruğu); DJ Brain yazıyı anlayıp `RequestIntent` çıkarır. `status` değerleri: `received`, `accepted`, `rejected`, `played`. Reddedilirse `reject_reason` dolar; kabul edilirse `estimated_play_time` verilebilir.

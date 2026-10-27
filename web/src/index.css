@@ -1,8 +1,16 @@
+:root {
+  /* Follow the device's light or dark theme; form controls follow it too. */
+  color-scheme: light dark;
+}
+
 body {
   margin: 0;
+  background: Canvas;
+  color: CanvasText;
 }
 
 input,
+textarea,
 button {
   font: inherit;
   padding: 0.4rem 0.6rem;

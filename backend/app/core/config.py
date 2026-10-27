@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     jamendo_client_id: str = ""
     # Resolved from this file's location, not the working directory.
     music_dir: Path = PROJECT_ROOT / "data" / "music"
+    # Send the login cookie only over HTTPS. Must be true in production; local dev uses http.
+    cookie_secure: bool = False
 
 
 @lru_cache

@@ -110,10 +110,12 @@ Her modülün bir sorumlusu vardır; sorumlu o alanı takip eder ve kararların�
 Graduation-Project/
 ├── backend/                FastAPI uygulaması (Python 3.12)
 │   ├── app/
-│   │   ├── api/            router'lar (health, dj)
+│   │   ├── api/            router'lar (health, dj, tracks, auth, me)
 │   │   ├── core/           ayarlar (.env) ve loglama
 │   │   ├── db/             veritabanı oturumu ve temel model
-│   │   ├── radio/          müzik, seçim ve yayın mantığı (şimdilik boş)
+│   │   ├── music/          katalog, indirme/aktarma komutları ve şarkı seçimi
+│   │   ├── users/          hesaplar, giriş oturumları ve profil (bkz. docs/kullanicilar.md)
+│   │   ├── radio/          yayın mantığı (şimdilik boş)
 │   │   ├── content/llm/    LLMClient arayüzü ve GeminiClient
 │   │   └── speech_client/  ses servisine bağlanacak arayüz (şimdilik boş)
 │   ├── alembic/            veritabanı migration'ları

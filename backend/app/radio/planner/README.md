@@ -54,13 +54,15 @@ blok 2: [anons "...sırada C"] [şarkı C]
 
 | Uç | Açıklama |
 |---|---|
-| `POST /api/sessions` | Oturum açar. Gövde isteğe bağlıdır: `{"user_id": "guest"}`. Yanıt `201 {"session_id", "user_id"}` |
+| `POST /api/sessions` | Oturum açar. Gövde almaz. Yanıt `201 {"session_id", "user_id"}` |
 | `GET /api/sessions/{id}/next` | Şimdi çalınacak parçayı döner |
 | `DELETE /api/sessions/{id}` | Oturumu kapatır (204) |
 
+Dinleyici giriş çerezinden (#15) alınır, istekte gönderilen bir `user_id`'ye güvenilmez. Giriş yapılmışsa oturum o hesaba aittir ve `/next` ile `DELETE` yalnızca o hesapla çalışır. Giriş yoksa `user_id` `"guest"` olur; misafir oturumu, rastgele ve tahmin edilemeyen `session_id`'yi bilen herkes kullanabilir.
+
 Hata kodları:
 
-* `404`: oturum yok ya da süresi doldu. Boşta kalan oturumlar 2 saat sonra kapanır.
+* `404`: oturum yok, süresi doldu ya da başka bir hesaba ait. Boşta kalan oturumlar 2 saat sonra kapanır.
 * `503`: çalınacak şarkı yok, ya da planlayıcı henüz bağlanmadı (#12 öncesi).
 
 ### `/next` yanıt biçimi (#10 ile netleştirilecek öneri)

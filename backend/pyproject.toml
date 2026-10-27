@@ -12,6 +12,7 @@ dependencies = [
     "psycopg[binary]",
     "httpx",
     "google-genai",
+    "argon2-cffi",
 ]
 
 [project.optional-dependencies]

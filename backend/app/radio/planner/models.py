@@ -102,11 +102,6 @@ class NextSegmentResponse(BaseModel):
     announcement_skipped: str | None = None  # why a planned announcement was skipped
 
 
-class CreateSessionRequest(BaseModel):
-    # Real user accounts arrive in S3 (#15); until then everyone is a guest.
-    user_id: str = "guest"
-
-
 class SessionCreated(BaseModel):
     session_id: str
     user_id: str

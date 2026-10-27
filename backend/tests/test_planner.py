@@ -13,12 +13,14 @@ import asyncio
 import itertools
 import time
 from collections.abc import Sequence
+from uuid import uuid4
 
 import httpx
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from app.api.auth import optional_user
 from app.radio.planner import (
     AnnouncementPlan,
     AnnouncementRequest,
@@ -32,6 +34,7 @@ from app.radio.planner import (
     router,
 )
 from app.radio.planner.adapters import HttpSpeechSynthesizer
+from app.users import UserRow
 
 # --- fakes ----------------------------------------------------------------------------
 
@@ -321,8 +324,9 @@ def make_app(planner: BroadcastPlanner | None) -> FastAPI:
 def test_api_end_to_end_with_fake_services():
     planner = make_planner()
     with TestClient(make_app(planner)) as client:  # one event loop for all requests
-        created = client.post("/api/sessions", json={"user_id": "azra"})
+        created = client.post("/api/sessions")
         assert created.status_code == 201
+        assert created.json()["user_id"] == "guest"
         session_id = created.json()["session_id"]
 
         responses = []
@@ -344,10 +348,89 @@ def test_api_end_to_end_with_fake_services():
         assert track["audio_url"] == f"/api/tracks/{track['track_id']}/audio"
         assert {"title", "artist", "license", "duration_s"} <= set(track)
 
-        assert client.post("/api/sessions").status_code == 201  # body is optional
         assert client.get("/api/sessions/unknown/next").status_code == 404
         assert client.delete(f"/api/sessions/{session_id}").status_code == 204
         assert client.get(f"/api/sessions/{session_id}/next").status_code == 404
+
+
+class LoggedIn:
+    """Stands in for the login cookie: tests switch who is logged in between requests."""
+
+    def __init__(self) -> None:
+        self.user: UserRow | None = None
+
+    def as_(self, user_id: str | None) -> None:
+        self.user = UserRow(id=user_id, username=user_id) if user_id else None
+
+
+def make_app_with_login(planner: BroadcastPlanner) -> tuple[FastAPI, LoggedIn]:
+    app = make_app(planner)
+    login = LoggedIn()
+    app.dependency_overrides[optional_user] = lambda: login.user
+    return app, login
+
+
+def test_session_user_comes_from_the_login_not_the_request():
+    app, login = make_app_with_login(make_planner())
+    with TestClient(app) as client:
+        login.as_("usr_azra")
+        created = client.post("/api/sessions", json={"user_id": "usr_victim"})
+        assert created.json()["user_id"] == "usr_azra"
+
+        login.as_(None)
+        guest = client.post("/api/sessions", json={"user_id": "usr_victim"})
+        assert guest.json()["user_id"] == "guest"
+
+
+def test_an_accounts_session_is_closed_to_others():
+    app, login = make_app_with_login(make_planner())
+    with TestClient(app) as client:
+        login.as_("usr_azra")
+        session_id = client.post("/api/sessions").json()["session_id"]
+
+        for other in ["usr_nisa", None]:  # another account, then a guest
+            login.as_(other)
+            assert client.get(f"/api/sessions/{session_id}/next").status_code == 404
+            assert client.delete(f"/api/sessions/{session_id}").status_code == 404
+
+        login.as_("usr_azra")
+        assert client.get(f"/api/sessions/{session_id}/next").status_code == 200
+        assert client.delete(f"/api/sessions/{session_id}").status_code == 204
+
+
+def test_guest_session_works_with_or_without_login():
+    app, login = make_app_with_login(make_planner())
+    with TestClient(app) as client:
+        session_id = client.post("/api/sessions").json()["session_id"]
+
+        login.as_("usr_nisa")  # logging in later does not lock the listener out
+        assert client.get(f"/api/sessions/{session_id}/next").status_code == 200
+
+
+def test_real_login_cookie_owns_the_session(db_session):
+    # The whole app with a real account and cookie (needs Postgres; skipped without it).
+    from app.db.session import get_db
+    from app.main import app
+
+    planner = make_planner()
+    app.dependency_overrides[get_db] = lambda: db_session
+    app.dependency_overrides[get_planner] = lambda: planner
+    try:
+        with TestClient(app) as client:
+            name = f"test_{uuid4().hex[:12]}"
+            user = client.post(
+                "/api/auth/register", json={"username": name, "password": "a long password"}
+            ).json()
+
+            created = client.post("/api/sessions", json={"user_id": "usr_victim"}).json()
+            assert created["user_id"] == user["id"]
+            session_id = created["session_id"]
+            assert client.get(f"/api/sessions/{session_id}/next").status_code == 200
+
+            client.post("/api/auth/logout")
+            assert client.get(f"/api/sessions/{session_id}/next").status_code == 404
+    finally:
+        app.dependency_overrides.clear()
 
 
 def test_api_reports_503_when_not_wired_or_no_music():

@@ -191,7 +191,7 @@ python -m app.music.download
 python -m app.music.import_catalog
 ```
 
-5. Kontrol: `http://localhost:8000/api/tracks?limit=5` şarkıları listeler.
+5. Kontrol: `http://localhost:8000/api/tracks?limit=5` şarkıları listeler. Listedeki bir `id` ile `http://localhost:8000/api/tracks/<id>/audio` adresi şarkıyı tarayıcıda çalar.
 
 Dosyalar repo kökündeki `data/music/` altına iner ve commit'lenmez. Lisans seçimi ve kaynak ayrıntıları için [docs/muzik-kaynagi.md](docs/muzik-kaynagi.md).
 

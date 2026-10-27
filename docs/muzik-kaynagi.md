@@ -77,5 +77,6 @@ NC (ticari olmayan) lisanslılar kabul edilir, çünkü proje ticari değildir. 
 - #33 (yapıldı): `backend/app/music/download.py`; `JAMENDO_CLIENT_ID` ve `music_dir` `Settings`'te, alan adları ve boyut canlı ölçüldü.
 - #34 (yapıldı): `python -m app.music.import_catalog` (backend klasöründen) `manifest.json`'u `tracks` tablosuna aktarır. Tekrar çalıştırmak güvenlidir; yeni şarkıyı ekler, değişeni günceller, dosyası diskte olmayanı atlar.
 - #35 (yapıldı): `GET /api/tracks` (`limit`, `offset`, `mood`) ve `GET /api/tracks/{id}`; yanıtta dosya yolu yoktur.
+- #42 (yapıldı): `GET /api/tracks/{id}/audio` ses dosyasını `audio/mpeg` olarak sunar, `Range` isteklerini destekler. Dosya yolu veritabanından okunur ve `music_dir` dışına çıkamaz; şarkı ya da dosya yoksa 404.
 - #34: elenmiş listeyi `tracks` tablosuna aktarır.
 - #35: katalog API ucu.

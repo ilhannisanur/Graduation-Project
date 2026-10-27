@@ -22,6 +22,8 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Lets plain `pytest` import `app` without installing the package.
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

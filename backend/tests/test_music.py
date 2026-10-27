@@ -1,10 +1,8 @@
 import pytest
-from sqlalchemy import create_engine, text
-from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.contracts import Track
-from app.core.config import get_settings
 from app.music import TrackRow, track_from_row
 
 
@@ -56,25 +54,6 @@ def test_source_and_source_track_id_are_unique_in_schema():
         if constraint.__class__.__name__ == "UniqueConstraint"
     ]
     assert {"source", "source_track_id"} in unique_columns
-
-
-@pytest.fixture
-def db_session():
-    # Needs the Docker Postgres with migrations applied (alembic upgrade head).
-    # CI has no Postgres service, so this is skipped there.
-    engine = create_engine(get_settings().database_url, connect_args={"connect_timeout": 3})
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1 FROM tracks LIMIT 1"))
-    except (OperationalError, ProgrammingError):
-        # OperationalError: Postgres is down; ProgrammingError: migrations not applied.
-        pytest.skip("Postgres with the tracks table is not available")
-    with engine.connect() as conn:
-        transaction = conn.begin()
-        session = Session(bind=conn, join_transaction_mode="create_savepoint")
-        yield session
-        session.close()
-        transaction.rollback()
 
 
 def test_same_source_track_cannot_be_inserted_twice(db_session: Session):

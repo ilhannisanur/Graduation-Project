@@ -2,15 +2,33 @@ import json
 from typing import Any
 
 from google import genai
+from google.genai import types
 
 from app.content.llm.base import LLMClient, LLMError
+
+TIMEOUT_MS = 15000  # per request, in milliseconds
+MAX_RETRIES = 2  # retries after the first one
+RETRY_STATUS_CODES = [
+    500,
+    502,
+    504,
+]  # 429/503 are not retried here: their Retry-After header can make the library wait minutes
 
 
 class GeminiClient(LLMClient):
     def __init__(self, api_key: str, model: str) -> None:
         if not api_key:
             raise LLMError("GEMINI_API_KEY is not set")
-        self._client = genai.Client(api_key=api_key)
+        self._client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(
+                timeout=TIMEOUT_MS,
+                retry_options=types.HttpRetryOptions(
+                    attempts=MAX_RETRIES,
+                    http_status_codes=RETRY_STATUS_CODES,
+                ),
+            ),
+        )
         self._model = model
 
     def generate_text(self, prompt: str, system: str | None = None) -> str:

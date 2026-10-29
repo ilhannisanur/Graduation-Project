@@ -167,6 +167,7 @@ def main(argv: list[str] | None = None) -> None:
     models = sorted({k["label"] for k in key})
     print(f"{len(key)} clips from {len(models)} models ({', '.join(models)}) -> {args.out / 'clips'}")
     print("Sheets: " + ", ".join(f"rating_{r}.xlsx" for r in args.raters))
+    print("Next: python -m tts_bench.listening_page --raters " + " ".join(args.raters) + "  (one HTML page per rater)")
 
 
 if __name__ == "__main__":

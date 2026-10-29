@@ -8,6 +8,7 @@ Tables:
   2. blind listening scores of every rater, per model (issue #4 acceptance criterion)
   3. which emotions listeners recognised, per model
   4. how each model expressed each emotion (parameters and tags actually used)
+  5. listener notes per model (pronunciation, glitches)
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from statistics import mean
@@ -53,16 +55,27 @@ def _header(cells: list[str]) -> list[str]:
     return [_row(cells), "|" + "---|" * len(cells)]
 
 
-def _rating_sheets(listening_dir: Path) -> dict[str, Path]:
-    """rater -> sheet; a filled .xlsx wins over a .csv with the same name."""
-    sheets: dict[str, Path] = {}
+def _filled(rows: list[dict[str, str]]) -> int:
+    return sum(1 for r in rows if str(r.get("perceived_emotion") or "").strip())
+
+
+def _rating_sheets(listening_dir: Path) -> dict[str, tuple[Path, list[dict[str, str]]]]:
+    """rater -> (file, rows). Of rating_<rater>.xlsx / .csv (also "rating_nisa (1).csv"
+    from a second browser download) the most completely filled one wins; on a tie the newest."""
+    best: dict[str, tuple[int, float, Path, list[dict[str, str]]]] = {}
     for path in sorted(listening_dir.glob("rating_*.*")):
-        if path.suffix.lower() not in (".xlsx", ".csv") or path.name.startswith("~$"):
+        if path.suffix.lower() not in (".xlsx", ".csv") or path.name.startswith(("~$", ".~lock")):
             continue
-        rater = path.stem.removeprefix("rating_")
-        if rater not in sheets or path.suffix.lower() == ".xlsx":
-            sheets[rater] = path
-    return sheets
+        rater = re.sub(r"\s*\(\d+\)$", "", path.stem.removeprefix("rating_")).strip()
+        rows = read_rating_sheet(path)
+        rank = (_filled(rows), path.stat().st_mtime)
+        if rater not in best or rank > best[rater][:2]:
+            best[rater] = (*rank, path, rows)
+    return {rater: (v[2], v[3]) for rater, v in sorted(best.items())}
+
+
+def _truthy(value: object) -> bool:
+    return str(value or "").strip().lower() in {"1", "true", "yes", "x", "evet"}
 
 
 def collect_ratings(listening_dir: Path | None) -> tuple[list[str], list[dict[str, str]]]:
@@ -72,9 +85,9 @@ def collect_ratings(listening_dir: Path | None) -> tuple[list[str], list[dict[st
     key = {r["clip_id"]: r for r in _read_csv(listening_dir / "key.csv")}
     raters: list[str] = []
     records: list[dict[str, str]] = []
-    for rater, sheet in _rating_sheets(listening_dir).items():
+    for rater, (_sheet, rows) in _rating_sheets(listening_dir).items():
         raters.append(rater)
-        for row in read_rating_sheet(sheet):
+        for row in rows:
             meta = key.get(str(row.get("clip_id", "")).strip())
             if meta is None:
                 continue
@@ -86,6 +99,19 @@ def collect_ratings(listening_dir: Path | None) -> tuple[list[str], list[dict[st
                     "group": meta["group"],
                     "naturalness": str(row.get("naturalness", "")).strip(),
                     "perceived": str(row.get("perceived_emotion", "")).strip().lower(),
+                    # pronunciation_issue comes from the listening page; pronunciation_notes from a hand-made column
+                    "pron": int(
+                        _truthy(row.get("pronunciation_issue"))
+                        or bool(str(row.get("pronunciation_notes") or "").strip())
+                    ),
+                    "notes": " / ".join(
+                        t
+                        for t in (
+                            str(row.get("notes") or "").strip(),
+                            str(row.get("pronunciation_notes") or "").strip(),
+                        )
+                        if t
+                    ),
                 }
             )
     return raters, records
@@ -137,6 +163,7 @@ def _listening_table(raters: list[str], records: list[dict[str, str]]) -> list[s
     cols = ["Model"]
     cols += [f"Naturalness: {r}" for r in raters] + ["Naturalness: mean"]
     cols += [f"Emotion hit: {r}" for r in raters] + ["Emotion hit: mean", "Hit on shared sentence"]
+    cols += ["Pronunciation/glitch flagged"]
     lines = _header(cols)
     by_label: dict[str, list[dict[str, str]]] = defaultdict(list)
     for rec in records:
@@ -151,8 +178,22 @@ def _listening_table(raters: list[str], records: list[dict[str, str]]) -> list[s
         cells: list = [label]
         cells += [_avg(nat[r]) for r in raters] + [_avg([v for r in raters for v in nat[r]])]
         cells += [_pct(hit[r]) for r in raters] + [_pct([v for r in raters for v in hit[r]]), _pct(shared)]
+        cells += [_pct([x["pron"] for x in recs if x["perceived"] or x["naturalness"]])]
         lines.append(_row(cells))
     return lines
+
+
+def _notes_list(records: list[dict[str, str]]) -> list[str]:
+    lines: list[str] = []
+    by_label: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for rec in records:
+        if rec.get("notes"):
+            by_label[rec["label"]].append(rec)
+    for label in sorted(by_label):
+        lines.append(f"**{label}**")
+        lines += [f"- {r['rater']}, {r['emotion']}: {r['notes']}" for r in by_label[label]]
+        lines.append("")
+    return lines or ["_No notes._", ""]
 
 
 def _emotion_table(records: list[dict[str, str]]) -> list[str]:
@@ -237,6 +278,8 @@ def summarize(results_dir: Path, listening_dir: Path | None = None) -> str:
         "Values actually used in the runs (shared sentence). tag = emotion tag added to the text.",
         "",
     ]
+    if records:
+        out += ["### 5. Listener notes (pronunciation and glitches, requirement 6)", "", *_notes_list(records)]
     return "\n".join(out)
 
 

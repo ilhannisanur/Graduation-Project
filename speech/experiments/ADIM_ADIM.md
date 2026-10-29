@@ -256,35 +256,76 @@ for z in ~/Downloads/results_*.zip; do unzip -o "$z" -d ~/Graduation-Project/spe
 
 ## Adım 7 — Kör dinleme testi (3 kişi)
 
-**Ne:** Üç kişi, hangi modelin hangisi olduğunu bilmeden klipleri puanlıyor.
+**Ne:** Üç kişi, hangi klibin hangi modele ait olduğunu bilmeden klipleri puanlıyor.
 
 **Neden:** Issue'nun ilk kabul kriteri bu. Sayısal ölçümler duyguyu ve doğallığı tam ölçemez. Model adlarının gizli olması önyargıyı önler.
 
-1. **Dinleme paketini oluştur.** Her modelin bir sürümünü seç (CPU sürümleri; referanslısı daha iyiyse onu):
+**Neden Excel değil de tarayıcı sayfası:** Excel'deki ses bağlantıları Windows'ta her tıklamada güvenlik uyarısı çıkarıyor. Mac Excel yerel ses dosyalarını çoğu zaman hiç açmıyor. Zip'in içinden açıldığında da bağlantılar kırılıyor. Bunun yerine herkese **tek bir HTML dosyası** gönderiyoruz. Bu dosyada:
+
+* Bütün sesler dosyanın içine gömülü.
+* Windows, Mac ve Linux'ta çift tıklayınca tarayıcıda açılıyor; Chrome, Edge, Safari ve Firefox'ta çalışıyor. Hiçbir şey kurmak gerekmiyor.
+* Puanlar tarayıcıda otomatik kaydediliyor; kişi ara verip sonra devam edebiliyor.
+* Sonunda **Sonuçları indir** düğmesi `rating_<isim>.csv` dosyasını indiriyor.
+
+### 7.1 Klipleri ve sayfaları hazırla (Azra)
+
+1. **Klipleri seç.** Bu adımı zaten yaptıysan, yani `listening/clips` klasörü ve `key.csv` dosyası duruyorsa, atla:
 
 ```bash
-ls results/
-.venv-kokoro/bin/python -m tts_bench.listening --raters azra nisa nisanur \
-  --labels kokoro-cpu chatterbox-cpu styletts2-cpu orpheus-t4 elevenlabs-cloud
+cd ~/Graduation-Project/speech/experiments
+.venv-kokoro/bin/python -m tts_bench.listening --raters azra nisa nisanur --labels <dinlenecek modeller>
 ```
 
-Her model 14 klip ekler (her duygudan 2). Kişi başı dinleme yaklaşık 25 dakika sürer.
-
-2. **Arkadaşlarına paket hazırla:**
+2. **Her kişi için sayfa üret:**
 
 ```bash
-cd listening
-for r in nisa nisanur; do zip -qr ../dinleme_$r.zip clips rating_$r.xlsx; done
-cd ..
+.venv-kokoro/bin/python -m tts_bench.listening_page --raters azra nisa nisanur
 ```
 
-3. **Paylaş ve doldurt:**
-   - `dinleme_nisa.zip` ve `dinleme_nisanur.zip` dosyalarını Drive'dan gönder.
-   - Herkes zip'i açar ve `.xlsx` dosyasını Excel ya da LibreOffice ile açar. Klip adına tıklayınca ses çalar.
-   - Açılır listelerden doldurulacaklar: **doğallık** (1–5) ve **duyulan duygu**.
-   - Yanlış okunan kelimeleri ve bozuklukları **notes** sütununa yazarlar (gereksinim 6).
-   - Sen de kendi dosyanı (`listening/rating_azra.xlsx`) doldur.
-4. **Gizlilik.** `key.csv` dosyasını puanlama bitene kadar kimse açmasın; hangi klibin hangi modele ait olduğu orada yazıyor.
+**Beklenen çıktı:** `listening/` altında `dinle_azra.html`, `dinle_nisa.html`, `dinle_nisanur.html` dosyaları; her biri yaklaşık 15–20 MB.
+
+* Her kişi kendi `.xlsx` dosyasındaki karışık sırayı alır; sıralar kişiden kişiye farklıdır.
+* Sesler sayfaya MP3 (128 kbps) olarak gömülür. Bütün klipler aynı işlemden geçtiği için karşılaştırma adil kalır.
+* Kayıpsız ses istersen komuta `--format wav` ekle; dosya yaklaşık 4 kat büyür.
+
+3. **Kendi sayfanı kontrol et.** `dinle_azra.html` dosyasını aç: bir klip çal, bir puan ver, sayfayı kapatıp tekrar aç. Puan duruyorsa her şey çalışıyor.
+
+### 7.2 Gönder
+
+1. **Drive'a yükle.** `dinle_nisa.html` ve `dinle_nisanur.html` dosyalarını Drive'a yükle ve her kişiye **sadece kendi dosyasını** paylaş. WhatsApp'tan "belge" olarak da gönderebilirsin.
+2. **E-posta kullanma.** 25 MB sınırına takılabilir.
+3. **`key.csv` gönderme.** Bu dosyayı ve `clips` klasörünü kimseye gönderme. Sayfada model adları yok, sadece klip numaraları var.
+4. **Mesajı gönder.** Arkadaşlarına şu mesajı yapıştırabilirsin:
+
+> Merhaba! #4 için kör dinleme testi hazır. Sana özel dosya: dinle_<isim>.html (Drive'da).
+> 1. Dosyayı **indir** (Drive'da önizleme açılırsa sağ üstteki indir simgesine bas) ve Masaüstüne kaydet.
+> 2. Dosyaya çift tıkla: tarayıcıda açılır (Windows: Chrome/Edge, Mac: Safari/Chrome). Kurulum yok.
+> 3. Kulaklık tak. Her klip için doğallığı (1–5) ve sesten duyduğun duyguyu seç. Yanlış okunan kelime varsa "telaffuz hatası"nı işaretle, kısa not yaz.
+> 4. Klavye kısayolları: Boşluk = çal, 1–5 = doğallık, harfler = duygu, → = sonraki.
+> 5. Ara verebilirsin: aynı dosyayı aynı tarayıcıda açınca kaldığın yerden devam eder.
+> 6. Bitince en alttaki "Sonuçları indir" düğmesine bas ve inen rating_<isim>.csv dosyasını bana gönder.
+> Yaklaşık 45–60 dakika sürüyor (140 klip). Bitirene kadar kliplerle ilgili konuşmayalım 🙂
+
+### 7.3 Kendi puanlaman
+
+`dinle_azra.html` dosyasını kullanman önerilir; böylece herkes aynı arayüzle puanlar. LibreOffice'teki `rating_azra.xlsx` dosyasını doldurmaya başladıysan o da geçerli: özet, her kişi için **en çok doldurulmuş** dosyayı kullanır.
+
+### 7.4 Sonuçları topla
+
+1. **Dosyaları yerleştir.** Gelen `rating_nisa.csv` ve `rating_nisanur.csv` dosyalarını, kendi dosyanla birlikte, `listening/` klasörüne koy. Tarayıcı ad sonuna "(1)" eklediyse (örneğin `rating_nisa (1).csv`) sorun değil, özet bunu tanır.
+2. **Tamamlanma kontrolü.** Kimin kaç klip doldurduğunu gör:
+
+```bash
+.venv-kokoro/bin/python -m tts_bench.summarize | grep -A6 "### 2."
+```
+
+**Sorun olursa:**
+
+| Durum | Çözüm |
+|---|---|
+| Sayfa açılıyor ama ses gelmiyor | Önce oynatıcıdaki ▶ düğmesine bas. Tarayıcılar ilk sesi kullanıcı tıklamadan çalmaz. |
+| Kaldığı yer kayboldu | Tarayıcı geçmişi temizlenmiş ya da dosya başka bir tarayıcıda açılmış. Daha önce "Sonuçları indir" ile ara kayıt alındıysa, **Önceki CSV'yi yükle** ile kaldığı yerden devam edilir. Bu yüzden arada bir ara kayıt indirmek iyi bir alışkanlık. |
+| Telefon | Bilgisayar önerilir. iPhone'da Dosyalar uygulamasının önizlemesi sayfayı çalıştırmaz. |
 
 ---
 

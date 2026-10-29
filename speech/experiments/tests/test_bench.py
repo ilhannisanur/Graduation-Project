@@ -375,3 +375,111 @@ def test_summary_lists_emotion_controls(tmp_path: Path):
     assert _controls('{"exaggeration": 0.8, "cfg_weight": 0.45, "reference": "built-in voice"}') == (
         "exaggeration=0.8, cfg_weight=0.45"
     )
+
+
+# --- listening page (self-contained HTML for every OS) -------------------------------
+
+
+def _page_data(path: Path) -> dict:
+    html = path.read_text(encoding="utf-8")
+    start = html.index('<script id="data" type="application/json">') + len('<script id="data" type="application/json">')
+    return json.loads(html[start : html.index("</script>", start)])
+
+
+def _listening_setup(tmp_path: Path) -> tuple[Path, list[dict[str, str]]]:
+    _run_fake(tmp_path, "fake-a")
+    _run_fake(tmp_path, "fake-b")
+    lst = tmp_path / "listening"
+    key = listening.build_listening_test(tmp_path / "results", lst, ["r1", "r2"])
+    return lst, key
+
+
+def test_listening_pages_are_blind_and_complete(tmp_path: Path):
+    from tts_bench.listening_page import build_pages
+
+    lst, key = _listening_setup(tmp_path)
+    pages = build_pages(lst, ["r1", "r2", "r3"], fmt="wav")
+    assert set(pages) == {"r1", "r2", "r3"}
+    html = pages["r1"].read_text(encoding="utf-8")
+    assert "fake-a" not in html and "fake-b" not in html, "model names must not leak into the page"
+
+    data = _page_data(pages["r1"])
+    assert data["emotions"] == list(EMOTIONS)
+    assert sorted(c["id"] for c in data["clips"]) == sorted(k["clip_id"] for k in key)
+    sheet_order = [r["clip_id"] for r in listening.read_rating_sheet(lst / "rating_r1.xlsx")]
+    assert [c["id"] for c in data["clips"]] == sheet_order, "same order as the rater's sheet"
+    r3 = [c["id"] for c in _page_data(pages["r3"])["clips"]]
+    assert r3 != sheet_order and sorted(r3) == sorted(sheet_order), "a rater without a sheet gets their own order"
+
+
+def test_summary_prefers_the_filled_csv_over_an_empty_sheet(tmp_path: Path):
+    lst, key = _listening_setup(tmp_path)
+    truth = {k["clip_id"]: k["emotion"] for k in key}
+    # r1 rated in the browser page: the CSV is filled, the xlsx stays empty;
+    # the browser named the second download "rating_r1 (1).csv"
+    with open(lst / "rating_r1 (1).csv", "w", newline="", encoding="utf-8-sig") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["clip_id", "naturalness", "perceived_emotion", "pronunciation_issue", "notes"])
+        for i, (cid, emo) in enumerate(truth.items()):
+            writer.writerow([cid, 5, emo, 1 if i == 0 else 0, "Ankara wrong; cut-off" if i == 0 else ""])
+    text = summarize.summarize(tmp_path / "results", lst)
+    assert "2 raters: r1, r2" in text
+    row = next(line for line in text.split("### 2.")[1].splitlines() if line.startswith("| fake-"))
+    cells = [c.strip() for c in row.strip("|").split("|")]
+    assert cells[1] == "5.0" and cells[4] == "100%"  # r1 naturalness, r1 emotion hit
+    assert "### 5. Listener notes" in text and "Ankara wrong; cut-off" in text
+
+
+def test_listening_page_in_a_real_browser(tmp_path: Path):
+    """Click through the page in headless Chromium, reload (autosave) and export the CSV."""
+    sync_api = pytest.importorskip("playwright.sync_api")
+    from tts_bench.listening_page import build_pages
+
+    lst, key = _listening_setup(tmp_path)
+    page_path = build_pages(lst, ["r2"], fmt="wav")["r2"]
+    clips = _page_data(page_path)["clips"]
+    truth = {k["clip_id"]: k["emotion"] for k in key}
+    shortcut = {"neutral": "n", "happy": "h", "excited": "e", "calm": "c", "sad": "s", "serious": "r", "surprised": "u"}
+
+    with sync_api.sync_playwright() as pw:
+        try:
+            browser = pw.chromium.launch()
+        except Exception as exc:  # noqa: BLE001 - no browser installed on this machine
+            pytest.skip(f"no browser: {exc}")
+        page = browser.new_page(accept_downloads=True)
+        page.goto(page_path.as_uri())
+        assert page.locator("#clipno").inner_text().startswith(f"Klip 1 / {len(clips)}")
+
+        # clip 1 with the mouse, the rest with keyboard shortcuts
+        page.click("#nat button[data-nat='4']")
+        page.click(f"#emo button[data-emo='{truth[clips[0]['id']]}']")
+        page.check("#pron")
+        page.fill("#notes", 'says "Ankra", cut-off')
+        page.click("#next")
+        for clip in clips[1:5]:
+            page.keyboard.press("3")
+            page.keyboard.press(shortcut[truth[clip["id"]]])
+            page.keyboard.press("ArrowRight")
+        assert "5 / " in page.locator("#count").inner_text()
+
+        page.reload()  # ratings survive closing the page
+        assert "5 / " in page.locator("#count").inner_text()
+
+        page.click("#export")  # first click warns that clips are missing
+        assert "eksik" in page.locator("#exportmsg").inner_text()
+        with page.expect_download() as info:
+            page.click("#export")
+        download = info.value
+        assert download.suggested_filename == "rating_r2.csv"
+        target = lst / "rating_r2.csv"
+        download.save_as(target)
+        browser.close()
+
+    rows = listening.read_rating_sheet(target)
+    assert len(rows) == len(clips)
+    first = rows[0]
+    assert first["naturalness"] == "4" and first["pronunciation_issue"] == "1"
+    assert first["notes"] == 'says "Ankra", cut-off' and first["perceived_emotion"] == truth[first["clip_id"]]
+    assert sum(1 for r in rows if r["perceived_emotion"]) == 5
+    text = summarize.summarize(tmp_path / "results", lst)
+    assert 'says "Ankra", cut-off' in text

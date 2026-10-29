@@ -217,25 +217,27 @@ Issue #4 her aday için **GPU belleği** ve GPU hızının ölçülmesini istiyo
 
 ## Kör dinleme testi
 
-```powershell
-.\.venv-kokoro\Scripts\Activate.ps1
-python -m tts_bench.listening --raters azra nisa nisanur
+```bash
+.venv-kokoro/bin/python -m tts_bench.listening --raters azra nisa nisanur --labels <modeller>
+.venv-kokoro/bin/python -m tts_bench.listening_page --raters azra nisa nisanur
 ```
 
-* `listening\` klasöründe `clips\` (adları gizlenmiş sesler), her kişi için bir `rating_<isim>.xlsx` ve `key.csv` oluşur.
-* `clips\` klasörünü ve kişinin kendi `.xlsx` dosyasını **aynı klasörde** paylaş. Bu, klip adına tıklayınca sesin çalması için gerekli.
-* Herkes açılır listelerden `naturalness` (1–5) ve `perceived_emotion` sütunlarını doldurur.
-* `key.csv` dosyasını puanlama bitene kadar kimse açmaz.
-* Doldurulan dosyaları `listening\` klasörüne geri koy, sonra:
+1. **Klipler.** `listening` komutu `clips/` (adları gizlenmiş klipler), `key.csv` (hangi klip hangi model; puanlama bitene kadar açılmaz) ve her kişiye bir `rating_<isim>.xlsx` üretir.
+2. **Sayfalar.** `listening_page` komutu her kişiye **tek dosyalık bir dinleme sayfası** üretir: `dinle_<isim>.html`. Sesler dosyanın içine gömülüdür; Windows, Mac ve Linux'ta çift tıklayınca tarayıcıda açılır. Puanlar otomatik kaydedilir. Kişi bitince `rating_<isim>.csv` dosyasını indirip geri gönderir.
+3. **Özet.** Gelen CSV dosyalarını `listening/` klasörüne koy ve özeti çalıştır:
 
-```powershell
-python -m tts_bench.summarize      # results\summary.md: 3 tablo
+```bash
+.venv-kokoro/bin/python -m tts_bench.summarize      # results/summary.md: 5 bölüm
 ```
+
+Her kişi için `rating_<isim>.xlsx` ve `rating_<isim>.csv` dosyalarından **en çok doldurulmuş** olan kullanılır.
+
+Adım adım anlatım ve arkadaşlarına gönderilecek hazır mesaj: `ADIM_ADIM.md`, Adım 7.
 
 İsteğe bağlı otomatik duygu kontrolü (Chatterbox ortamında, transformers orada var):
 
-```powershell
-python -m tts_bench.score_emotion
+```bash
+.venv-chatterbox/bin/python -m tts_bench.score_emotion
 ```
 
 ## Klasör yapısı
@@ -252,7 +254,8 @@ speech/experiments/
 │   ├── elevenlabs_tools.py  ElevenLabs anahtar, kota ve ses seçimi
 │   ├── say.py            tek cümle deneme
 │   ├── run.py            üretim ve ölçüm (kaldığı yerden devam eder)
-│   ├── listening.py      kör dinleme testi (xlsx)
+│   ├── listening.py      kör dinleme testi: klip seçimi, key.csv, xlsx
+│   ├── listening_page.py her kişiye tek dosyalık dinleme sayfası (HTML)
 │   ├── score_emotion.py  otomatik kaba duygu kontrolü
 │   └── summarize.py      rapor tabloları
 ├── colab/                Orpheus ve GPU deneyleri

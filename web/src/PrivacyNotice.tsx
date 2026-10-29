@@ -13,20 +13,22 @@ export default function PrivacyNotice() {
   }, [])
 
   return (
-    <details>
+    <details className="notice">
       <summary>How we use your data</summary>
-      {error && <p role="alert">Could not load the privacy notice: {error}</p>}
+      {error && (
+        <p className="alert" role="alert">
+          Could not load the privacy notice: {error}
+        </p>
+      )}
       {notice && (
         <>
           {notice.sections.map((section) => (
-            <div key={section.title}>
-              <h4 style={{ marginBottom: '0.25rem' }}>{section.title}</h4>
-              <p style={{ marginTop: 0 }}>{section.text}</p>
+            <div key={section.title} className="notice-section">
+              <h3>{section.title}</h3>
+              <p>{section.text}</p>
             </div>
           ))}
-          <p>
-            <small>Version {notice.version}</small>
-          </p>
+          <p className="meta">Version {notice.version}</p>
         </>
       )}
     </details>

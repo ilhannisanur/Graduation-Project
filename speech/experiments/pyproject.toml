@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tts-bench"
+version = "0.1.0"
+description = "Emotional English TTS comparison for Emotion-Aware AI Radio (issue #4): 7 emotions x 5 sentences"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "numpy",
+    "soundfile>=0.12",
+    "psutil",
+    "openpyxl",
+]
+
+[project.optional-dependencies]
+# Install one model per virtual environment; their pins conflict.
+kokoro = ["kokoro>=0.9.4"]
+chatterbox = ["chatterbox-tts==0.1.7"]
+styletts2 = ["styletts2==0.1.6"]
+orpheus-hf = ["transformers", "accelerate", "snac"]
+# ElevenLabs needs no extra package (plain HTTPS); put ELEVENLABS_API_KEY in .env
+emotion = ["transformers", "torch", "scipy"]
+dev = ["pytest>=8", "ruff>=0.6", "scipy"]
+
+[tool.setuptools.packages.find]
+include = ["tts_bench*"]
+
+[tool.setuptools.package-data]
+tts_bench = ["test_set.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["colab"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

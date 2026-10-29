@@ -11,8 +11,10 @@ def test_song_intro_prompt_loads():
 
 def test_song_intro_prompt_lists_every_emotion():
     text = load_prompt("song_intro")
+    lines = [line for line in text.splitlines() if "Choose exactly one of:" in line]
+    assert len(lines) == 1
     for emotion in Emotion:
-        assert emotion.value in text
+        assert emotion.value in lines[0]
 
 
 def test_missing_prompt_raises():

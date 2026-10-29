@@ -24,7 +24,7 @@ class GeminiClient(LLMClient):
             http_options=types.HttpOptions(
                 timeout=TIMEOUT_MS,
                 retry_options=types.HttpRetryOptions(
-                    attempts=MAX_RETRIES,
+                    attempts=MAX_RETRIES + 1,
                     http_status_codes=RETRY_STATUS_CODES,
                 ),
             ),

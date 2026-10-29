@@ -27,7 +27,7 @@ def test_client_gets_timeout_and_retry_limit(monkeypatch):
 
     options = created_with[0]["http_options"]
     assert options.timeout == gemini.TIMEOUT_MS
-    assert options.retry_options.attempts == gemini.MAX_RETRIES
+    assert options.retry_options.attempts == gemini.MAX_RETRIES + 1
     assert options.retry_options.http_status_codes == gemini.RETRY_STATUS_CODES
 
 

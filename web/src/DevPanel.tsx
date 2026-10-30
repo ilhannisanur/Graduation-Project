@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { readError } from './api.ts'
+import Setting from './Setting.tsx'
 
 type Health = { app: string; db: string }
 
@@ -44,45 +45,66 @@ export default function DevPanel() {
 
   return (
     <>
-      <section>
-        <h2>Backend status</h2>
-        {healthError && <p>Backend unreachable: {healthError}</p>}
+      <Setting title="Backend status" description="The API and its database.">
+        {healthError && (
+          <p className="alert" role="alert">
+            Backend unreachable: {healthError}
+          </p>
+        )}
         {health && (
           <p>
             App: <strong>{health.app}</strong> · Database: <strong>{health.db}</strong>
           </p>
         )}
-        {!health && !healthError && <p>Checking…</p>}
-      </section>
+        {!health && !healthError && <p className="muted">Checking…</p>}
+      </Setting>
 
-      <section>
-        <h2>DJ announcement preview</h2>
-        <form onSubmit={generate} style={{ display: 'grid', gap: '0.5rem' }}>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-            required
-          />
-          <input
-            value={artist}
-            onChange={(e) => setArtist(e.target.value)}
-            placeholder="Artist"
-            required
-          />
-          <input
-            value={mood}
-            onChange={(e) => setMood(e.target.value)}
-            placeholder="Mood"
-            required
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? 'Generating…' : 'Generate DJ announcement'}
-          </button>
+      <Setting
+        title="DJ announcement preview"
+        tone="lime"
+        description="Asks the language model for one song introduction."
+      >
+        <form onSubmit={generate} style={{ display: 'grid', gap: 16 }}>
+          <label className="field">
+            Title
+            <input
+              className="input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </label>
+          <label className="field">
+            Artist
+            <input
+              className="input"
+              value={artist}
+              onChange={(e) => setArtist(e.target.value)}
+              required
+            />
+          </label>
+          <label className="field">
+            Mood
+            <input
+              className="input"
+              value={mood}
+              onChange={(e) => setMood(e.target.value)}
+              required
+            />
+          </label>
+          <div className="panel-actions">
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Generating…' : 'Generate DJ announcement'}
+            </button>
+          </div>
         </form>
-        {error && <p role="alert">Error: {error}</p>}
-        {announcement && <blockquote>{announcement}</blockquote>}
-      </section>
+        {error && (
+          <p className="alert" role="alert">
+            {error}
+          </p>
+        )}
+        {announcement && <blockquote className="quote">{announcement}</blockquote>}
+      </Setting>
     </>
   )
 }

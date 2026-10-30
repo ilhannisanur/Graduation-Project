@@ -226,3 +226,6 @@ __marimo__/
 *.ogg
 *.flac
 node_modules/
+
+# Design skill working files
+.taste-skill/

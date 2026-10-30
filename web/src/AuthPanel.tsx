@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { api, type User } from './api.ts'
+import PasswordInput from './PasswordInput.tsx'
 import PrivacyNotice from './PrivacyNotice.tsx'
 
 type Mode = 'login' | 'register'
@@ -47,55 +48,81 @@ export default function AuthPanel({ onLoggedIn }: { onLoggedIn: (user: User) => 
 
   const registering = mode === 'register'
   return (
-    <section>
-      <h2>{registering ? 'Create an account' : 'Sign in'}</h2>
-      <form onSubmit={submit} style={{ display: 'grid', gap: '0.5rem' }}>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
-          autoComplete="username"
-          // Same rule as the backend; the browser points at this field before sending.
-          pattern={registering ? USERNAME_PATTERN : undefined}
-          title={registering ? USERNAME_RULE : undefined}
-          aria-describedby={registering ? 'username-rule' : undefined}
-          required
-        />
-        {registering && (
-          <small id="username-rule" style={{ marginTop: '-0.25rem' }}>
-            {USERNAME_RULE}
-          </small>
-        )}
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder={registering ? 'Password (at least 8 characters)' : 'Password'}
-          autoComplete={registering ? 'new-password' : 'current-password'}
-          minLength={registering ? 8 : undefined}
-          required
-        />
+    <section className="auth-card" aria-labelledby="auth-title">
+      <div style={{ display: 'grid', gap: 6 }}>
+        <h2 id="auth-title">{registering ? 'Start your station' : 'Welcome back'}</h2>
+        <p className="muted">
+          {registering ? 'Pick a name and a password.' : 'Sign in to hear your radio.'}
+        </p>
+      </div>
+      <form onSubmit={submit}>
+        {/* The hints sit outside the <label> so the field's name stays "Username" / "Password". */}
+        <div className="field">
+          <label htmlFor="auth-username">Username</label>
+          <input
+            id="auth-username"
+            className="input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            // Same rule as the backend; the browser points at this field before sending.
+            pattern={registering ? USERNAME_PATTERN : undefined}
+            title={registering ? USERNAME_RULE : undefined}
+            aria-describedby={registering ? 'username-rule' : undefined}
+            required
+          />
+          {registering && (
+            <span id="username-rule" className="field-hint">
+              {USERNAME_RULE}
+            </span>
+          )}
+        </div>
+        <div className="field">
+          <label htmlFor="auth-password">Password</label>
+          <PasswordInput
+            id="auth-password"
+            value={password}
+            onChange={setPassword}
+            autoComplete={registering ? 'new-password' : 'current-password'}
+            minLength={registering ? 8 : undefined}
+            describedBy={registering ? 'password-rule' : undefined}
+          />
+          {registering && (
+            <span id="password-rule" className="field-hint">
+              At least 8 characters.
+            </span>
+          )}
+        </div>
         {registering && (
           <>
-            <label>
+            <label className="switch-row tone-mint">
+              <span>
+                <strong>Learn from what I listen to</strong>
+                <span className="muted">Optional. You can change this later.</span>
+              </span>
               <input
                 type="checkbox"
+                role="switch"
+                className="switch"
                 checked={learning}
                 onChange={(e) => setLearning(e.target.checked)}
-              />{' '}
-              Learn from what I listen to (optional, you can change this later)
+              />
             </label>
             <PrivacyNotice />
           </>
         )}
-        <button type="submit" disabled={busy}>
+        {error && (
+          <p className="alert" role="alert">
+            {error}
+          </p>
+        )}
+        <button type="submit" className="btn btn-primary btn-big" disabled={busy}>
           {busy ? 'Please wait…' : registering ? 'Create account' : 'Sign in'}
         </button>
       </form>
-      {error && <p role="alert">Error: {error}</p>}
-      <p>
+      <p className="muted">
         {registering ? 'Already have an account?' : 'New here?'}{' '}
-        <button type="button" onClick={switchMode}>
+        <button type="button" className="link-btn" onClick={switchMode}>
           {registering ? 'Sign in' : 'Create an account'}
         </button>
       </p>

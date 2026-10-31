@@ -206,3 +206,8 @@ def test_day_parts():
     assert at(19) == "Friday evening"
     assert at(23) == "Friday night"
     assert at(2) == "Friday night"
+
+
+def test_emotion_case_and_spaces_are_accepted():
+    spec = generate(FakeLLM({"emotion": " Happy", "text": "Here's Rain."}))
+    assert spec.emotion == Emotion.HAPPY

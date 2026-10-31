@@ -132,8 +132,11 @@ def _spec_from_answer(answer: Any) -> AnnouncementSpec | None:
     text = answer.get("text")
     if not isinstance(text, str) or not text.strip():
         return None
+    emotion_name = answer.get("emotion")
+    if not isinstance(emotion_name, str):
+        return None
     try:
-        emotion = Emotion(answer.get("emotion"))
+        emotion = Emotion(emotion_name.strip().lower())  # "Happy " is fine too
     except ValueError:
         return None
     text = text.strip()

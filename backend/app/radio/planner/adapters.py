@@ -1,26 +1,70 @@
-"""Adapter for the Speech service (#8), which runs as a separate process.
+"""Adapters between the planner and the Speech service (#8).
 
-The request/response shape below is the proposal for the Speech service API:
+``SpeechClientSynthesizer`` is the one the application uses (M1 integration, #12):
+it speaks through the backend's ``SpeechClient`` (app.speech_client), the same
+client every other backend code uses for the speech service.
 
-    POST {base_url}/synthesize
-    {"text": "...", "emotion": "calm", "intensity": 0.6, "voice_id": null,
-     "target_duration_s": 12.0}
-    -> 200 {"audio_url": "/audio/3f2a.wav", "duration_s": 11.4}
+``HttpSpeechSynthesizer`` is the first version written with the planner (#9),
+before the speech service existed. It is kept for its tests and for running the
+planner against any server that answers ``POST /synthesize``.
 
-A relative ``audio_url`` is turned into an absolute one with
-``public_base_url``, so the browser can fetch the file.
-
-Adapters for the music source (#11) and the director (#6) are written in the
-integration (#12), once their functions are merged.
+The music source (#11) and the director (#6) adapters live in their own modules:
+``app.music.source.CatalogMusicSource`` and ``app.content.director.SongIntroDirector``.
 """
 
 from __future__ import annotations
 
+import logging
 from urllib.parse import urljoin
 
 import httpx
 
+from app.speech_client import EMOTIONS, SpeechClient, SpeechRequest
+
 from .models import AnnouncementPlan, SpeechAudio
+
+logger = logging.getLogger(__name__)
+
+
+class SpeechClientSynthesizer:
+    """Implements the planner's ``SpeechSynthesizer`` on top of ``SpeechClient``.
+
+    Errors (service down, 422, 503) are not caught here: the planner catches every
+    announcement failure and plays the song without the announcement.
+    """
+
+    def __init__(self, client: SpeechClient) -> None:
+        self.client = client
+
+    async def synthesize(self, plan: AnnouncementPlan) -> SpeechAudio:
+        result = await self.client.synthesize(
+            SpeechRequest(
+                text=plan.text,
+                emotion=speakable_emotion(plan.emotion),
+                intensity=plan.intensity,
+                voice_id=plan.voice_id,
+                target_duration_s=plan.target_duration_s,
+            )
+        )
+        return SpeechAudio(audio_url=result.audio_url, duration_s=result.duration_s)
+
+    async def aclose(self) -> None:
+        close = getattr(self.client, "aclose", None)
+        if close is not None:
+            await close()
+
+
+def speakable_emotion(emotion: str) -> str:
+    """The plan's emotion if the speech service knows it, else neutral.
+
+    An unknown label would make the service answer 422 and the announcement would be
+    lost; saying it in a neutral voice is better than not saying it.
+    """
+    label = emotion.strip().lower()
+    if label in EMOTIONS:
+        return label
+    logger.warning("unknown emotion %r, speaking the announcement as neutral", emotion)
+    return "neutral"
 
 
 class HttpSpeechSynthesizer:

@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     music_dir: Path = PROJECT_ROOT / "data" / "music"
     # Send the login cookie only over HTTPS. Must be true in production; local dev uses http.
     cookie_secure: bool = False
+    # The speech (TTS) service, a separate process (speech/service). The browser never
+    # calls it directly: announcement audio is served through /api/speech/audio/.
+    speech_service_url: str = "http://localhost:8001"
 
 
 @lru_cache

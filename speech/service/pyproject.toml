@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "speech-service"
+version = "0.1.0"
+description = "Speech service of Emotion-Aware AI Radio (#8): POST /synthesize -> audio"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2",
+    "numpy",
+    "soundfile>=0.12",
+    "scipy",
+    # the TTS engines: speech/experiments (installed with: pip install -e ../experiments[kokoro])
+    "tts-bench",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+include = ["speech_service*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

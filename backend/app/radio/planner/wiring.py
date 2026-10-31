@@ -1,14 +1,10 @@
 """Holds the single planner instance of the application.
 
-The real music source, director and speech client are connected in the M1
-integration (#12), for example in the FastAPI lifespan::
+The real music source, director and speech client are connected when the backend
+starts: ``app.radio.integration.radio_lifespan`` (M1 integration, #12).
 
-    from app.radio.planner import BroadcastPlanner, configure_planner
-
-    configure_planner(BroadcastPlanner(music=..., director=..., speech=...))
-
-Until then the endpoints answer 503 instead of using fake data (team rule:
-mock data only in tests). Tests override ``get_planner`` with fakes.
+If no planner is configured, the endpoints answer 503 instead of using fake data
+(team rule: mock data only in tests). Tests configure a planner with fakes.
 """
 
 from __future__ import annotations

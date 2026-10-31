@@ -8,17 +8,21 @@ the backend talks to it only through ``SpeechClient``. Tests use a fake
 
 from __future__ import annotations
 
-import os
-from typing import Literal, Protocol
+from typing import Literal, Protocol, get_args
 from urllib.parse import urljoin
 
 import httpx
 from pydantic import BaseModel, Field
 
+from app.core.config import get_settings
+
 # Same seven labels as the speech service and DJ Brain (docs/tts-karsilastirma.md).
 Emotion = Literal["neutral", "happy", "excited", "calm", "sad", "serious", "surprised"]
+EMOTIONS: frozenset[str] = frozenset(get_args(Emotion))
 
 DEFAULT_SPEECH_URL = "http://localhost:8001"
+# The service answers "/audio/<name>.wav"; the backend serves it as /api/speech/audio/<name>.wav
+PUBLIC_AUDIO_BASE = "/api/speech/"
 
 
 class SpeechRequest(BaseModel):
@@ -90,8 +94,11 @@ class HttpSpeechClient:
 
 
 def get_speech_client() -> SpeechClient:
-    """FastAPI dependency; the address comes from SPEECH_SERVICE_URL."""
+    """FastAPI dependency; the address comes from SPEECH_SERVICE_URL (backend/.env).
+
+    Audio URLs point at the backend's proxy (/api/speech/audio/...), so the browser
+    reaches them through the same address as the rest of the API.
+    """
     return HttpSpeechClient(
-        base_url=os.environ.get("SPEECH_SERVICE_URL", DEFAULT_SPEECH_URL),
-        public_base_url=os.environ.get("SPEECH_PUBLIC_URL") or None,
+        base_url=get_settings().speech_service_url, public_base_url=PUBLIC_AUDIO_BASE
     )

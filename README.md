@@ -129,7 +129,7 @@ Graduation-Project/
 
 ## Kurulum ve çalıştırma
 
-Gerekenler: Windows 11, Python 3.12, Node.js (LTS), Docker Desktop. Komutlar PowerShell içindir ve repo kök klasöründen başlar.
+Gerekenler: Windows 11, Python 3.12 (backend), Python 3.11 (speech servisi), Node.js (LTS), Docker Desktop. Komutlar PowerShell içindir ve repo kök klasöründen başlar.
 
 ### 1. Veritabanı (PostgreSQL)
 
@@ -196,6 +196,52 @@ python -m app.music.import_catalog
 5. Kontrol: `http://localhost:8000/api/tracks?limit=5` şarkıları listeler. Listedeki bir `id` ile `http://localhost:8000/api/tracks/<id>/audio` adresi şarkıyı tarayıcıda çalar.
 
 Dosyalar repo kökündeki `data/music/` altına iner ve commit'lenmez. Lisans seçimi ve kaynak ayrıntıları için [docs/muzik-kaynagi.md](docs/muzik-kaynagi.md).
+
+### 6. Speech servisi (anonsların sesi)
+
+Anonsları seslendiren servis backend'den ayrı çalışır ve kendi **Python 3.11** ortamını kullanır. Kurulum bir kez yapılır. Ubuntu komutları, GPU'lu kurulum (Orpheus) ve ayarlar için: [speech/service/README.md](speech/service/README.md).
+
+Yeni bir terminalde:
+
+```powershell
+cd speech\service
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+.\.venv\Scripts\python.exe -m pip install -e "..\experiments[kokoro]" -e ".[dev]"
+.\.venv\Scripts\python.exe -m spacy download en_core_web_sm
+copy .env.example .env
+.\.venv\Scripts\uvicorn.exe speech_service.app:app --host 127.0.0.1 --port 8001
+```
+
+Windows'ta `espeak-ng` de kurulu olmalı. İlk açılışta model indirildiği için birkaç dakika sürebilir. GPU yoksa servis Kokoro ile CPU'da çalışır.
+
+Kontrol: `http://localhost:8000/api/speech/health` adresi `"status": "ok"` göstermeli.
+
+Backend servise `backend/.env` içindeki `SPEECH_SERVICE_URL` adresinden bağlanır (varsayılan `http://localhost:8001`). Tarayıcı servise hiç bağlanmaz; anons sesleri de şarkılar gibi backend'den (`/api/speech/audio/...`) gelir.
+
+### 7. Radyoyu dinle
+
+Açılış sırası: veritabanı (1) → backend (2) → speech servisi (6) → web (4). Müzik kataloğu (5) bir kez aktarılmış olmalı.
+
+**Terminalden kontrol.** Web oynatıcıya gerek duymadan bütün zinciri dener. Backend klasöründe, venv açıkken:
+
+```powershell
+python -m app.radio.check
+```
+
+Oynatıcının yaptığını yapar: oturum açar, sıradaki parçayı üç kez ister ve her sesi indirir. Şarkıdan sonra 30 sn bekler (şarkı çalıyormuş gibi), bu sürede anons yazılıp seslendirilir. Hepsi geçerse `RADIO WORKS END TO END` yazar. Sesleri dinlemek için `--save $env:TEMP\radio-check` ekle (Ubuntu'da `--save /tmp/radio-check`).
+
+**Tarayıcıdan.** `http://localhost:5173` adresini aç ve radyoyu başlat: şarkı → seslendirilmiş DJ anonsu → şarkı.
+
+Bir parça eksikse radyo susmaz:
+
+| Durum | Ne olur |
+|---|---|
+| `GEMINI_API_KEY` boş | Anonslar DJ Brain'in şablon cümlesiyle seslendirilir: "Up next, *şarkı* by *sanatçı*." |
+| Speech servisi kapalı | Şarkılar anonssuz çalar. Servis açılınca anonslar kendiliğinden geri gelir, backend'i yeniden başlatmak gerekmez. |
+| Katalog boş ya da veritabanı kapalı | `/api/sessions/{id}/next` 503 döner: "No song available right now". Adım 1 ve 5'i kontrol et. |
+
+Backend açılırken eksik parçayı log'a uyarı olarak yazar (`LLM not available ...`, `speech service not reachable ...`). Zincirin ayrıntıları ve temiz bilgisayar kontrol listesi: [docs/m1-entegrasyon.md](docs/m1-entegrasyon.md).
 
 ### Testler
 

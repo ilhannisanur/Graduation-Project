@@ -14,7 +14,9 @@ import pytest
 from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 
+from app.core.config import get_settings
 from app.speech_client import (
+    PUBLIC_AUDIO_BASE,
     HttpSpeechClient,
     SpeechClient,
     SpeechRequest,
@@ -138,5 +140,13 @@ def test_request_validation_matches_the_service():
 
 def test_get_speech_client_reads_the_address(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("SPEECH_SERVICE_URL", "http://gpu-box:8001/")
-    client = get_speech_client()
-    assert isinstance(client, HttpSpeechClient) and client.base_url == "http://gpu-box:8001"
+    get_settings.cache_clear()  # settings are cached; read the variable set above
+    try:
+        client = get_speech_client()
+    finally:
+        monkeypatch.delenv("SPEECH_SERVICE_URL")
+        get_settings.cache_clear()
+    assert isinstance(client, HttpSpeechClient)
+    assert client.base_url == "http://gpu-box:8001"
+    # the browser gets the audio through the backend, never from the service directly
+    assert client.public_base_url == PUBLIC_AUDIO_BASE

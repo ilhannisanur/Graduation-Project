@@ -2,6 +2,8 @@
 
 from .client import (
     DEFAULT_SPEECH_URL,
+    EMOTIONS,
+    PUBLIC_AUDIO_BASE,
     Emotion,
     HttpSpeechClient,
     SpeechClient,
@@ -13,6 +15,8 @@ from .client import (
 
 __all__ = [
     "DEFAULT_SPEECH_URL",
+    "EMOTIONS",
+    "PUBLIC_AUDIO_BASE",
     "Emotion",
     "HttpSpeechClient",
     "SpeechClient",

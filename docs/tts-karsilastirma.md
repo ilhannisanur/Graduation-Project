@@ -1,7 +1,8 @@
 # Duygulu İngilizce TTS Modellerinin Karşılaştırması
 
-Issue: #4 · Sprint: S1 · Modül: Voice & Broadcast · İlgili gereksinimler: 5, 6, 8, 18 · Hazırlayan: Azra İdiz
+Issue: #4 (ek test: #55) · Sprint: S1 · Modül: Voice & Broadcast · İlgili gereksinimler: 5, 6, 8, 18 · Hazırlayan: Azra İdiz
 Durum: **tamamlandı** (29.10.2026). Ölçümler ve 3 kişilik kör dinleme testi bitti; karar aşağıda.
+Güncelleme (31.10.2026): ElevenLabs ile Orpheus'un kör karşılaştırması eklendi (#55, 6.3). Karar değişmedi.
 
 ## Özet ve karar
 
@@ -16,7 +17,7 @@ Durum: **tamamlandı** (29.10.2026). Ölçümler ve 3 kişilik kör dinleme test
   - GPU kullanılamazsa ya da Orpheus hata verirse yayın susmaz (gereksinim 8; yedek içerik #26).
   - Bedeli: Kokoro'nun duygu girdisi yok; yedek modda anonslar duygusuz okunur.
 * **Nerede çalışacak:** Ana model **GPU'da** çalışacak. GPU'nun kiralanması ya da okulla görüşülmesi seçenekleri değerlendiriliyor; karar #8 başında netleşecek. En az gereksinim: 8 GB'tan fazla VRAM (ölçülen tepe 6,7 GB). T4 sınıfı bir GPU tek dinleyici için yeterli.
-* **ElevenLabs:** Ticari referans olarak hız ölçümüne dahil edildi (RTF 0,71). Issue'daki adaylar arasında olmadığı için bu kör dinleme testine girmedi; Orpheus ile karşılaştırması ayrı bir ek test olarak planlandı (6.3).
+* **ElevenLabs:** Ticari referans olarak ölçüldü (RTF 0,71) ve ayrı bir kör testte (#55, 6.3) Orpheus ile karşılaştırıldı. Orpheus en az ElevenLabs kadar iyi bulundu (doğallık 3,62'ye 3,06; duygu isabeti %47'ye %39; ortak cümlede %33'e %10). Ücretli bir servise geçmek için bir gerekçe çıkmadı.
 
 Bu karar #8'in (Speech servisi) girdisidir: Speech servisi Orpheus'u ana motor, Kokoro'yu yedek motor olarak kullanır (7. bölüm).
 
@@ -149,7 +150,7 @@ Yoğunluk 0.7 (neutral için 0). CPU ve T4 çalıştırmalarında ayarlar aynıd
 | Chatterbox | Heyecanlıda çok güçlü (%87); duygu yoğunluğu sayısal olarak ayarlanabiliyor | Üzgün (%7) ve sakin (%20) zayıf; CPU'da yavaş (RTF 4.63); yerleşik ses erkek | En çok işaretlenen model (%18): "çok cızırtı var", "dedikleri anlaşılmıyor", "hızlı konuştu diye heyecanlı olmuyor" | CPU ve T4'te sorunsuz; torch 2.6.0'a sabit |
 | Kokoro | En hızlı ve en hafif; CPU'da gerçek zamandan hızlı; temiz ses | Duygu yok (ortak cümlede %5); doğallık düşük | "Ses kalitesi baya iyi ama doğallık yok"; ara ara küçük cızırtı | CPU'da sorunsuz |
 | StyleTTS2 | CPU'da da gerçek zamandan hızlı (RTF 0.84) | En düşük doğallık (1.88); duyguyu düz okuyor | "Cızırtı var ve çok kötü", "haber spikeri gibi" | Eski bağımlılıklar nedeniyle ayrı sanal ortam gerekiyor |
-| ElevenLabs | Hızlı (RTF 0.71, ağ dahil); geniş ses kütüphanesi | Ücretli bulut servisi; dinleyici verisi gönderilemez; ücretsiz plan yayın için kullanılamaz | Bu testte dinlenmedi (6.3) | API anahtarı yalnızca `.env` içinde; tam set yaklaşık 3.600 karakter |
+| ElevenLabs | Hızlı (RTF 0.71, ağ dahil); geniş ses kütüphanesi; nötr, mutlu, heyecanlı ve şaşkında Orpheus'tan biraz daha iyi tanındı (6.3) | Ücretli bulut servisi; dinleyici verisi gönderilemez; ücretsiz plan yayın için kullanılamaz; üzgün (%7) ve sakin (%33) zayıf; metin aynıyken duyguyu sesle neredeyse veremedi (ortak cümlede %10) | Telaffuz hatası işaretlenmedi; bir dinleyici birçok klibi "kötü" olarak niteledi | API anahtarı yalnızca `.env` içinde; tam set yaklaşık 3.600 karakter |
 
 **Sınırlılıklar:**
 
@@ -157,6 +158,8 @@ Yoğunluk 0.7 (neutral için 0). CPU ve T4 çalıştırmalarında ayarlar aynıd
 2. **Dinleyiciler değişkendi.** Dinleyiciler ekip üyeleri ve sayıları 3. Dinleyiciler arasında fark var. Örneğin StyleTTS2'nin doğallığı Nisa'da 2.91, diğerlerinde 1.17–1.54. "Telaffuz/ses hatası" işaretlerinin tamamı (48) tek bir dinleyiciden geldi; diğer ikisi hiç işaretlemedi. 4.2'deki son sütun bu yüzden temkinli okunmalı. Yine de sıralamanın başı her üç dinleyicide de aynı: Orpheus.
 3. **Ses formatı.** Dinleme klipleri MP3 128 kbps'ye çevrildi. Bütün modellere aynı işlem uygulandığı için karşılaştırmayı bozmaz.
 4. **Cızırtının kaynağı belli değil.** Bildirilen cızırtıların modelden mi, ses formatından mı geldiği ayrıştırılmadı. Orpheus için bu konu #8'de ham WAV çıktılarıyla incelenecek.
+5. **#55'teki dinleyiciler Orpheus kliplerini tanıyordu.** Orpheus'un 35 klibi #4'te de dinlenmişti; ElevenLabs klipleri ise yeniydi. Sıra karışık ve klip numaraları farklıydı, ama tanıdıklık puanları etkilemiş olabilir.
+6. **ElevenLabs tek bir ayarla denendi.** Tek ses (`FGY2WhTYpPnrIDTdsKH5`), `eleven_v3`, `stability=0.5`. Başka bir ses ya da ayar daha iyi sonuç verebilir.
 
 ## 6. Karar gerekçesi
 
@@ -177,11 +180,34 @@ Yoğunluk 0.7 (neutral için 0). CPU ve T4 çalıştırmalarında ayarlar aynıd
   - StyleTTS2 doğallıkta en düşük.
 * **Bedeli:** Yedek modda anonslar duygusuz okunur.
 
-### 6.3 ElevenLabs (kapsam dışı, ek test)
+### 6.3 ElevenLabs ile karşılaştırma (#55)
 
-ElevenLabs, issue'daki adaylar arasında değildi. Ticari bir üst sınır olarak sonradan eklendi ve hız ölçümüne dahil edildi. Yayında kullanılması şunlara bağlı: ücretli plan, sürekli maliyet ve dinleyici verisi gönderilmemesi kuralı.
+ElevenLabs, #4'teki adaylar arasında değildi. Ticari bir üst sınır olarak sonradan eklendi. Seçilen Orpheus'un bu referansa ne kadar yakın olduğu ayrı bir kör testte ölçüldü (#55, 31.10.2026).
 
-Seçilen açık kaynak modelin bu referansa ne kadar yakın olduğu ayrı bir issue'da ölçülecek: **ElevenLabs ve Orpheus karışık kör dinleme testi** (70 klip, 3 dinleyici). Bu test #4'ün kararını değiştirmez; ücretli seçeneğin değerlendirilmesi için girdi sağlar.
+**Yöntem:** ElevenLabs (`eleven_v3`, hazır kadın sesi) ve Orpheus (`tara`), 35'er klip, toplam 70 klip. Klipler karışık sırada ve kör olarak dinlendi. Dinleyiciler #4'tekilerle aynı 3 kişi; kişi başı 70 puan, toplam 210 puan, eksik puan yok. #4'teki tarayıcı sayfası yöntemi kullanıldı.
+
+**Kör dinleme puanları:**
+
+| Model | Doğallık: Azra | Doğallık: Nisa | Doğallık: Nisanur | **Doğallık: ort.** | Duygu isabeti: Azra | Duygu isabeti: Nisa | Duygu isabeti: Nisanur | **Duygu isabeti: ort.** | Ortak cümlede isabet | Telaffuz/ses hatası işaretlenen |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **Orpheus** | 3.46 | 3.69 | 3.71 | **3.62** | 54% | 40% | 46% | **47%** | **33%** | 2% |
+| ElevenLabs | 3.46 | 3.63 | 2.09 | 3.06 | 51% | 46% | 20% | 39% | 10% | 0% |
+
+**Duygu bazında tanınma (3 dinleyici birlikte; her hücre 15 puan):**
+
+| Model | neutral | happy | excited | calm | sad | serious | surprised |
+|---|---|---|---|---|---|---|---|
+| Orpheus | 27% | 47% | 7% | **87%** | **67%** | **47%** | 47% |
+| ElevenLabs | **47%** | **53%** | **40%** | 33% | 7% | 40% | **53%** |
+
+**Sonuç:**
+
+1. **Orpheus en az ElevenLabs kadar iyi.** Üç kişinin ortalamasında doğallıkta (3,62'ye 3,06) ve duygu isabetinde (%47'ye %39) önde.
+2. **Fark tek dinleyicinin etkisinde.** Ortalamalar arasındaki farkın büyük kısmı bir dinleyiciden geliyor: Nisanur ElevenLabs'a 2,09 verdi. Diğer iki dinleyicide iki model neredeyse eşit: doğallık 3,58'e 3,55; duygu isabeti %47'ye %48,5. Bu yüzden sonuç "Orpheus daha iyi" değil, **"Orpheus en az ElevenLabs kadar iyi"** olarak okunmalı.
+3. **Duyguyu yalnızca sesle vermekte Orpheus açıkça önde.** Metnin her duyguda aynı olduğu ortak cümlede Orpheus %33, ElevenLabs %10 (şans düzeyinin altında). Bu, DJ Brain'in seçtiği duygunun metinden bağımsız olarak sese yansıması için en önemli ölçüt.
+4. **İki model birbirini tamamlıyor.** Orpheus sakin, üzgün ve ciddi duygularda güçlü. ElevenLabs heyecanlı (%40'a %7), nötr, mutlu ve şaşkın duygularda biraz daha iyi tanındı. Orpheus'un heyecanlı duygusundaki zayıflığı #4'te de görülmüştü (%20); #8 ve #22'de üzerinde çalışılacak.
+
+**Karara etkisi:** #4'ün kararı değişmiyor. Ücretli bir bulut servisi, ölçülen hiçbir ana ölçütte belirgin bir üstünlük sağlamadı; üstelik sürekli maliyet getiriyor ve dinleyici verisi gönderilemiyor. Bu yüzden ElevenLabs yayında kullanılmayacak. Projede ana model Orpheus, yedek model Kokoro olarak kalıyor. GPU kiralamaya ödenecek maliyet, ücretli TTS planına göre daha mantıklı bir yatırım.
 
 ## 7. #8 (Speech servisi) için sonuçlar
 
@@ -217,5 +243,7 @@ Seçilen açık kaynak modelin bu referansa ne kadar yakın olduğu ayrı bir is
 - [x] Üç kişinin kör dinleme puanları bir tabloda (4.2: Azra, Nisa, Nisanur; doğallık ve duygu isabeti ayrı sütunlarda)
 - [x] Hız ve GPU belleği her açık kaynak aday için ölçüldü (4.1; Colab T4)
 - [x] Her modelde duygunun nasıl verildiği not edildi (3. bölüm ve 4.4)
+- [x] Ek test (#55): ElevenLabs ve Orpheus için üç kişinin puanları bir tabloda (6.3)
+- [x] Ek test (#55): sonuç 6.3 bölümüne eklendi
 - [x] Seçilen model, yedek model ve nedenleri yazıldı ("Özet ve karar" ile 6. bölüm: Orpheus ve Kokoro)
 - [x] Ses dosyaları repoya girmedi (`.gitignore`: results/, listening/, *.wav, *.mp3, .env; `git ls-files` ile kontrol edildi)

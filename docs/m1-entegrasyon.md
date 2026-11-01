@@ -84,10 +84,21 @@ Kabul ölçütü: "Temiz bir bilgisayarda README adımlarıyla çalışıyor". B
 
 Video repoya **eklenmez**, ekibin ortak klasörüne yüklenir. 2–3 dakika yeterlidir.
 
-1. Terminaller: veritabanı, backend ve speech servisi açık (backend log'unda uyarı yok).
-2. Tarayıcıda `http://localhost:5173`, radyoyu başlat. İlk şarkının başı duyulur.
-3. Şarkının sonuna atla ya da bekle: DJ anonsu duyulur, metni ve duygusu ekranda (ya da `/next` cevabında) görünür.
-4. Anonsun tanıttığı şarkı başlar.
-5. İsteğe bağlı: speech servisini kapat, radyonun susmadığını göster; tekrar aç, anonsların geri geldiğini göster.
+**Çekimden önce**
+
+* Her servisten **bir tane** çalışsın. Backend'i yeniden başlatırken eski pencerenin gerçekten kapandığını kontrol et; eski kopya portu tutarsa istekler eski ayarlı backend'e düşer ve DJ şablon cümle söyler.
+* `backend/.env` içinde `GEMINI_API_KEY` dolu ve `GEMINI_MODEL=gemini-3.1-flash-lite` olsun. Backend açılış log'unda `LLM not available` uyarısı çıkmamalı.
+* Önce `python -m app.radio.check` çalıştır: `RADIO WORKS END TO END` görülmeli ve anons şablon ("Up next, … by …") olmamalı.
+* GPU'lu bilgisayarda Orpheus kullanılıyorsa (`/health` → `engine: orpheus-hf`), çekim sırasında GPU'yu kullanan başka program açık olmasın. Anonsun hazırlanması 20 – 60 sn sürebilir. İstersen çekimden önce birkaç anonsu üretip önbelleğe al, böylece demoda anında gelirler.
+* Ekranda "No DJ intro this time" görünürse anons o sefer hazır olmamıştır; şarkıyı sonuna kadar dinleyip yeniden dene. İleri düğmesine hızlı hızlı basma: anons şarkı başladıktan sonra hazırlandığı için atlanır.
+
+**Çekim akışı**
+
+1. Terminaller: veritabanı, backend, speech servisi ve web açık (backend log'unda uyarı yok).
+2. Tarayıcıda `http://localhost:5173`, giriş yap. İlk ekran Listen. Yayını başlat; ilk şarkının başı duyulur, lisans ve kaynak bilgisi "About this song" kutusunda görünür.
+3. Şarkıyı yarısına kadar dinle, sonra sona doğru bekle: DJ anonsu duyulur, cümlesi ve duygusu ekranda görünür, alanın rengi DJ'in duygusuna göre değişir.
+4. Anonsun tanıttığı şarkı başlar; "On air so far" listesinde geçmiş görünür.
+5. Başka ekrana (Your profile) geç, mini oynatıcının çalmaya devam ettiğini göster.
+6. İsteğe bağlı: speech servisini kapat, radyonun susmadığını göster ("No DJ intro this time"); tekrar aç, anonsların geri geldiğini göster.
 
 Ekran ve sistem sesi birlikte kaydedilmeli. Ubuntu'da OBS Studio önerilir (GNOME'un yerleşik ekran kaydedicisi sistem sesini kaydetmeyebilir). Windows'ta Xbox Game Bar (`Win+G`) ya da OBS kullanılabilir.

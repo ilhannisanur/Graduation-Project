@@ -3,10 +3,14 @@ import { api, type User } from './api.ts'
 import AuthPanel from './AuthPanel.tsx'
 import Banner, { Equalizer } from './Banner.tsx'
 import DevPanel from './DevPanel.tsx'
+import ListenPanel from './ListenPanel.tsx'
+import MiniPlayer from './MiniPlayer.tsx'
 import PrivacyPanel from './PrivacyPanel.tsx'
 import ProfilePanel from './ProfilePanel.tsx'
+import { useRadio } from './useRadio.ts'
 
 const VIEWS = [
+  { id: 'listen', label: 'Listen', tone: 'pink' },
   { id: 'profile', label: 'Your profile', tone: 'sun' },
   { id: 'privacy', label: 'Privacy and data', tone: 'mint' },
   { id: 'dev', label: 'Developer', tone: 'sky' },
@@ -16,7 +20,7 @@ type View = (typeof VIEWS)[number]['id']
 
 function viewFromHash(): View {
   const id = window.location.hash.replace(/^#\/?/, '')
-  return VIEWS.find((v) => v.id === id)?.id ?? 'profile'
+  return VIEWS.find((v) => v.id === id)?.id ?? 'listen'
 }
 
 /** The open view lives in the URL hash, so back/forward and reloads keep it. */
@@ -34,6 +38,9 @@ export default function App() {
   // undefined: still checking whether a login cookie is valid
   const [user, setUser] = useState<User | null | undefined>(undefined)
   const view = useView()
+  // Here, not in the Listen view, so the music goes on while the listener edits the profile.
+  const radio = useRadio()
+  const stopRadio = radio.stop
 
   useEffect(() => {
     api<User>('/api/me')
@@ -41,9 +48,13 @@ export default function App() {
       .catch(() => setUser(null))
   }, [])
 
-  const signedOut = useCallback(() => setUser(null), [])
+  const signedOut = useCallback(() => {
+    stopRadio()
+    setUser(null)
+  }, [stopRadio])
 
   async function logout() {
+    stopRadio()
     try {
       await api<void>('/api/auth/logout', { method: 'POST' })
     } finally {
@@ -95,10 +106,11 @@ export default function App() {
     )
   }
 
+  const showMini = view !== 'listen' && radio.status !== 'idle' && radio.current !== null
   return (
     <>
       <header className="topbar">
-        <a className="wordmark" href="#/profile">
+        <a className="wordmark" href="#/listen">
           <Equalizer />
           Emotion-Aware AI Radio
         </a>
@@ -111,7 +123,7 @@ export default function App() {
           </button>
         </div>
       </header>
-      <div className="shell">
+      <div className={showMini ? 'shell has-mini' : 'shell'}>
         <nav className="sidebar" aria-label="Sections">
           {VIEWS.map((v) => (
             <a
@@ -126,6 +138,7 @@ export default function App() {
         </nav>
         <main className="canvas">
           <div className="view">
+            {view === 'listen' && <ListenPanel radio={radio} />}
             {view === 'profile' && (
               <ProfilePanel username={user.username} onSignedOut={signedOut} />
             )}
@@ -143,6 +156,7 @@ export default function App() {
           </div>
         </main>
       </div>
+      {showMini && <MiniPlayer radio={radio} />}
     </>
   )
 }

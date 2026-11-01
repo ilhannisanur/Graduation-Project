@@ -1,5 +1,16 @@
 export type User = { id: string; username: string; created_at: string }
 
+/** A catalog song (GET /api/tracks/{id}). */
+export type Track = {
+  id: string
+  title: string
+  artist: string
+  duration_seconds: number
+  license: string
+  license_url: string
+  source_url: string
+}
+
 export type Profile = {
   genres: string[]
   artists: string[]

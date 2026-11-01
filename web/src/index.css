@@ -336,6 +336,335 @@ a {
   width: 6px;
 }
 
+/* ---------- listen: the stage shows what is on air in its tone ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.eq-still span {
+  animation-play-state: paused;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 32px;
+  min-height: 420px;
+  padding: 44px 48px;
+  border-radius: var(--radius-big);
+  background: var(--tone);
+  overflow: hidden;
+  transition: background-color 600ms ease;
+}
+
+.stage-body {
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  min-width: 0;
+}
+
+.stage h1 {
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 0.98;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.stage-lede {
+  max-width: 46ch;
+  font-size: 18px;
+  line-height: 27px;
+}
+
+.stage-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.stage-artist {
+  font-family: var(--display);
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.stage-next {
+  font-size: 16px;
+}
+
+.stage-quote {
+  margin: 0;
+  max-width: 30ch;
+  font-family: var(--display);
+  font-size: clamp(26px, 3.2vw, 42px);
+  line-height: 1.15;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.stage-quote::before {
+  content: '“';
+}
+
+.stage-quote::after {
+  content: '”';
+}
+
+.mood-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: var(--fs-small);
+  text-transform: capitalize;
+}
+
+.stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.stage-actions .alert {
+  flex-basis: 100%;
+}
+
+.stage .eq-big {
+  height: 140px;
+}
+
+.btn-huge {
+  gap: 10px;
+  height: 60px;
+  padding: 0 32px;
+  font-size: 18px;
+}
+
+.round-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.6);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color var(--t-hover) ease,
+    transform var(--t-press) var(--ease-out);
+}
+
+.round-btn:hover {
+  background: var(--surface);
+}
+
+.round-btn:active {
+  transform: scale(0.92);
+}
+
+.round-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.round-btn-big {
+  width: 68px;
+  height: 68px;
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.round-btn-big:hover {
+  background: #3a342d;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.volume input {
+  width: 120px;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.progress {
+  display: grid;
+  gap: 6px;
+  max-width: 560px;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.55);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink);
+  transform: scaleX(var(--ratio));
+  transform-origin: left;
+  transition: transform 250ms linear;
+}
+
+.progress-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.listen-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.listen-grid .panel {
+  align-content: start;
+  gap: 12px;
+}
+
+.panel-title::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--tone, var(--ink));
+  vertical-align: 1px;
+}
+
+.credit-line {
+  font-size: 17px;
+  line-height: 26px;
+}
+
+.credit-line a,
+.link-arrow {
+  font-weight: 600;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.link-arrow::after {
+  content: ' ↗';
+}
+
+.history {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-field);
+}
+
+.history-item:first-child {
+  background: var(--raised);
+}
+
+.history-time {
+  color: var(--faint);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- the mini player: on air, at the foot of the other views ---------- */
+
+.mini-player {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  left: calc(var(--sidebar-width) + 16px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 8px 8px 22px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--surface);
+  box-shadow: 0 12px 32px rgb(23 19 15 / 0.22);
+}
+
+.mini-player .eq {
+  color: var(--pink);
+}
+
+.mini-player .round-btn {
+  background: var(--surface);
+}
+
+.mini-player .round-btn:hover {
+  background: var(--pink);
+}
+
+.mini-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mini-label:hover {
+  text-decoration: underline;
+}
+
+.has-mini .canvas {
+  padding-bottom: 120px;
+}
+
+.has-mini .save-bar.is-dirty {
+  bottom: 92px;
+}
+
 /* ---------- settings: label column beside a panel ---------- */
 
 .setting {
@@ -997,6 +1326,34 @@ fieldset.field legend {
 
   .banner .eq {
     display: none;
+  }
+
+  .stage {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding: 28px 22px;
+  }
+
+  .stage .eq-big {
+    display: none;
+  }
+
+  .btn-huge {
+    width: 100%;
+  }
+
+  .volume {
+    display: none; /* phones use their own volume buttons */
+  }
+
+  .listen-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mini-player {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
   }
 
   .station {

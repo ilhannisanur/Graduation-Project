@@ -55,10 +55,10 @@ Sütunlar: V/A = valence / arousal, Kelime = kullanılan / izin verilen en fazla
 - Gün/saat verilmeyen anonslarda gün adı geçmedi; önceki şarkı verilmeyenlerde önceki şarkıdan bahsedilmedi.
 
 Geliştirilmesi gerekenler:
-- **Kalıp tekrarı:** "Moving right along, here is X by Y." (#7 ve #11 neredeyse aynı), "Moving on to something a bit more ..." (#3, #15), "Time to ..." (#10, #14, #20). Son 3 anons prompt'ta olduğu hâlde, 4 anons önceki kalıp geri geliyor. Açılış tipi listesi (Python rastgele seçer) gerekiyor gibi görünüyor.
+- **Kalıp tekrarı:** "Moving right along, here is X by Y." (örnek 7 ve 11 neredeyse aynı), "Moving on to something a bit more ..." (örnek 3 ve 15), "Time to ..." (örnek 10, 14 ve 20). Son 3 anons prompt'ta olduğu hâlde, 4 anons önceki kalıp geri geliyor. Açılış tipi listesi (Python rastgele seçer) gerekiyor gibi görünüyor.
 - **"Tuesday afternoon" çok sık:** Gün/saat verildiği 10 anonsun 8'inde kullanıldı. "You may mention them lightly" kuralı LLM için "kullan" anlamına geliyor.
-- **Önceki şarkı neredeyse hiç kullanılmadı:** Verildiği 10 anonsun yalnızca 2'sinde geçti (#13, #17).
+- **Önceki şarkı neredeyse hiç kullanılmadı:** Verildiği 10 anonsun yalnızca 2'sinde geçti (örnek 13 ve 17).
 - **Hep hem şarkı adı hem sanatçı:** 20 anonsun 20'sinde ikisi de söyleniyor (çoğu "X by Y" kalıbında). Prompt "title, artist or both" dese de yalnızca birini söyleyen anons ("Hadise bizlerle" tarzı) hiç yok.
 - **Anonslar kısa:** 10–22 kelime; izin verilen sınır 12–50 arasında rastgele seçildiği hâlde uzun anons hiç yok. Sebep, prompt'taki "upper bound, not a target. Do not pad." cümlesi. Uzunluk çeşitliliği isteniyorsa bu cümle gözden geçirilmeli.
-- **Küçük kural ihlalleri:** Kısaltma kuralına rağmen "Let us", "It is" (#4, #6, #8, #16); gün/saat verilmediği hâlde "kick off your day" (#20, öğleden sonra).
+- **Küçük kural ihlalleri:** Kısaltma kuralına rağmen "Let us", "It is" (örnek 4, 6, 8 ve 16); gün/saat verilmediği hâlde "kick off your day" (örnek 20, öğleden sonra).
 - **"sad" duygusu 5 kez seçildi:** Hüzünlü şarkıda DJ'in de hüzünlü konuşması doğru mu, yoksa "calm" mı daha uygun? C4'te (#17) değerlendirilebilir.

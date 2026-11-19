@@ -4,13 +4,10 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from app.content.dj.common import seconds_for
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient, LLMError
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
-
-WORDS_PER_SECOND = 2.5
-MIN_SECONDS = 3.0
-MAX_SECONDS = 120.0  # upper limit of AnnouncementSpec.target_seconds
 
 # Each announcement gets a random word limit in this range, so lengths vary.
 MIN_WORDS = 12
@@ -32,7 +29,7 @@ def fallback_song_intro(track: Track) -> AnnouncementSpec:
         kind=AnnouncementKind.SONG_INTRO,
         text=text,
         emotion=Emotion.NEUTRAL,
-        target_seconds=_seconds_for(text),
+        target_seconds=seconds_for(text),
     )
 
 
@@ -144,11 +141,5 @@ def _spec_from_answer(answer: Any) -> AnnouncementSpec | None:
         kind=AnnouncementKind.SONG_INTRO,
         text=text,
         emotion=emotion,
-        target_seconds=_seconds_for(text),
+        target_seconds=seconds_for(text),
     )
-
-
-def _seconds_for(text: str) -> float:
-    """Expected speaking time of a text, kept inside the contract's limits."""
-    seconds = len(text.split()) / WORDS_PER_SECOND
-    return min(MAX_SECONDS, max(MIN_SECONDS, seconds))

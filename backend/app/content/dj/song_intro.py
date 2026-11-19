@@ -3,9 +3,9 @@ from collections.abc import Sequence
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from app.content.dj.common import seconds_for, spec_from_answer
+from app.content.dj.common import ask_llm_for_spec, seconds_for
 from app.content.dj.prompts import load_prompt
-from app.content.llm import LLMClient, LLMError
+from app.content.llm import LLMClient
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
 
 # Each announcement gets a random word limit in this range, so lengths vary.
@@ -15,8 +15,6 @@ MAX_WORDS = 50
 # Giving them every time makes every announcement mention them.
 DAY_PART_PROBABILITY = 0.5
 PREVIOUS_SONG_PROBABILITY = 0.5
-# One more try when the LLM answer is unusable (bad emotion or empty text).
-LLM_ATTEMPTS = 2
 
 DEFAULT_TIMEZONE = ZoneInfo("Europe/Istanbul")
 
@@ -94,17 +92,8 @@ def generate_song_intro(
     )
     system = load_prompt("song_intro")
 
-    for _ in range(LLM_ATTEMPTS):
-        try:
-            answer = llm.generate_json(prompt, system=system)
-        except LLMError:
-            # Timeouts and server errors are already retried inside the client (#52).
-            break
-        spec = spec_from_answer(answer, AnnouncementKind.SONG_INTRO)
-        if spec is not None:
-            return spec
-
-    return fallback_song_intro(next_track)
+    spec = ask_llm_for_spec(llm, prompt, system, AnnouncementKind.SONG_INTRO)
+    return spec or fallback_song_intro(next_track)
 
 
 def describe_day_part(now: datetime) -> str:

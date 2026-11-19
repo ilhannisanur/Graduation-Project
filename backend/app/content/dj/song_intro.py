@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from app.content.dj.common import ask_llm_for_spec, seconds_for
+from app.content.dj.common import ask_llm_for_spec, describe_day_part, seconds_for
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
@@ -94,17 +94,3 @@ def generate_song_intro(
 
     spec = ask_llm_for_spec(llm, prompt, system, AnnouncementKind.SONG_INTRO)
     return spec or fallback_song_intro(next_track)
-
-
-def describe_day_part(now: datetime) -> str:
-    """Turn a time into words such as "Friday evening"."""
-    hour = now.hour
-    if 5 <= hour < 12:
-        part = "morning"
-    elif 12 <= hour < 17:
-        part = "afternoon"
-    elif 17 <= hour < 21:
-        part = "evening"
-    else:
-        part = "night"
-    return f"{now.strftime('%A')} {part}"

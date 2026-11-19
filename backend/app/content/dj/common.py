@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 
 from app.content.llm import LLMClient, LLMError
@@ -54,3 +55,17 @@ def ask_llm_for_spec(
         if spec is not None:
             return spec
     return None
+
+
+def describe_day_part(now: datetime) -> str:
+    """Turn a time into words such as "Friday evening"."""
+    hour = now.hour
+    if 5 <= hour < 12:
+        part = "morning"
+    elif 12 <= hour < 17:
+        part = "afternoon"
+    elif 17 <= hour < 21:
+        part = "evening"
+    else:
+        part = "night"
+    return f"{now.strftime('%A')} {part}"

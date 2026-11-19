@@ -1,10 +1,9 @@
 import random
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Any
 from zoneinfo import ZoneInfo
 
-from app.content.dj.common import seconds_for
+from app.content.dj.common import seconds_for, spec_from_answer
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient, LLMError
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
@@ -101,7 +100,7 @@ def generate_song_intro(
         except LLMError:
             # Timeouts and server errors are already retried inside the client (#52).
             break
-        spec = _spec_from_answer(answer)
+        spec = spec_from_answer(answer, AnnouncementKind.SONG_INTRO)
         if spec is not None:
             return spec
 
@@ -120,26 +119,3 @@ def describe_day_part(now: datetime) -> str:
     else:
         part = "night"
     return f"{now.strftime('%A')} {part}"
-
-
-def _spec_from_answer(answer: Any) -> AnnouncementSpec | None:
-    """Check the LLM answer; return None if it cannot be used."""
-    if not isinstance(answer, dict):
-        return None
-    text = answer.get("text")
-    if not isinstance(text, str) or not text.strip():
-        return None
-    emotion_name = answer.get("emotion")
-    if not isinstance(emotion_name, str):
-        return None
-    try:
-        emotion = Emotion(emotion_name.strip().lower())  # "Happy " is fine too
-    except ValueError:
-        return None
-    text = text.strip()
-    return AnnouncementSpec(
-        kind=AnnouncementKind.SONG_INTRO,
-        text=text,
-        emotion=emotion,
-        target_seconds=seconds_for(text),
-    )

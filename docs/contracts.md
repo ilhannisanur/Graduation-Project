@@ -129,7 +129,7 @@ Haber bülteni. DJ Brain üretir. En az bir madde içermelidir; her madde kaynak
 
 ## ListenerContext
 
-Dinleyiciye kişisel bir yayın üretmek için kullanılan bağlam. Music & Platform doldurur, DJ Brain kullanır.
+Dinleyici profilinden türetilen, kişisel veri içermeyen bağlam. Ortak yayında şarkı seçim puanının profil bileşeni için kullanılır. Music & Platform doldurur, DJ Brain kullanır.
 
 > **Uyarı:** Bu model LLM'e gönderilebilir. Ad, e-posta, telefon gibi kişisel veri **kesinlikle** içermez; fazladan alan gelirse reddedilir.
 
@@ -196,9 +196,11 @@ Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (i
 
 ## Akış
 
-1. **Music & Platform → `TrackSegment`:** Dinleyici için şarkı seçer; `track_id`, `selection_reason` ve (istekse) `request_id` ile segmenti oluşturur.
-2. **DJ Brain → `AnnouncementSpec`:** `ListenerContext`, şarkı ve istek bilgisine bakıp anonsun metnini, duygusunu ve süresini belirler. Haber gerekiyorsa `BulletinSegment` üretir.
-3. **Voice & Broadcast:** `AnnouncementSpec`'ten sesi üretir, `AnnouncementSegment.audio_url`'i doldurur ve `Segment` kuyruğunu kullanıcı başına sıraya dizip yayınlar.
+1. **Music & Platform → `TrackSegment`:** Ortak yayın için şarkı seçer; `track_id`, `selection_reason` ve (istekse) `request_id` ile segmenti oluşturur.
+2. **DJ Brain → `AnnouncementSpec`:** Bağlam, şarkı ve istek bilgisine bakıp anonsun metnini, duygusunu ve süresini belirler. Haber gerekiyorsa `BulletinSegment` üretir.
+3. **Voice & Broadcast:** `AnnouncementSpec`'ten sesi bir kez üretir, `AnnouncementSegment.audio_url`'i doldurur ve `Segment`'leri tek ortak sıraya dizip bütün dinleyicilere yayınlar.
+
+> **Not:** `SongRequest.session_id` kişi başına yayın oturumundan kalmadır. Ortak akışta istek, gönderen kullanıcıya (`user_id`) bağlanacak; değişiklik istek kuyruğu işinde (#16) yapılacak.
 
 ```
 Music & Platform --TrackSegment--------------DJ Brain ---------AnnouncementSpec/Bulletin---> Voice & Broadcast --> Segment kuyruğu --> yayın

@@ -1,0 +1,648 @@
+[
+  {
+    "text": "Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going.",
+    "emotion": "happy",
+    "target_seconds": 7.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Morning Tide\" by Lena Hart\nValence: 0.80, arousal: 0.40\nMaximum words: 39",
+    "llm_ms": 4100,
+    "llm_calls": [
+      {
+        "duration_ms": 4100,
+        "ok": true
+      }
+    ],
+    "number": 1,
+    "request": {
+      "next_track": {
+        "title": "Morning Tide",
+        "artist": "Lena Hart",
+        "valence": 0.8,
+        "arousal": 0.4
+      },
+      "previous_track": null,
+      "recent_announcements": []
+    },
+    "wall_ms": 4824
+  },
+  {
+    "text": "Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.",
+    "emotion": "excited",
+    "target_seconds": 6.4,
+    "used_fallback": false,
+    "prompt": "Next song: \"Neon Run\" by The Static Kids\nValence: 0.70, arousal: 0.90\nSong that just played: \"Morning Tide\" by Lena Hart\nMaximum words: 29\nYour most recent announcements:\n1. Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going.",
+    "llm_ms": 2519,
+    "llm_calls": [
+      {
+        "duration_ms": 2519,
+        "ok": true
+      }
+    ],
+    "number": 2,
+    "request": {
+      "next_track": {
+        "title": "Neon Run",
+        "artist": "The Static Kids",
+        "valence": 0.7,
+        "arousal": 0.9
+      },
+      "previous_track": {
+        "title": "Morning Tide",
+        "artist": "Lena Hart"
+      },
+      "recent_announcements": [
+        "Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going."
+      ]
+    },
+    "wall_ms": 3212
+  },
+  {
+    "text": "Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.",
+    "emotion": "sad",
+    "target_seconds": 8.8,
+    "used_fallback": false,
+    "prompt": "Next song: \"Grey Window\" by Owen Marsh\nValence: 0.20, arousal: 0.20\nSong that just played: \"Neon Run\" by The Static Kids\nDay and time of day: Tuesday afternoon\nMaximum words: 27\nYour most recent announcements:\n1. Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.\n2. Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going.",
+    "llm_ms": 3814,
+    "llm_calls": [
+      {
+        "duration_ms": 3814,
+        "ok": true
+      }
+    ],
+    "number": 3,
+    "request": {
+      "next_track": {
+        "title": "Grey Window",
+        "artist": "Owen Marsh",
+        "valence": 0.2,
+        "arousal": 0.2
+      },
+      "previous_track": {
+        "title": "Neon Run",
+        "artist": "The Static Kids"
+      },
+      "recent_announcements": [
+        "Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.",
+        "Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going."
+      ]
+    },
+    "wall_ms": 4517
+  },
+  {
+    "text": "Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.",
+    "emotion": "calm",
+    "target_seconds": 7.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Paper Boats\" by Mila Rae\nValence: 0.60, arousal: 0.30\nSong that just played: \"Grey Window\" by Owen Marsh\nDay and time of day: Tuesday afternoon\nMaximum words: 46\nYour most recent announcements:\n1. Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.\n2. Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.\n3. Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going.",
+    "llm_ms": 6872,
+    "llm_calls": [
+      {
+        "duration_ms": 6872,
+        "ok": true
+      }
+    ],
+    "number": 4,
+    "request": {
+      "next_track": {
+        "title": "Paper Boats",
+        "artist": "Mila Rae",
+        "valence": 0.6,
+        "arousal": 0.3
+      },
+      "previous_track": {
+        "title": "Grey Window",
+        "artist": "Owen Marsh"
+      },
+      "recent_announcements": [
+        "Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.",
+        "Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.",
+        "Up next is Morning Tide by Lena Hart. It's a lovely track to keep the good vibes going."
+      ]
+    },
+    "wall_ms": 7554
+  },
+  {
+    "text": "We are keeping the momentum going. This is Thunder Road Home by Northbound.",
+    "emotion": "neutral",
+    "target_seconds": 5.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Thunder Road Home\" by Northbound\nValence: 0.50, arousal: 0.80\nMaximum words: 34\nYour most recent announcements:\n1. Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.\n2. Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.\n3. Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now.",
+    "llm_ms": 3680,
+    "llm_calls": [
+      {
+        "duration_ms": 3680,
+        "ok": true
+      }
+    ],
+    "number": 5,
+    "request": {
+      "next_track": {
+        "title": "Thunder Road Home",
+        "artist": "Northbound",
+        "valence": 0.5,
+        "arousal": 0.8
+      },
+      "previous_track": {
+        "title": "Paper Boats",
+        "artist": "Mila Rae"
+      },
+      "recent_announcements": [
+        "Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.",
+        "Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.",
+        "Keep that energy climbing with Neon Run by The Static Kids. It's coming up right now."
+      ]
+    },
+    "wall_ms": 4300
+  },
+  {
+    "text": "It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.",
+    "emotion": "calm",
+    "target_seconds": 5.6,
+    "used_fallback": false,
+    "prompt": "Next song: \"Slow Coffee\" by June Avenue\nValence: 0.70, arousal: 0.20\nDay and time of day: Tuesday afternoon\nMaximum words: 36\nYour most recent announcements:\n1. We are keeping the momentum going. This is Thunder Road Home by Northbound.\n2. Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.\n3. Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon.",
+    "llm_ms": 5625,
+    "llm_calls": [
+      {
+        "duration_ms": 5625,
+        "ok": true
+      }
+    ],
+    "number": 6,
+    "request": {
+      "next_track": {
+        "title": "Slow Coffee",
+        "artist": "June Avenue",
+        "valence": 0.7,
+        "arousal": 0.2
+      },
+      "previous_track": {
+        "title": "Thunder Road Home",
+        "artist": "Northbound"
+      },
+      "recent_announcements": [
+        "We are keeping the momentum going. This is Thunder Road Home by Northbound.",
+        "Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.",
+        "Moving on to something a bit more mellow, here's Grey Window by Owen Marsh. It's a quiet track for this Tuesday afternoon."
+      ]
+    },
+    "wall_ms": 6273
+  },
+  {
+    "text": "Moving right along, here is Lost Signal by Echo Field.",
+    "emotion": "serious",
+    "target_seconds": 4.0,
+    "used_fallback": false,
+    "prompt": "Next song: \"Lost Signal\" by Echo Field\nValence: 0.30, arousal: 0.60\nSong that just played: \"Slow Coffee\" by June Avenue\nMaximum words: 14\nYour most recent announcements:\n1. It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.\n2. We are keeping the momentum going. This is Thunder Road Home by Northbound.\n3. Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae.",
+    "llm_ms": 2730,
+    "llm_calls": [
+      {
+        "duration_ms": 2730,
+        "ok": true
+      }
+    ],
+    "number": 7,
+    "request": {
+      "next_track": {
+        "title": "Lost Signal",
+        "artist": "Echo Field",
+        "valence": 0.3,
+        "arousal": 0.6
+      },
+      "previous_track": {
+        "title": "Slow Coffee",
+        "artist": "June Avenue"
+      },
+      "recent_announcements": [
+        "It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.",
+        "We are keeping the momentum going. This is Thunder Road Home by Northbound.",
+        "Hope you are having a nice Tuesday afternoon. Let us settle in with Paper Boats by Mila Rae."
+      ]
+    },
+    "wall_ms": 3419
+  },
+  {
+    "text": "It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.",
+    "emotion": "happy",
+    "target_seconds": 7.6,
+    "used_fallback": false,
+    "prompt": "Next song: \"Sunday Bikes\" by The Fernwoods\nValence: 0.90, arousal: 0.60\nDay and time of day: Tuesday afternoon\nMaximum words: 50\nYour most recent announcements:\n1. Moving right along, here is Lost Signal by Echo Field.\n2. It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.\n3. We are keeping the momentum going. This is Thunder Road Home by Northbound.",
+    "llm_ms": 3674,
+    "llm_calls": [
+      {
+        "duration_ms": 3674,
+        "ok": true
+      }
+    ],
+    "number": 8,
+    "request": {
+      "next_track": {
+        "title": "Sunday Bikes",
+        "artist": "The Fernwoods",
+        "valence": 0.9,
+        "arousal": 0.6
+      },
+      "previous_track": {
+        "title": "Lost Signal",
+        "artist": "Echo Field"
+      },
+      "recent_announcements": [
+        "Moving right along, here is Lost Signal by Echo Field.",
+        "It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.",
+        "We are keeping the momentum going. This is Thunder Road Home by Northbound."
+      ]
+    },
+    "wall_ms": 4452
+  },
+  {
+    "text": "For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.",
+    "emotion": "sad",
+    "target_seconds": 4.8,
+    "used_fallback": false,
+    "prompt": "Next song: \"Cold Harbor\" by Ada Quinn\nValence: 0.10, arousal: 0.40\nDay and time of day: Tuesday afternoon\nMaximum words: 36\nYour most recent announcements:\n1. It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.\n2. Moving right along, here is Lost Signal by Echo Field.\n3. It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue.",
+    "llm_ms": 3732,
+    "llm_calls": [
+      {
+        "duration_ms": 3732,
+        "ok": true
+      }
+    ],
+    "number": 9,
+    "request": {
+      "next_track": {
+        "title": "Cold Harbor",
+        "artist": "Ada Quinn",
+        "valence": 0.1,
+        "arousal": 0.4
+      },
+      "previous_track": {
+        "title": "Sunday Bikes",
+        "artist": "The Fernwoods"
+      },
+      "recent_announcements": [
+        "It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.",
+        "Moving right along, here is Lost Signal by Echo Field.",
+        "It is a peaceful Tuesday afternoon. Let us enjoy Slow Coffee by June Avenue."
+      ]
+    },
+    "wall_ms": 4930
+  },
+  {
+    "text": "Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.",
+    "emotion": "happy",
+    "target_seconds": 5.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Fireflies\" by Sol & Moon\nValence: 0.80, arousal: 0.70\nDay and time of day: Tuesday afternoon\nMaximum words: 17\nYour most recent announcements:\n1. For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.\n2. It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.\n3. Moving right along, here is Lost Signal by Echo Field.",
+    "llm_ms": 2655,
+    "llm_calls": [
+      {
+        "duration_ms": 2655,
+        "ok": true
+      }
+    ],
+    "number": 10,
+    "request": {
+      "next_track": {
+        "title": "Fireflies",
+        "artist": "Sol & Moon",
+        "valence": 0.8,
+        "arousal": 0.7
+      },
+      "previous_track": {
+        "title": "Cold Harbor",
+        "artist": "Ada Quinn"
+      },
+      "recent_announcements": [
+        "For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.",
+        "It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.",
+        "Moving right along, here is Lost Signal by Echo Field."
+      ]
+    },
+    "wall_ms": 3365
+  },
+  {
+    "text": "Moving right along, here is Long Way Down by Brass Hollow.",
+    "emotion": "neutral",
+    "target_seconds": 4.4,
+    "used_fallback": false,
+    "prompt": "Next song: \"Long Way Down\" by Brass Hollow\nSong that just played: \"Fireflies\" by Sol & Moon\nMaximum words: 16\nYour most recent announcements:\n1. Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.\n2. For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.\n3. It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods.",
+    "llm_ms": 2933,
+    "llm_calls": [
+      {
+        "duration_ms": 2933,
+        "ok": true
+      }
+    ],
+    "number": 11,
+    "request": {
+      "next_track": {
+        "title": "Long Way Down",
+        "artist": "Brass Hollow"
+      },
+      "previous_track": {
+        "title": "Fireflies",
+        "artist": "Sol & Moon"
+      },
+      "recent_announcements": [
+        "Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.",
+        "For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.",
+        "It is a beautiful Tuesday afternoon, so let's keep that energy high. This is Sunday Bikes by The Fernwoods."
+      ]
+    },
+    "wall_ms": 3734
+  },
+  {
+    "text": "Keep it locked right here for City Lights by Kai Rivers.",
+    "emotion": "neutral",
+    "target_seconds": 4.4,
+    "used_fallback": false,
+    "prompt": "Next song: \"City Lights\" by Kai Rivers\nDay and time of day: Tuesday afternoon\nMaximum words: 31\nYour most recent announcements:\n1. Moving right along, here is Long Way Down by Brass Hollow.\n2. Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.\n3. For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn.",
+    "llm_ms": 2651,
+    "llm_calls": [
+      {
+        "duration_ms": 2651,
+        "ok": true
+      }
+    ],
+    "number": 12,
+    "request": {
+      "next_track": {
+        "title": "City Lights",
+        "artist": "Kai Rivers"
+      },
+      "previous_track": {
+        "title": "Long Way Down",
+        "artist": "Brass Hollow"
+      },
+      "recent_announcements": [
+        "Moving right along, here is Long Way Down by Brass Hollow.",
+        "Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.",
+        "For this Tuesday afternoon, let's turn to Cold Harbor by Ada Quinn."
+      ]
+    },
+    "wall_ms": 3595
+  },
+  {
+    "text": "That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.",
+    "emotion": "sad",
+    "target_seconds": 5.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Small Hours\" by Nora Vale\nValence: 0.40, arousal: 0.10\nSong that just played: \"City Lights\" by Kai Rivers\nDay and time of day: Tuesday afternoon\nMaximum words: 24\nYour most recent announcements:\n1. Keep it locked right here for City Lights by Kai Rivers.\n2. Moving right along, here is Long Way Down by Brass Hollow.\n3. Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon.",
+    "llm_ms": 2764,
+    "llm_calls": [
+      {
+        "duration_ms": 2764,
+        "ok": true
+      }
+    ],
+    "number": 13,
+    "request": {
+      "next_track": {
+        "title": "Small Hours",
+        "artist": "Nora Vale",
+        "valence": 0.4,
+        "arousal": 0.1
+      },
+      "previous_track": {
+        "title": "City Lights",
+        "artist": "Kai Rivers"
+      },
+      "recent_announcements": [
+        "Keep it locked right here for City Lights by Kai Rivers.",
+        "Moving right along, here is Long Way Down by Brass Hollow.",
+        "Time to brighten up your Tuesday afternoon with Fireflies by Sol and Moon."
+      ]
+    },
+    "wall_ms": 3456
+  },
+  {
+    "text": "Time to get moving with Jump Start by Volt Club.",
+    "emotion": "excited",
+    "target_seconds": 4.0,
+    "used_fallback": false,
+    "prompt": "Next song: \"Jump Start\" by Volt Club\nValence: 0.90, arousal: 0.95\nMaximum words: 12\nYour most recent announcements:\n1. That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.\n2. Keep it locked right here for City Lights by Kai Rivers.\n3. Moving right along, here is Long Way Down by Brass Hollow.",
+    "llm_ms": 3092,
+    "llm_calls": [
+      {
+        "duration_ms": 3092,
+        "ok": true
+      }
+    ],
+    "number": 14,
+    "request": {
+      "next_track": {
+        "title": "Jump Start",
+        "artist": "Volt Club",
+        "valence": 0.9,
+        "arousal": 0.95
+      },
+      "previous_track": {
+        "title": "Small Hours",
+        "artist": "Nora Vale"
+      },
+      "recent_announcements": [
+        "That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.",
+        "Keep it locked right here for City Lights by Kai Rivers.",
+        "Moving right along, here is Long Way Down by Brass Hollow."
+      ]
+    },
+    "wall_ms": 3942
+  },
+  {
+    "text": "Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.",
+    "emotion": "sad",
+    "target_seconds": 6.0,
+    "used_fallback": false,
+    "prompt": "Next song: \"Old Photographs\" by Henry Lake\nValence: 0.35, arousal: 0.30\nMaximum words: 31\nYour most recent announcements:\n1. Time to get moving with Jump Start by Volt Club.\n2. That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.\n3. Keep it locked right here for City Lights by Kai Rivers.",
+    "llm_ms": 2757,
+    "llm_calls": [
+      {
+        "duration_ms": 2757,
+        "ok": true
+      }
+    ],
+    "number": 15,
+    "request": {
+      "next_track": {
+        "title": "Old Photographs",
+        "artist": "Henry Lake",
+        "valence": 0.35,
+        "arousal": 0.3
+      },
+      "previous_track": {
+        "title": "Jump Start",
+        "artist": "Volt Club"
+      },
+      "recent_announcements": [
+        "Time to get moving with Jump Start by Volt Club.",
+        "That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.",
+        "Keep it locked right here for City Lights by Kai Rivers."
+      ]
+    },
+    "wall_ms": 3536
+  },
+  {
+    "text": "It is time for some Clara Moss. Here is Riverbend.",
+    "emotion": "neutral",
+    "target_seconds": 4.0,
+    "used_fallback": false,
+    "prompt": "Next song: \"Riverbend\" by Clara Moss\nValence: 0.60, arousal: 0.50\nMaximum words: 34\nYour most recent announcements:\n1. Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.\n2. Time to get moving with Jump Start by Volt Club.\n3. That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale.",
+    "llm_ms": 3081,
+    "llm_calls": [
+      {
+        "duration_ms": 3081,
+        "ok": true
+      }
+    ],
+    "number": 16,
+    "request": {
+      "next_track": {
+        "title": "Riverbend",
+        "artist": "Clara Moss",
+        "valence": 0.6,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Old Photographs",
+        "artist": "Henry Lake"
+      },
+      "recent_announcements": [
+        "Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.",
+        "Time to get moving with Jump Start by Volt Club.",
+        "That was Kai Rivers. Now, let's drift into Small Hours by Nora Vale."
+      ]
+    },
+    "wall_ms": 3876
+  },
+  {
+    "text": "That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.",
+    "emotion": "serious",
+    "target_seconds": 6.8,
+    "used_fallback": false,
+    "prompt": "Next song: \"Midnight Train\" by The Lanterns\nValence: 0.40, arousal: 0.70\nSong that just played: \"Riverbend\" by Clara Moss\nMaximum words: 45\nYour most recent announcements:\n1. It is time for some Clara Moss. Here is Riverbend.\n2. Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.\n3. Time to get moving with Jump Start by Volt Club.",
+    "llm_ms": 2993,
+    "llm_calls": [
+      {
+        "duration_ms": 2993,
+        "ok": true
+      }
+    ],
+    "number": 17,
+    "request": {
+      "next_track": {
+        "title": "Midnight Train",
+        "artist": "The Lanterns",
+        "valence": 0.4,
+        "arousal": 0.7
+      },
+      "previous_track": {
+        "title": "Riverbend",
+        "artist": "Clara Moss"
+      },
+      "recent_announcements": [
+        "It is time for some Clara Moss. Here is Riverbend.",
+        "Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.",
+        "Time to get moving with Jump Start by Volt Club."
+      ]
+    },
+    "wall_ms": 3726
+  },
+  {
+    "text": "Hope you enjoyed that. Now, let's brighten up this Tuesday afternoon with Golden Hour by Iris Bloom.",
+    "emotion": "happy",
+    "target_seconds": 6.8,
+    "used_fallback": false,
+    "prompt": "Next song: \"Golden Hour\" by Iris Bloom\nValence: 0.85, arousal: 0.50\nSong that just played: \"Midnight Train\" by The Lanterns\nDay and time of day: Tuesday afternoon\nMaximum words: 27\nYour most recent announcements:\n1. That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.\n2. It is time for some Clara Moss. Here is Riverbend.\n3. Moving on to something a bit more pensive. This is Old Photographs by Henry Lake.",
+    "llm_ms": 10988,
+    "llm_calls": [
+      {
+        "duration_ms": 10988,
+        "ok": true
+      }
+    ],
+    "number": 18,
+    "request": {
+      "next_track": {
+        "title": "Golden Hour",
+        "artist": "Iris Bloom",
+        "valence": 0.85,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Midnight Train",
+        "artist": "The Lanterns"
+      },
+      "recent_announcements": [
+        "That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.",
+        "It is time for some Clara Moss. Here is Riverbend.",
+        "Moving on to something a bit more pensive. This is Old Photographs by Henry Lake."
+      ]
+    },
+    "wall_ms": 11803
+  },
+  {
+    "text": "Moving into the afternoon with something a bit more moody. This is Static Rain by Low Orbit.",
+    "emotion": "sad",
+    "target_seconds": 6.8,
+    "used_fallback": false,
+    "prompt": "Next song: \"Static Rain\" by Low Orbit\nValence: 0.25, arousal: 0.50\nDay and time of day: Tuesday afternoon\nMaximum words: 30\nYour most recent announcements:\n1. Hope you enjoyed that. Now, let's brighten up this Tuesday afternoon with Golden Hour by Iris Bloom.\n2. That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.\n3. It is time for some Clara Moss. Here is Riverbend.",
+    "llm_ms": 3265,
+    "llm_calls": [
+      {
+        "duration_ms": 3265,
+        "ok": true
+      }
+    ],
+    "number": 19,
+    "request": {
+      "next_track": {
+        "title": "Static Rain",
+        "artist": "Low Orbit",
+        "valence": 0.25,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Golden Hour",
+        "artist": "Iris Bloom"
+      },
+      "recent_announcements": [
+        "Hope you enjoyed that. Now, let's brighten up this Tuesday afternoon with Golden Hour by Iris Bloom.",
+        "That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.",
+        "It is time for some Clara Moss. Here is Riverbend."
+      ]
+    },
+    "wall_ms": 4251
+  },
+  {
+    "text": "Time for Weekend Plans by Sunny Days Band to kick off your day.",
+    "emotion": "excited",
+    "target_seconds": 5.2,
+    "used_fallback": false,
+    "prompt": "Next song: \"Weekend Plans\" by Sunny Days Band\nValence: 0.95, arousal: 0.80\nSong that just played: \"Static Rain\" by Low Orbit\nMaximum words: 14\nYour most recent announcements:\n1. Moving into the afternoon with something a bit more moody. This is Static Rain by Low Orbit.\n2. Hope you enjoyed that. Now, let's brighten up this Tuesday afternoon with Golden Hour by Iris Bloom.\n3. That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns.",
+    "llm_ms": 5081,
+    "llm_calls": [
+      {
+        "duration_ms": 5081,
+        "ok": true
+      }
+    ],
+    "number": 20,
+    "request": {
+      "next_track": {
+        "title": "Weekend Plans",
+        "artist": "Sunny Days Band",
+        "valence": 0.95,
+        "arousal": 0.8
+      },
+      "previous_track": {
+        "title": "Static Rain",
+        "artist": "Low Orbit"
+      },
+      "recent_announcements": [
+        "Moving into the afternoon with something a bit more moody. This is Static Rain by Low Orbit.",
+        "Hope you enjoyed that. Now, let's brighten up this Tuesday afternoon with Golden Hour by Iris Bloom.",
+        "That was Riverbend from Clara Moss. Now, let's keep things moving with Midnight Train by The Lanterns."
+      ]
+    },
+    "wall_ms": 5867
+  }
+]

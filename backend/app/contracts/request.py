@@ -27,9 +27,10 @@ class SongRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str
-    session_id: str
+    user_id: str
     raw_text: str
     intent: RequestIntent | None = None
     status: RequestStatus
     reject_reason: str | None = None
+    track_id: str | None = None
     estimated_play_time: AwareDatetime | None = None

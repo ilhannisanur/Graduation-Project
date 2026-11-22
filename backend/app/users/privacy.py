@@ -4,7 +4,7 @@ Change NOTICE_VERSION whenever the text changes in meaning: every consent row re
 version it was given under, so we can show what the listener agreed to.
 """
 
-NOTICE_VERSION = "2026-10-27"
+NOTICE_VERSION = "2026-11-23"
 
 PREFERENCE_LEARNING = "preference_learning"
 
@@ -22,9 +22,10 @@ NOTICE: list[tuple[str, str]] = [
         "What we store",
         "Your username and a scrambled (hashed) form of your password, which nobody can turn "
         "back into the password. Your profile: genres, song languages, news topics, favourite "
-        "artists and the city for weather. When you signed in and until when that sign-in "
-        "is valid. Your choices on this page and when you made them. We do not ask for your "
-        "e-mail, phone number or real name.",
+        "artists and the city for weather. The songs you request, with the text you wrote and "
+        "whether you allowed us to read your message on air. When you signed in and until when "
+        "that sign-in is valid. Your choices on this page and when you made them. We do not ask "
+        "for your e-mail, phone number or real name.",
     ),
     (
         "Why",

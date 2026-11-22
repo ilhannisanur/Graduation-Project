@@ -86,11 +86,12 @@ REQUEST_INTENT = {
 
 SONG_REQUEST = {
     "id": "req_001",
-    "session_id": "ses_001",
+    "user_id": "usr_001",
     "raw_text": "Play Morning Rain for my sister's birthday",
     "intent": REQUEST_INTENT,
     "status": "accepted",
     "reject_reason": None,
+    "track_id": "trk_001",
     "estimated_play_time": "2025-01-15T09:10:00+03:00",
 }
 

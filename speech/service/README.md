@@ -25,7 +25,7 @@ cp .env.example .env
 
 ```powershell
 cd speech\service
-py -3.11 -m venv .venv
+py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 .\.venv\Scripts\python.exe -m pip install -e "..\experiments[kokoro]" -e ".[dev]"
 .\.venv\Scripts\python.exe -m spacy download en_core_web_sm
@@ -46,10 +46,36 @@ Windows'ta `espeak-ng` de kurulu olmalı (Kokoro bilinmeyen kelimeleri onunla ok
 2. **Hugging Face'e giriş yap.** Orpheus'un model sayfasında (`canopylabs/orpheus-3b-0.1-ft`) koşullar bir kez kabul edilmeli. Ardından şunu çalıştır:
 
    ```bash
-   .venv/bin/huggingface-cli login
+   .venv/bin/hf auth login
    ```
 
+   Windows'ta: `.\.venv\Scripts\hf.exe auth login`. Eski `huggingface-cli` komutu yeni sürümlerde yoktur. "Paste an access token" seçeneğini seç ve Hugging Face'ten (Settings → Access Tokens) oluşturduğun **Read** yetkili token'ı yapıştır. Token projede değil, kullanıcı klasöründe (`~/.cache/huggingface`) saklanır.
+
 3. **Gereksinim:** En az 8 GB VRAM gerekir (T4'te ölçülen tepe değer 6,7 GB).
+
+#### Windows'ta CUDA'lı torch
+
+Windows'ta varsayılan `pip install torch` CPU sürümünü kurar. `torch.cuda.is_available()` `False` dönerse CUDA'lı sürümü kur (RTX 4060 ve CUDA 12.4 ile denendi):
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cu124 --force-reinstall
+.\.venv\Scripts\python.exe -m pip install -e "..\experiments[kokoro,orpheus-hf]" -e ".[dev]"
+```
+
+#### 8 GB'lık kartta (RTX 4060 Laptop) ölçümler
+
+Model dosyaları yaklaşık 14 GB iner (32 bit), servis bunu 16 bit yükler ve GPU'da yaklaşık 7 GB yer tutar. 8 GB kartta bellek sınırdadır; taşan kısım sistem RAM'ine gider.
+
+| Durum | 5 sn'lik anons için üretim süresi |
+|---|---|
+| Servis yalnız başına çalışıyor | yaklaşık 21 sn |
+| Aynı anda başka istekler, başka GPU işleri | 50 – 100 sn |
+
+Canlı yayında anons şarkı başlayınca hazırlanır; süre uzarsa o anons atlanır ve şarkı çalınır (yayın susmaz). Üretim sırasında GPU'yu kullanan başka program (oyun, video) açık olmasın. Demo için anonsları önceden üretip önbelleğe almak da mümkündür (aynı istek ikinci kez anında gelir).
+
+#### Duygu
+
+Orpheus duyguyu ton ayarıyla değil, metne eklenen etiketlerle verir: `happy` → `<chuckle>`, `excited` → `<laugh>`, `sad` → `<sigh>`, `surprised` → `<gasp>` (yoğunluk 0,5 ve üzeri). Diğer duygular için metin olduğu gibi okunur. Ses tonunu büyük ölçüde cümlenin kendisi belirler. `TTS_ENGINE_OPTIONS=temperature=0.85` gibi bir ayarla daha ifadeli (ama daha az tutarlı) okuma denenebilir.
 
 ## Çalıştırma
 

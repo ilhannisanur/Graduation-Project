@@ -129,7 +129,7 @@ Graduation-Project/
 
 ## Kurulum ve çalıştırma
 
-Gerekenler: Windows 11, Python 3.12 (backend), Python 3.11 (speech servisi), Node.js (LTS), Docker Desktop. Komutlar PowerShell içindir ve repo kök klasöründen başlar.
+Gerekenler: Windows 11, Python 3.12 (backend ve speech servisi; speech 3.11 ile de çalışır), Node.js (LTS), Docker Desktop. Komutlar PowerShell içindir ve repo kök klasöründen başlar.
 
 ### 1. Veritabanı (PostgreSQL)
 
@@ -199,13 +199,13 @@ Dosyalar repo kökündeki `data/music/` altına iner ve commit'lenmez. Lisans se
 
 ### 6. Speech servisi (anonsların sesi)
 
-Anonsları seslendiren servis backend'den ayrı çalışır ve kendi **Python 3.11** ortamını kullanır. Kurulum bir kez yapılır. Ubuntu komutları, GPU'lu kurulum (Orpheus) ve ayarlar için: [speech/service/README.md](speech/service/README.md).
+Anonsları seslendiren servis backend'den ayrı çalışır ve kendi Python ortamını (**3.12**, 3.11 de olur) kullanır. Kurulum bir kez yapılır. Ubuntu komutları, GPU'lu kurulum (Orpheus) ve ayarlar için: [speech/service/README.md](speech/service/README.md).
 
 Yeni bir terminalde:
 
 ```powershell
 cd speech\service
-py -3.11 -m venv .venv
+py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 .\.venv\Scripts\python.exe -m pip install -e "..\experiments[kokoro]" -e ".[dev]"
 .\.venv\Scripts\python.exe -m spacy download en_core_web_sm

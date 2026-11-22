@@ -162,7 +162,7 @@ Kullanıcı hesapları Music & Platform'dadır (ayrıntılar: [kullanicilar.md](
 
 ## RequestIntent ve SongRequest
 
-Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (istek kuyruğu); DJ Brain yazıyı anlayıp `RequestIntent` çıkarır. `status` değerleri: `received`, `accepted`, `rejected`, `played`. Reddedilirse `reject_reason` dolar; kabul edilirse `estimated_play_time` verilebilir.
+Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (istek kuyruğu); DJ Brain yazıyı anlayıp `RequestIntent` çıkarır. `status` değerleri: `received`, `accepted`, `rejected`, `played`. Reddedilirse `reject_reason` dolar; kabul edilirse `track_id` (kataloktaki şarkı) ve `estimated_play_time` verilebilir. İstek, gönderen kullanıcıya (`user_id`) bağlıdır; hesap silinince istekler de silinir.
 
 `RequestIntent`:
 
@@ -180,7 +180,7 @@ Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (i
 ```json
 {
   "id": "req_001",
-  "session_id": "ses_001",
+  "user_id": "usr_001",
   "raw_text": "Play Morning Rain for my sister's birthday",
   "intent": {
     "song_title": "Morning Rain",
@@ -190,6 +190,7 @@ Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (i
   },
   "status": "accepted",
   "reject_reason": null,
+  "track_id": "trk_001",
   "estimated_play_time": "2025-01-15T09:10:00+03:00"
 }
 ```
@@ -200,7 +201,15 @@ Dinleyicinin yazılı şarkı isteği. `SongRequest`'i Music & Platform tutar (i
 2. **DJ Brain → `AnnouncementSpec`:** Bağlam, şarkı ve istek bilgisine bakıp anonsun metnini, duygusunu ve süresini belirler. Haber gerekiyorsa `BulletinSegment` üretir.
 3. **Voice & Broadcast:** `AnnouncementSpec`'ten sesi bir kez üretir, `AnnouncementSegment.audio_url`'i doldurur ve `Segment`'leri tek ortak sıraya dizip bütün dinleyicilere yayınlar.
 
-> **Not:** `SongRequest.session_id` kişi başına yayın oturumundan kalmadır. Ortak akışta istek, gönderen kullanıcıya (`user_id`) bağlanacak; değişiklik istek kuyruğu işinde (#16) yapılacak.
+### İstek kuyruğu (#16)
+
+- `POST /api/requests` (giriş şart): `{ "raw_text": "...", "track_id": "trk_..." (isteğe bağlı), "message_readout_allowed": false }`. `track_id` verilirse istek hemen `accepted` olur; verilmezse `received` kalır ve DJ Brain (#13) anlayınca kabul ya da red eder. Aynı kullanıcı aynı şarkıyı tekrar isterse yeni kayıt açılmaz, var olan istek döner (200).
+- `GET /api/requests/mine`: giriş yapan kullanıcının istekleri, yeniden eskiye.
+- Bir kullanıcının bekleyen (`received` + `accepted`) en fazla 3 isteği olabilir; fazlası 429 alır.
+- **Tek ortak kuyruk:** aynı şarkıya gelen istekler birleşir; şarkı bir kez çalar, o şarkıyı isteyen herkesin isteği `played` olur. Sıra, her şarkının ilk isteğine göredir.
+- `estimated_play_time`: şu an + önündeki şarkıların süresi + her şarkı için 30 sn (DJ girişi ve istek anonsu). Kaba bir tahmindir; o an çalan şarkı hesaba katılmaz.
+- **Mesaj izni:** `RequestIntent.message` anonsta yalnızca isteği gönderen `message_readout_allowed: true` dediyse okunur (`app.music.requests.service.shoutout_message`). İzin her istekte ayrıca sorulur.
+- Planlayıcı (#14) sıradaki grubu `service.next_group`, çalınca `service.mark_played` ile yönetir; DJ Brain (#13) `service.accept` / `service.reject` çağırır. Planlayıcı, anons ve web arayüzü bağlantıları bu PR'da yoktur.
 
 ```
 Music & Platform --TrackSegment--------------DJ Brain ---------AnnouncementSpec/Bulletin---> Voice & Broadcast --> Segment kuyruğu --> yayın

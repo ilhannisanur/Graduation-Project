@@ -4,6 +4,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.music.requests.models import SongRequestRow
 from app.users.models import AuthSessionRow, ConsentRow, UserProfileRow, UserRow
 from app.users.options import GENRES, LANGUAGES, NEWS_TOPICS
 from app.users.privacy import CONSENT_KINDS, NOTICE_VERSION, PREFERENCE_LEARNING
@@ -176,6 +177,11 @@ def export_user_data(db: Session, user: UserRow) -> dict:
         .where(ConsentRow.user_id == user.id)
         .order_by(ConsentRow.created_at, ConsentRow.id)
     )
+    song_requests = db.scalars(
+        select(SongRequestRow)
+        .where(SongRequestRow.user_id == user.id)
+        .order_by(SongRequestRow.created_at, SongRequestRow.id)
+    )
     return {
         "exported_at": _now().isoformat(),
         "account": {
@@ -192,6 +198,17 @@ def export_user_data(db: Session, user: UserRow) -> dict:
                 "at": c.created_at.isoformat(),
             }
             for c in consents
+        ],
+        "song_requests": [
+            {
+                "id": r.id,
+                "text": r.raw_text,
+                "status": r.status,
+                "track_id": r.track_id,
+                "message_readout_allowed": r.message_readout_allowed,
+                "at": r.created_at.isoformat(),
+            }
+            for r in song_requests
         ],
         "sign_ins": [
             {"created_at": s.created_at.isoformat(), "expires_at": s.expires_at.isoformat()}

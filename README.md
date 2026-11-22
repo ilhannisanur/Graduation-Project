@@ -112,8 +112,8 @@ Her modülün bir sorumlusu vardır; sorumlu o alanı takip eder ve kararların�
 | Modül | Kapsam | Sorumlu |
 |---|---|---|
 | 🧠 DJ Brain & Emotion | Metinden duygu (değerlik ve uyarılmışlık) ve ton adayları, LLM metin servisi, yönetmen (anonsun tonu ve süresi), haber ve hava durumu anonsları, güvenlik filtresi, yazılı istekleri anlama, sesten duygu tanıma modelinin eğitimi ve doğrulama ölçümleri | Nisa Nur Aklan |
-| 🎙️ Voice & Broadcast | Duygulu ses (TTS) ve 7 duygu için ayarlar, prozodi kontrolü, doğrulama döngüsünün sentez hattına eklenmesi, yayın planlayıcı (ortak sıra), ses karıştırma (geçişler, ses seviyesi), HLS akışı, yedek içerik | Azra İdiz |
-| 🎵 Music & Platform | Müzik kataloğu ve lisanslar, müzik analizi (değerlik, enerji), seçim puanı ve "neden bu şarkı?", ortak istek kuyruğu, backend API, kullanıcılar ve KVKK, web/PWA oynatıcı, yönetim paneli | Nisanur İlhan |
+| 🎙️ Voice & Broadcast | Duygulu ses (TTS) ve 7 duygu için ayarlar, prozodi kontrolü, doğrulama döngüsünün sentez hattına eklenmesi, yayın planlayıcı (ortak sıra), ses karıştırma (geçişler, ses seviyesi), HLS akışı, yayın ayarları | Azra İdiz |
+| 🎵 Music & Platform | Müzik kataloğu ve lisanslar, müzik analizi (değerlik, enerji), seçim puanı ve "neden bu şarkı?", ortak istek kuyruğu, yedek içerik, backend API, kullanıcılar ve KVKK, web/PWA oynatıcı, yönetim paneli, dinleyici testi sayfası | Nisanur İlhan |
 
 **Modüller arası sınır:** DJ Brain her anons için ne söyleneceğine, hangi duyguyla ve ne kadar sürede söyleneceğine karar verir. Voice & Broadcast anonsları seslendirir, şarkılar ve isteklerle birlikte tek ortak sıraya dizer ve bütün dinleyicilere yayınlar. Music & Platform şarkıları, kullanıcıları ve istekleri sağlar. Bu sınır ortak bir veri sözleşmesiyle tanımlanır.
 

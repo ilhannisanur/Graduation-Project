@@ -107,7 +107,7 @@ Her katman ayrı ayrı açılıp kapatılabilir; böylece temel ses, prozodi aya
 
 ## Modüller
 
-Her modülün bir sorumlusu vardır; sorumlu o alanı takip eder ve kararlarını verir. Issue'lar atanmamış açılır, herkes her sprintte kendini atar: önce kendi modülünden, gerekirse diğerlerinden. Sprint yükü tahmini puanlarla dengelenir, PR'lar çapraz incelenir. Modüllerin 1. dönem iş yükü yaklaşık eşittir ve her birinde bir yapay zekâ parçası vardır.
+Her modülün bir sorumlusu vardır; sorumlu o alanı takip eder ve kararlarını verir. Issue'lar atanmamış açılır, herkes her sprintte kendini atar: önce kendi modülünden, gerekirse diğerlerinden. Sprint yükü tahmini puanlarla dengelenir, PR incelemesi isteğe bağlıdır; veri tabanı, güvenlik, kullanıcı verisi ve ortak sözleşme gibi önemli değişiklikler başka bir modülden biri tarafından incelenir. Modüllerin 1. dönem iş yükü yaklaşık eşittir ve her birinde bir yapay zekâ parçası vardır.
 
 | Modül | Kapsam | Sorumlu |
 |---|---|---|

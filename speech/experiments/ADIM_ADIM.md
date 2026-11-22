@@ -373,7 +373,7 @@ git push
 gh pr ready
 ```
 
-5. **İncelemeye gönder.** Reviewer olarak Nisa ya da Nisanur'u ekle, kartı **In review**'a taşı. PR onaylanınca issue'daki kutuları işaretle.
+5. **İncelemeye gönder (önemli değişikliklerde).** Reviewer olarak Nisa ya da Nisanur'u ekle, kartı **In review**'a taşı. İnceleme gerekmeyen küçük değişiklikte bu adımı atla. PR birleşince issue'daki kutuları işaretle.
 
 ---
 

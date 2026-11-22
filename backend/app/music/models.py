@@ -43,6 +43,8 @@ class TrackRow(Base):
     arousal: Mapped[float | None] = mapped_column(Float, default=None)
 
     # Internal fields (never leave the database layer)
+    # Where valence/arousal came from: "tags" (mood tags) or later "audio" (#20); None if empty.
+    affect_source: Mapped[str | None] = mapped_column(String, default=None)
     file_path: Mapped[str | None] = mapped_column(Text, default=None)
     source: Mapped[str] = mapped_column(String)  # e.g. "jamendo"
     source_track_id: Mapped[str] = mapped_column(String)

@@ -62,8 +62,9 @@ def test_llm_error_gives_fallback(post):
     llm = FailingLLM(None)
     data = post(llm).json()
     assert data["used_fallback"] is True
-    assert data["text"] == "Up next, Rain by Someone."
-    assert data["emotion"] == "neutral"
+    # The fallback follows the song's mood (the posted song is a slow, sad one).
+    assert "Rain" in data["text"] and "Someone" in data["text"]
+    assert data["emotion"] == "sad"
     assert llm.calls == 1  # LLMError is not retried again here; the client already retried
     assert [call["ok"] for call in data["llm_calls"]] == [False]
 

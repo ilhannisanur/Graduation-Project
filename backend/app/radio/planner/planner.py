@@ -81,6 +81,7 @@ class _Block:
     index: int
     track: TrackInfo
     announcement: asyncio.Task[QueuedAnnouncement | None] | None
+    previous: TrackInfo | None = None  # last_planned before this block, to undo it
 
 
 @dataclass(eq=False)
@@ -114,6 +115,7 @@ class BroadcastPlanner:
         self.speech = speech
         self.settings = settings or PlannerSettings()
         self._sessions: dict[str, Session] = {}
+        self._reports: set[asyncio.Task[None]] = set()  # keeps fire-and-forget tasks alive
 
     # --- sessions -------------------------------------------------------------
 
@@ -213,9 +215,42 @@ class BroadcastPlanner:
         session.last_planned = track
 
         announcement = None
-        if index > 0 and index % self.settings.songs_per_announcement == 0:
+        # A request is always announced (the shout-out), even as the very first song.
+        due = index > 0 and index % self.settings.songs_per_announcement == 0
+        if due or track.request is not None:
             announcement = asyncio.create_task(self._make_announcement(session, previous, track))
-        return _Block(index=index, track=track, announcement=announcement)
+        return _Block(index=index, track=track, announcement=announcement, previous=previous)
+
+    def refresh_upcoming(self) -> None:
+        """Re-plan every session's next block (a request arrived, the mood changed).
+
+        The block that is already prepared is dropped unless it is itself a request, so a new
+        request is played after the current song instead of two songs later. Must be called
+        from the event loop.
+        """
+        for session in list(self._sessions.values()):
+            self._replan(session)
+
+    def _replan(self, session: Session) -> None:
+        task = session.upcoming
+        if task is None:
+            return
+        if task.done():
+            if task.cancelled() or task.exception() is not None:
+                session.upcoming = None
+            else:
+                block = task.result()
+                if block.track.request is not None:
+                    return  # a request is already next: keep it
+                if block.announcement is not None:
+                    block.announcement.cancel()
+                if session.recent and session.recent[-1] is block.track:
+                    session.recent.pop()
+                session.last_planned = block.previous
+        else:
+            task.cancel()  # still picking the song: nothing was recorded yet
+        session.upcoming = asyncio.create_task(self._prepare_block(session))
+        logger.info("session %s: next block re-planned", session.session_id)
 
     async def _resolve_block(
         self, session: Session, block: _Block
@@ -298,6 +333,9 @@ class BroadcastPlanner:
             return None
 
     def _track_segment(self, track: TrackInfo) -> QueuedTrack:
+        """The segment for a song that is handed out now, i.e. starts playing."""
+        if track.request is not None:
+            self._report_started(track)
         return QueuedTrack(
             track_id=track.track_id,
             title=track.title,
@@ -306,7 +344,25 @@ class BroadcastPlanner:
             reason=track.reason,
             duration_s=track.duration_s,
             audio_url=self.settings.track_audio_url.format(track_id=track.track_id),
+            requested_by=track.request.on_air_names if track.request else None,
+            request_messages=track.request.messages if track.request else None,
         )
+
+    def _report_started(self, track: TrackInfo) -> None:
+        """Tell the music source a requested song is on air (it marks the requests played)."""
+        started = getattr(self.music, "track_started", None)
+        if started is None:
+            return
+
+        async def report() -> None:
+            try:
+                await started(track.track_id)
+            except Exception:
+                logger.warning("could not mark %s as played", track.track_id, exc_info=True)
+
+        task = asyncio.create_task(report())
+        self._reports.add(task)
+        task.add_done_callback(self._reports.discard)
 
     def _evict_idle(self) -> None:
         now = time.monotonic()

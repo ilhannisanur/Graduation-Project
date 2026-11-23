@@ -1,4 +1,5 @@
 import json
+from collections.abc import Sequence
 from typing import Any
 
 from google import genai
@@ -16,7 +17,10 @@ RETRY_STATUS_CODES = [
 
 
 class GeminiClient(LLMClient):
-    def __init__(self, api_key: str, model: str) -> None:
+    """Gemini behind LLMClient. When a model fails (e.g. 503 "high demand", a timeout), the
+    same request is tried once with each fallback model, in order."""
+
+    def __init__(self, api_key: str, model: str, fallback_models: Sequence[str] = ()) -> None:
         if not api_key:
             raise LLMError("GEMINI_API_KEY is not set")
         self._client = genai.Client(
@@ -29,7 +33,7 @@ class GeminiClient(LLMClient):
                 ),
             ),
         )
-        self._model = model
+        self._models = [model, *(m for m in fallback_models if m and m != model)]
 
     def generate_text(self, prompt: str, system: str | None = None) -> str:
         return self._create(prompt, system)
@@ -46,11 +50,15 @@ class GeminiClient(LLMClient):
             raise LLMError("LLM did not return valid JSON") from exc
 
     def _create(self, prompt: str, system: str | None, **extra: Any) -> str:
-        params: dict[str, Any] = {"model": self._model, "input": prompt, **extra}
-        if system:
-            params["system_instruction"] = system
-        try:
-            interaction = self._client.interactions.create(**params)
-        except Exception as exc:
-            raise LLMError(f"Gemini request failed: {exc}") from exc
-        return interaction.output_text
+        errors: list[str] = []
+        for model in self._models:
+            params: dict[str, Any] = {"model": model, "input": prompt, **extra}
+            if system:
+                params["system_instruction"] = system
+            try:
+                interaction = self._client.interactions.create(**params)
+            except Exception as exc:
+                errors.append(f"{model}: {exc}")
+                continue
+            return interaction.output_text
+        raise LLMError("Gemini request failed: " + " | ".join(errors))

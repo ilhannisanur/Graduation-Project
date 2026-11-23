@@ -6,20 +6,24 @@ import DevPanel from './DevPanel.tsx'
 import ListenPanel from './ListenPanel.tsx'
 import MiniPlayer from './MiniPlayer.tsx'
 import PrivacyPanel from './PrivacyPanel.tsx'
+import EmotionsPanel from './EmotionsPanel.tsx'
 import ProfilePanel from './ProfilePanel.tsx'
+import RequestPage from './RequestPage.tsx'
 import { useRadio } from './useRadio.ts'
 
 const VIEWS = [
-  { id: 'listen', label: 'Listen', tone: 'pink' },
+  { id: 'listen', label: 'Studio', tone: 'pink' },
+  { id: 'emotions', label: 'Seven feelings', tone: 'lime' },
   { id: 'profile', label: 'Your profile', tone: 'sun' },
   { id: 'privacy', label: 'Privacy and data', tone: 'mint' },
   { id: 'dev', label: 'Developer', tone: 'sky' },
 ] as const
 
-type View = (typeof VIEWS)[number]['id']
+type View = (typeof VIEWS)[number]['id'] | 'request'
 
 function viewFromHash(): View {
   const id = window.location.hash.replace(/^#\/?/, '')
+  if (id === 'request') return 'request' // the phone page from the QR code
   return VIEWS.find((v) => v.id === id)?.id ?? 'listen'
 }
 
@@ -61,6 +65,9 @@ export default function App() {
       setUser(null)
     }
   }
+
+  // Phones from the QR code: no account wall and no sidebar; the page signs itself in.
+  if (view === 'request') return <RequestPage />
 
   if (user === undefined) {
     return (
@@ -139,6 +146,7 @@ export default function App() {
         <main className="canvas">
           <div className="view">
             {view === 'listen' && <ListenPanel radio={radio} />}
+            {view === 'emotions' && <EmotionsPanel />}
             {view === 'profile' && (
               <ProfilePanel username={user.username} onSignedOut={signedOut} />
             )}

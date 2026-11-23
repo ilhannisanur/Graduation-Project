@@ -91,6 +91,9 @@ def test_lerp_and_engine_settings():
     kokoro = KokoroEngine()
     assert kokoro.settings_for(SynthesisRequest("x", "sad", 1.0))["speed"] < 1.0
     assert kokoro.settings_for(SynthesisRequest("x", "excited", 1.0))["speed"] > 1.0
+    slower = KokoroEngine(speed="0.9")
+    assert slower.settings_for(SynthesisRequest("x", "neutral", 0.5))["speed"] == 0.9
+    assert slower.settings_for(SynthesisRequest("x", "excited", 1.0))["speed"] > 0.9
     cb = ChatterboxEngine()
     calm = cb.settings_for(SynthesisRequest("x", "calm", 1.0))
     excited = cb.settings_for(SynthesisRequest("x", "excited", 1.0))

@@ -7,6 +7,7 @@ from .models import (
     QueuedAnnouncement,
     QueuedSegment,
     QueuedTrack,
+    RequestNote,
     SpeechAudio,
     TrackInfo,
 )
@@ -33,6 +34,7 @@ __all__ = [
     "QueuedAnnouncement",
     "QueuedSegment",
     "QueuedTrack",
+    "RequestNote",
     "SessionNotFound",
     "SpeechAudio",
     "SpeechSynthesizer",

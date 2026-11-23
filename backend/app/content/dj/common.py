@@ -1,10 +1,10 @@
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
 from app.content.llm import LLMClient, LLMError
-from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion
+from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
 
 WORDS_PER_SECOND = 2.5
 MIN_SECONDS = 3.0
@@ -80,3 +80,19 @@ def describe_day_part(now: datetime) -> str:
     else:
         part = "night"
     return f"{now.strftime('%A')} {part}"
+
+
+def track_lines(track: Track) -> list[str]:
+    """Prompt lines about the next song: title, artist and mood numbers if known."""
+    lines = [f'Next song: "{track.title}" by {track.artist}']
+    if track.valence is not None and track.arousal is not None:
+        lines.append(f"Valence: {track.valence:.2f}, arousal: {track.arousal:.2f}")
+    return lines
+
+
+def recent_lines(recent_announcements: Sequence[str]) -> list[str]:
+    """Prompt lines that list the DJ's recent announcements, so it does not repeat them."""
+    if not recent_announcements:
+        return []
+    numbered = [f"{n}. {text}" for n, text in enumerate(recent_announcements, start=1)]
+    return ["Your most recent announcements:", *numbered]

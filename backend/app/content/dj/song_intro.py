@@ -2,7 +2,14 @@ import random
 from collections.abc import Sequence
 from datetime import datetime
 
-from app.content.dj.common import DEFAULT_TIMEZONE, ask_llm_for_spec, describe_day_part, seconds_for
+from app.content.dj.common import (
+    DEFAULT_TIMEZONE,
+    ask_llm_for_spec,
+    describe_day_part,
+    seconds_for,
+    track_lines,
+    recent_lines,
+)
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
@@ -39,10 +46,7 @@ def build_song_intro_prompt(
     Only the information that is given gets a line; a missing field is left out.
     The fixed rules live in the song_intro system prompt.
     """
-    lines = [f'Next song: "{next_track.title}" by {next_track.artist}']
-
-    if next_track.valence is not None and next_track.arousal is not None:
-        lines.append(f"Valence: {next_track.valence:.2f}, arousal: {next_track.arousal:.2f}")
+    lines = track_lines(next_track)
 
     # The planner replays the same song when the music source is down.
     if previous_track is not None and previous_track.id != next_track.id:
@@ -53,10 +57,7 @@ def build_song_intro_prompt(
 
     lines.append(f"Maximum words: {max_words}")
 
-    if recent_announcements:
-        lines.append("Your most recent announcements:")
-        for number, text in enumerate(recent_announcements, start=1):
-            lines.append(f"{number}. {text}")
+    lines.extend(recent_lines(recent_announcements))
 
     return "\n".join(lines)
 

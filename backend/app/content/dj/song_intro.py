@@ -6,9 +6,9 @@ from app.content.dj.common import (
     DEFAULT_TIMEZONE,
     ask_llm_for_spec,
     describe_day_part,
+    recent_lines,
     seconds_for,
     track_lines,
-    recent_lines,
 )
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient

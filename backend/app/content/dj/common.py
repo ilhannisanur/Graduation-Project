@@ -1,5 +1,7 @@
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from app.content.llm import LLMClient, LLMError
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion
@@ -10,6 +12,8 @@ MAX_SECONDS = 120.0  # upper limit of AnnouncementSpec.target_seconds
 
 # One more try when the LLM answer is unusable (bad emotion or empty text).
 LLM_ATTEMPTS = 2
+
+DEFAULT_TIMEZONE = ZoneInfo("Europe/Istanbul")
 
 
 def seconds_for(text: str) -> float:
@@ -42,9 +46,16 @@ def spec_from_answer(answer: Any, kind: AnnouncementKind) -> AnnouncementSpec | 
 
 
 def ask_llm_for_spec(
-    llm: LLMClient, prompt: str, system: str, kind: AnnouncementKind
+    llm: LLMClient,
+    prompt: str,
+    system: str,
+    kind: AnnouncementKind,
+    check: Callable[[str], bool] | None = None,
 ) -> AnnouncementSpec | None:
-    """Ask the LLM for an announcement; try once more on an unusable answer. None if it fails."""
+    """Ask the LLM for an announcement; try once more on an unusable answer. None if it fails.
+
+    ``check`` is an extra test on the text (for example, placeholders are present).
+    """
     for _ in range(LLM_ATTEMPTS):
         try:
             answer = llm.generate_json(prompt, system=system)
@@ -52,7 +63,7 @@ def ask_llm_for_spec(
             # Timeouts and server errors are already retried inside the client (#52).
             break
         spec = spec_from_answer(answer, kind)
-        if spec is not None:
+        if spec is not None and (check is None or check(spec.text)):
             return spec
     return None
 

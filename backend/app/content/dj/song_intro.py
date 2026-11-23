@@ -1,9 +1,8 @@
 import random
 from collections.abc import Sequence
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
-from app.content.dj.common import ask_llm_for_spec, describe_day_part, seconds_for
+from app.content.dj.common import DEFAULT_TIMEZONE, ask_llm_for_spec, describe_day_part, seconds_for
 from app.content.dj.prompts import load_prompt
 from app.content.llm import LLMClient
 from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
@@ -15,8 +14,6 @@ MAX_WORDS = 50
 # Giving them every time makes every announcement mention them.
 DAY_PART_PROBABILITY = 0.5
 PREVIOUS_SONG_PROBABILITY = 0.5
-
-DEFAULT_TIMEZONE = ZoneInfo("Europe/Istanbul")
 
 
 def fallback_song_intro(track: Track) -> AnnouncementSpec:

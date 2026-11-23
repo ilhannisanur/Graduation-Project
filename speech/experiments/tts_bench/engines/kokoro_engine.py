@@ -13,12 +13,12 @@ from .base import Audio, SynthesisRequest, TTSEngine, lerp, to_mono_float32
 # Speed at intensity 1.0; neutral is 1.0.
 SPEED_FULL = {
     "neutral": 1.0,
-    "happy": 1.08,
-    "excited": 1.18,
-    "calm": 0.9,
-    "sad": 0.85,
-    "serious": 0.94,
-    "surprised": 1.1,
+    "happy": 1.02,
+    "excited": 1.04,
+    "calm": 0.96,
+    "sad": 0.95,
+    "serious": 0.97,
+    "surprised": 1.03,
 }
 SAMPLE_RATE = 24_000
 

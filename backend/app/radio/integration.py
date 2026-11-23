@@ -1,6 +1,6 @@
 """M1 integration (#12): connects the broadcast planner (#9) to the real modules.
 
-    music    CatalogMusicSource (#11)     songs from the catalog in Postgres
+    music    BroadcastMusicSource (#16)   requests first, then the station mood, then the catalog
     director SongIntroDirector (#6)       the intro, written by the LLM (Gemini)
     speech   SpeechClientSynthesizer (#8) the voice, from the separate speech service
 
@@ -32,7 +32,8 @@ from app.content.director import SongIntroDirector
 from app.content.llm import LLMClient, LLMError, get_llm_client
 from app.core.config import Settings, get_settings
 from app.db.session import get_engine
-from app.music.source import CatalogMusicSource, SessionFactory
+from app.music.broadcast_source import BroadcastMusicSource
+from app.music.source import SessionFactory
 from app.radio.planner import (
     BroadcastPlanner,
     MusicSource,
@@ -99,10 +100,14 @@ def build_planner(
         base_url=settings.speech_service_url, public_base_url=PUBLIC_AUDIO_BASE
     )
     return BroadcastPlanner(
-        music=music or CatalogMusicSource(session_factory),
+        music=music or BroadcastMusicSource(session_factory),
         director=SongIntroDirector(llm or build_llm(settings), session_factory),
         speech=SpeechClientSynthesizer(speech_client),
-        settings=planner_settings,
+        settings=planner_settings
+        or PlannerSettings(
+            announcement_wait_s=settings.planner_announcement_wait_s,
+            announcement_timeout_s=settings.planner_announcement_timeout_s,
+        ),
     )
 
 

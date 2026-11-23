@@ -38,7 +38,10 @@ class KokoroEngine(TTSEngine):
     def settings_for(self, req: SynthesisRequest) -> dict[str, Any]:
         return {
             "voice": self.options.get("voice", "af_heart"),
-            "speed": lerp(1.0, SPEED_FULL[req.emotion], req.intensity),
+            # "speed" option: base speaking rate (e.g. 0.9 = 10% slower for every emotion);
+            # the emotion still changes it on top of that.
+            "speed": float(self.options.get("speed", 1.0))
+            * lerp(1.0, SPEED_FULL[req.emotion], req.intensity),
         }
 
     def synthesize(self, req: SynthesisRequest) -> Audio:

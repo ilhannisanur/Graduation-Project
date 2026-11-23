@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.contracts import RequestIntent
@@ -14,6 +14,20 @@ from app.music.requests import SongRequestRow, service
 from app.users import UserRow
 
 PASSWORD = "correct horse battery"
+
+
+@pytest.fixture(autouse=True)
+def empty_queue(request):
+    """Tests share the developer's database, where real requests may be waiting. Inside the
+    test's transaction (rolled back afterwards) they are marked played, so the queue starts
+    empty."""
+    if "db_session" in request.fixturenames:
+        db = request.getfixturevalue("db_session")
+        db.execute(
+            update(SongRequestRow)
+            .where(SongRequestRow.status == "accepted")
+            .values(status="played")
+        )
 
 
 @pytest.fixture

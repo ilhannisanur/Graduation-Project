@@ -15,6 +15,10 @@ export type TrackSegment = {
   reason: string | null
   duration_s: number
   audio_url: string
+  /** On-air names when the song is a listener request; [] = a request without names. */
+  requested_by?: string[] | null
+  /** The listeners' messages that may be read on air. */
+  request_messages?: string[] | null
 }
 
 export type AnnouncementSegment = {

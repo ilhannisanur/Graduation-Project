@@ -206,6 +206,7 @@ def export_user_data(db: Session, user: UserRow) -> dict:
                 "status": r.status,
                 "track_id": r.track_id,
                 "message_readout_allowed": r.message_readout_allowed,
+                "on_air_name": r.on_air_name,
                 "at": r.created_at.isoformat(),
             }
             for r in song_requests

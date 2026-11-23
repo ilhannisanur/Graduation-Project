@@ -28,6 +28,13 @@ def new_segment_id() -> str:
 # --- input from other modules -------------------------------------------------
 
 
+class RequestNote(BaseModel):
+    """Who asked for a song and what may be read on air. Only what listeners chose to share."""
+
+    on_air_names: list[str] = Field(default_factory=list)
+    messages: list[str] = Field(default_factory=list)  # only those with read-out permission
+
+
 class TrackInfo(BaseModel):
     """A song chosen by Music & Platform (#11)."""
 
@@ -37,6 +44,8 @@ class TrackInfo(BaseModel):
     duration_s: float = Field(gt=0)
     license: str | None = None
     reason: str | None = None  # "why this song?" (filled from S5 on)
+    # Set when the song comes from the listener request queue (#16).
+    request: RequestNote | None = None
 
 
 class AnnouncementRequest(BaseModel):
@@ -80,6 +89,8 @@ class QueuedTrack(BaseModel):
     reason: str | None = None
     duration_s: float
     audio_url: str
+    requested_by: list[str] | None = None  # on-air names; [] = a request without names
+    request_messages: list[str] | None = None  # messages allowed to be read on air
 
 
 class QueuedAnnouncement(BaseModel):

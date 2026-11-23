@@ -47,6 +47,24 @@ def test_kind_and_emotion():
     assert spec.emotion == Emotion.NEUTRAL
 
 
+def test_fallback_follows_the_song_mood():
+    happy = fallback_song_intro(make_track(valence=0.85, arousal=0.5))
+    sad = fallback_song_intro(make_track(valence=0.15, arousal=0.2))
+    lively = fallback_song_intro(make_track(valence=0.8, arousal=0.9))
+
+    assert happy.emotion == Emotion.HAPPY
+    assert sad.emotion == Emotion.SAD
+    assert lively.emotion == Emotion.EXCITED
+    for spec in (happy, sad, lively):
+        assert "Rain" in spec.text and "Ava" in spec.text
+
+
+def test_fallback_is_the_same_for_the_same_song():
+    track = make_track(valence=0.15, arousal=0.6)
+    assert fallback_song_intro(track) == fallback_song_intro(track)
+    assert fallback_song_intro(track).emotion == Emotion.SERIOUS
+
+
 # --- build_song_intro_prompt ---------------------------------------------------
 
 

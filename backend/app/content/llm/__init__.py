@@ -7,7 +7,8 @@ def get_llm_client() -> LLMClient:
     """Build the LLM client chosen by LLM_PROVIDER. Add new providers here."""
     settings = get_settings()
     if settings.llm_provider == "gemini":
-        return GeminiClient(settings.gemini_api_key, settings.gemini_model)
+        fallbacks = [m.strip() for m in settings.gemini_fallback_models.split(",") if m.strip()]
+        return GeminiClient(settings.gemini_api_key, settings.gemini_model, fallbacks)
     raise LLMError(f"Unknown LLM_PROVIDER: {settings.llm_provider}")
 
 

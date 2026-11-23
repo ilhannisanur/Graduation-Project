@@ -6,6 +6,7 @@ The planner (#14) takes the next group with `next_group` and reports with `mark_
 DJ Brain (#13) calls `accept` / `reject` once it has understood the text.
 """
 
+from collections.abc import Collection
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select, update
@@ -47,6 +48,8 @@ def create_request(
     raw_text: str,
     track_id: str | None = None,
     message_readout_allowed: bool = False,
+    on_air_name: str | None = None,
+    message: str | None = None,
 ) -> tuple[SongRequestRow, bool]:
     """Add a request. Returns (request, created); created is False when the user already has a
     pending request for the same track (the existing one is returned, nothing is added).
@@ -54,7 +57,8 @@ def create_request(
     With a track_id the request is accepted at once; without one it stays "received" until
     DJ Brain has understood the text. The caller commits.
     """
-    if track_id is not None and db.get(TrackRow, track_id) is None:
+    track = db.get(TrackRow, track_id) if track_id is not None else None
+    if track_id is not None and track is None:
         raise UnknownTrack(track_id)
 
     pending = list(
@@ -71,9 +75,17 @@ def create_request(
     if len(pending) >= MAX_PENDING_PER_USER:
         raise TooManyPending(user_id)
 
+    # The listener picked the song from the catalog, so the intent is already known.
+    intent = (
+        RequestIntent(song_title=track.title, artist=track.artist, message=message).model_dump()
+        if track is not None
+        else None
+    )
     row = SongRequestRow(
         user_id=user_id,
         raw_text=raw_text,
+        intent=intent,
+        on_air_name=on_air_name,
         track_id=track_id,
         status=(RequestStatus.ACCEPTED if track_id else RequestStatus.RECEIVED).value,
         message_readout_allowed=message_readout_allowed,
@@ -136,9 +148,12 @@ def _groups(rows: list[SongRequestRow]) -> list[list[SongRequestRow]]:
     return list(groups.values())
 
 
-def next_group(db: Session) -> list[SongRequestRow]:
-    """All accepted requests for the track that should play next ([] if the queue is empty)."""
-    groups = _groups(_accepted(db))
+def next_group(db: Session, skip_track_ids: Collection[str] = ()) -> list[SongRequestRow]:
+    """All accepted requests for the track that should play next ([] if the queue is empty).
+
+    `skip_track_ids`: tracks the planner already put in line but that have not started yet.
+    """
+    groups = [g for g in _groups(_accepted(db)) if g[0].track_id not in skip_track_ids]
     return groups[0] if groups else []
 
 
@@ -198,6 +213,33 @@ def pending_count(db: Session, user_id: str) -> int:
         .select_from(SongRequestRow)
         .where(SongRequestRow.user_id == user_id, SongRequestRow.status.in_(PENDING))
     )
+
+
+def public_queue(db: Session, now: datetime | None = None) -> list[dict]:
+    """The shared queue as everyone may see it: songs, times and on-air names only."""
+    times = estimated_play_times(db, now)
+    groups = _groups(_accepted(db))
+    ids = [g[0].track_id for g in groups]
+    tracks = {t.id: t for t in db.scalars(select(TrackRow).where(TrackRow.id.in_(ids)))}
+    queue = []
+    for position, group in enumerate(groups, start=1):
+        track = tracks.get(group[0].track_id)
+        if track is None:
+            continue
+        queue.append(
+            {
+                "position": position,
+                "track_id": track.id,
+                "title": track.title,
+                "artist": track.artist,
+                "requests": len(group),
+                "on_air_names": [r.on_air_name for r in group if r.on_air_name],
+                # Only messages the listener allowed to be read on air are public.
+                "messages": [m for r in group if (m := shoutout_message(r))],
+                "estimated_play_time": times[group[0].id],
+            }
+        )
+    return queue
 
 
 def shoutout_message(row: SongRequestRow) -> str | None:

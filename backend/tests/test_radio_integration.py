@@ -26,6 +26,7 @@ from app.content.llm import LLMClient, LLMError
 from app.contracts import Track
 from app.core.config import Settings
 from app.main import app
+from app.music.broadcast_source import BroadcastMusicSource
 from app.music.selection.base import NoTrackAvailable, TrackSelector
 from app.music.source import CatalogMusicSource
 from app.radio.integration import UnavailableLLM, build_llm, build_planner
@@ -325,7 +326,7 @@ def test_lifespan_connects_the_real_modules():
     with TestClient(app):  # no request: nothing touches Postgres or the speech service
         planner = current_planner()
         assert isinstance(planner, BroadcastPlanner)
-        assert isinstance(planner.music, CatalogMusicSource)
+        assert isinstance(planner.music, BroadcastMusicSource)
         assert isinstance(planner.director, SongIntroDirector)
         assert isinstance(planner.speech, SpeechClientSynthesizer)
     assert current_planner() is None

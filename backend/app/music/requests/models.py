@@ -38,6 +38,8 @@ class SongRequestRow(Base):
     reject_reason: Mapped[str | None] = mapped_column(Text, default=None)
     # The listener's explicit permission to read their message on air. Asked per request.
     message_readout_allowed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # The name the listener wants the DJ to say on air ("This one is for Hakan"). Optional.
+    on_air_name: Mapped[str | None] = mapped_column(Text, default=None)
     # Set in Python (not only by the database) so requests made in one transaction keep their order.
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.now(UTC)

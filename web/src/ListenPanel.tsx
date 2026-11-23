@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { Equalizer, type Tone } from './Banner.tsx'
 import { PauseIcon, PlayIcon, SkipIcon, StopIcon } from './Icons.tsx'
+import { MoodPanel, RequestsPanel, VoiceStatus } from './Studio.tsx'
 import type { HistoryEntry, Radio } from './useRadio.ts'
 
 /** The DJ's emotion picks the colour of the stage while it talks: the mood you can see. */
@@ -21,6 +22,38 @@ function clock(seconds: number): string {
 
 function timeOfDay(date: Date): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+/**
+ * The DJ's words as live subtitles: each word lights up when it is about to be spoken.
+ * Timing is spread by word length over the clip, which is close enough for speech.
+ */
+function Subtitles({ text, time, duration }: { text: string; time: number; duration: number }) {
+  const words = text.split(/\s+/).filter(Boolean)
+  const weights = words.map((w) => w.length + 2)
+  const total = weights.reduce((a, b) => a + b, 0)
+  // Speech starts a moment in and ends a moment before the clip does.
+  const progress = duration > 0 ? Math.min(1, Math.max(0, (time - 0.25) / (duration * 0.92))) : 0
+  let reached = 0
+  let spoken = 0
+  for (const weight of weights) {
+    if (reached / total >= progress) break
+    reached += weight
+    spoken += 1
+  }
+  return (
+    <blockquote className="stage-quote subtitles" aria-label={text}>
+      {words.map((word, i) => (
+        <span
+          key={i}
+          className={i < spoken - 1 ? 'w said' : i === spoken - 1 ? 'w now' : 'w'}
+          aria-hidden="true"
+        >
+          {word}{' '}
+        </span>
+      ))}
+    </blockquote>
+  )
 }
 
 function Progress({ time, duration }: { time: number; duration: number }) {
@@ -142,10 +175,25 @@ function Stage({ radio }: { radio: Radio }) {
                   ? 'Paused'
                   : 'Now playing'}
             </p>
+            {segment.requested_by && (
+              <p className="request-badge">
+                {segment.requested_by.length > 0
+                  ? `Requested by ${segment.requested_by.join(', ')}`
+                  : 'A listener request'}
+              </p>
+            )}
             <h1 id="stage-title" className="stage-title">
               {segment.title}
             </h1>
             <p className="stage-artist">{segment.artist}</p>
+            {segment.request_messages?.map((m) => (
+              <q key={m} className="stage-message">
+                {m}
+              </q>
+            ))}
+            {segment.reason && !segment.requested_by && (
+              <p className="stage-why">Why this song: {segment.reason.toLowerCase()}</p>
+            )}
           </>
         ) : (
           <>
@@ -155,7 +203,7 @@ function Stage({ radio }: { radio: Radio }) {
             <h1 id="stage-title" className="sr-only">
               Your DJ is talking
             </h1>
-            <blockquote className="stage-quote">{segment.text}</blockquote>
+            <Subtitles text={segment.text} time={radio.time} duration={radio.duration} />
             {track && (
               <p className="stage-next">
                 Next song: <strong>{track.title}</strong> by {track.artist}
@@ -280,6 +328,12 @@ export default function ListenPanel({ radio }: { radio: Radio }) {
       <p className="sr-only" aria-live="polite">
         {announcement}
       </p>
+
+      <VoiceStatus />
+      <div className="studio-grid">
+        <MoodPanel radio={radio} />
+        <RequestsPanel />
+      </div>
 
       <div className="listen-grid">
         <section className="panel tone-pink" aria-labelledby="credits-title">

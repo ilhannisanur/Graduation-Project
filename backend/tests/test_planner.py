@@ -27,6 +27,7 @@ from app.radio.planner import (
     BroadcastPlanner,
     NoTrackAvailable,
     PlannerSettings,
+    RequestNote,
     SessionNotFound,
     SpeechAudio,
     TrackInfo,
@@ -482,3 +483,115 @@ def test_http_speech_synthesizer_against_a_fake_server():
     assert seen["url"] == "http://speech:8001/synthesize"
     assert '"emotion":"happy"' in seen["body"].replace(" ", "")
     assert audio.audio_url == "http://localhost:8001/audio/abc.wav" and audio.duration_s == 7.5
+
+
+# --- re-planning when a request arrives (#16 demo) -------------------------------------
+
+
+class SwitchableMusic(FakeMusic):
+    """Plays the catalog until a "request" is set; then that song comes next."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.request: TrackInfo | None = None
+
+    async def next_track(self, *, user_id: str, recent_track_ids: Sequence[str]) -> TrackInfo:
+        if self.request is not None:
+            track, self.request = self.request, None
+            return track
+        return await super().next_track(user_id=user_id, recent_track_ids=recent_track_ids)
+
+
+def test_refresh_puts_a_new_request_right_after_the_current_song():
+    async def scenario():
+        music = SwitchableMusic()
+        planner = make_planner(music=music)
+        session = planner.create_session("u1")
+        first = await planner.next_segment(session.session_id)  # song 1; song 2 is prepared
+        await asyncio.sleep(0.05)
+        music.request = TrackInfo(
+            track_id="req",
+            title="Wished",
+            artist="Someone",
+            duration_s=200,
+            request=RequestNote(on_air_names=["Hakan"]),
+        )
+        planner.refresh_upcoming()
+        rest = await take(planner, session.session_id, 2)
+        await planner.aclose()
+        return first, rest
+
+    first, rest = asyncio.run(scenario())
+    assert first.segment.kind == "track"
+    assert kinds(rest) == ["announcement", "track"]
+    assert rest[0].segment.introduces_track_id == "req"
+    assert rest[1].segment.track_id == "req"
+    assert rest[1].segment.requested_by == ["Hakan"]
+
+
+def test_the_music_source_hears_when_a_requested_song_starts():
+    class ReportingMusic(SwitchableMusic):
+        def __init__(self) -> None:
+            super().__init__()
+            self.started: list[str] = []
+
+        async def track_started(self, track_id: str) -> None:
+            self.started.append(track_id)
+
+    async def scenario():
+        music = ReportingMusic()
+        music.request = TrackInfo(
+            track_id="req", title="W", artist="S", duration_s=200, request=RequestNote()
+        )
+        planner = make_planner(music=music)
+        session = planner.create_session("u1")
+        first = await planner.next_segment(session.session_id)  # the shout-out
+        before = list(music.started)
+        await planner.next_segment(session.session_id)  # the requested song
+        await asyncio.sleep(0.01)
+        await planner.aclose()
+        return first, before, music.started
+
+    first, before, after = asyncio.run(scenario())
+    assert first.segment.kind == "announcement"
+    assert before == []  # not played yet while the DJ talks
+    assert after == ["req"]
+
+
+def test_a_request_as_the_first_song_is_still_announced():
+    async def scenario():
+        music = SwitchableMusic()
+        music.request = TrackInfo(
+            track_id="req", title="W", artist="S", duration_s=200, request=RequestNote()
+        )
+        planner = make_planner(music=music)
+        session = planner.create_session("u1")
+        out = await take(planner, session.session_id, 2)
+        await planner.aclose()
+        return out
+
+    out = asyncio.run(scenario())
+    assert kinds(out) == ["announcement", "track"]
+    assert out[1].segment.track_id == "req"
+
+
+def test_refresh_keeps_a_request_that_is_already_next():
+    async def scenario():
+        music = SwitchableMusic()
+        planner = make_planner(music=music)
+        session = planner.create_session("u1")
+        await planner.next_segment(session.session_id)
+        await asyncio.sleep(0.05)
+        music.request = TrackInfo(
+            track_id="req", title="W", artist="S", duration_s=200, request=RequestNote()
+        )
+        planner.refresh_upcoming()
+        await asyncio.sleep(0.05)
+        music.request = TrackInfo(track_id="other", title="O", artist="S", duration_s=200)
+        planner.refresh_upcoming()  # a request is already next: it stays
+        rest = await take(planner, session.session_id, 2)
+        await planner.aclose()
+        return rest
+
+    rest = asyncio.run(scenario())
+    assert rest[1].segment.track_id == "req"

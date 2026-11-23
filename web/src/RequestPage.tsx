@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { api, ApiError } from './api.ts'
 import { Equalizer } from './Banner.tsx'
+import { ReactionBar } from './Reactions.tsx'
 import { whenText } from './studio.ts'
 
 /**
@@ -125,6 +126,7 @@ export default function RequestPage() {
             Ask for another song
           </button>
         </section>
+        <ReactionBar />
       </main>
     )
   }
@@ -139,6 +141,8 @@ export default function RequestPage() {
         <h1>Ask the DJ for a song</h1>
         <p>Your request goes into the shared queue and the AI DJ announces it live.</p>
       </header>
+
+      <ReactionBar />
 
       <form className="req-form" onSubmit={send}>
         <label className="field">

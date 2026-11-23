@@ -1,6 +1,6 @@
 from fastapi import APIRouter, FastAPI
 
-from app.api import auth, dj, health, me, station, tracks
+from app.api import auth, dj, health, me, reactions, station, tracks
 from app.api import requests as song_requests
 from app.core.logging import setup_logging
 from app.radio.integration import radio_lifespan
@@ -18,6 +18,7 @@ api.include_router(dj.router)
 api.include_router(tracks.router)
 api.include_router(song_requests.router)
 api.include_router(station.router)
+api.include_router(reactions.router)
 api.include_router(auth.router)
 api.include_router(me.router)
 api.include_router(planner_router)

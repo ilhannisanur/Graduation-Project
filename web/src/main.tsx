@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/bricolage-grotesque'
 import './index.css'
 import './studio.css'
+import './onair.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

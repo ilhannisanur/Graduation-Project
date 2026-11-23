@@ -1,11 +1,13 @@
 import type { CSSProperties } from 'react'
 import { Equalizer, type Tone } from './Banner.tsx'
 import { PauseIcon, PlayIcon, SkipIcon, StopIcon } from './Icons.tsx'
+import { openOnAir } from './OnAir.tsx'
+import { FloatingReactions } from './Reactions.tsx'
 import { MoodPanel, RequestsPanel, VoiceStatus } from './Studio.tsx'
 import type { HistoryEntry, Radio } from './useRadio.ts'
 
 /** The DJ's emotion picks the colour of the stage while it talks: the mood you can see. */
-const EMOTION_TONES: Record<string, Tone> = {
+export const EMOTION_TONES: Record<string, Tone> = {
   neutral: 'sun',
   happy: 'sun',
   excited: 'pink',
@@ -28,7 +30,15 @@ function timeOfDay(date: Date): string {
  * The DJ's words as live subtitles: each word lights up when it is about to be spoken.
  * Timing is spread by word length over the clip, which is close enough for speech.
  */
-function Subtitles({ text, time, duration }: { text: string; time: number; duration: number }) {
+export function Subtitles({
+  text,
+  time,
+  duration,
+}: {
+  text: string
+  time: number
+  duration: number
+}) {
   const words = text.split(/\s+/).filter(Boolean)
   const weights = words.map((w) => w.length + 2)
   const total = weights.reduce((a, b) => a + b, 0)
@@ -329,7 +339,13 @@ export default function ListenPanel({ radio }: { radio: Radio }) {
         {announcement}
       </p>
 
-      <VoiceStatus />
+      <FloatingReactions />
+      <div className="studio-bar">
+        <VoiceStatus />
+        <button type="button" className="btn" onClick={openOnAir}>
+          Open the On Air screen
+        </button>
+      </div>
       <div className="studio-grid">
         <MoodPanel radio={radio} />
         <RequestsPanel />

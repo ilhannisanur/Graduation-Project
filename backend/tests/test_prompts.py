@@ -20,3 +20,9 @@ def test_song_intro_prompt_lists_every_emotion():
 def test_missing_prompt_raises():
     with pytest.raises(FileNotFoundError):
         load_prompt("does_not_exist")
+
+
+def test_greeting_prompt_has_its_own_and_shared_rules():
+    text = load_prompt("greeting")
+    assert "{time}" in text
+    assert "Choose exactly one of:" in text

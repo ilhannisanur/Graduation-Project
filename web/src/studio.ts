@@ -47,6 +47,16 @@ export const getVoiceHealth = () =>
 
 export type EmotionSample = { emotion: string; label: string; text: string; file: string }
 
+export type Reaction = { id: number; emoji: string }
+
+export type Reactions = { emoji: string[]; latest: number; items: Reaction[] }
+
+export const getReactions = (after: number) =>
+  api<Reactions>(`/api/station/reactions?after=${after}`)
+
+export const sendReaction = (emoji: string) =>
+  api<Reaction>('/api/station/reactions', { method: 'POST', body: JSON.stringify({ emoji }) })
+
 export const getMoods = () => api<Moods>('/api/station/moods')
 
 export const setMood = (id: string | null) =>

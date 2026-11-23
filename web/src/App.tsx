@@ -8,6 +8,7 @@ import MiniPlayer from './MiniPlayer.tsx'
 import PrivacyPanel from './PrivacyPanel.tsx'
 import EmotionsPanel from './EmotionsPanel.tsx'
 import ProfilePanel from './ProfilePanel.tsx'
+import OnAir from './OnAir.tsx'
 import RequestPage from './RequestPage.tsx'
 import { useRadio } from './useRadio.ts'
 
@@ -19,11 +20,12 @@ const VIEWS = [
   { id: 'dev', label: 'Developer', tone: 'sky' },
 ] as const
 
-type View = (typeof VIEWS)[number]['id'] | 'request'
+type View = (typeof VIEWS)[number]['id'] | 'request' | 'onair'
 
 function viewFromHash(): View {
   const id = window.location.hash.replace(/^#\/?/, '')
   if (id === 'request') return 'request' // the phone page from the QR code
+  if (id === 'onair') return 'onair' // the projector view
   return VIEWS.find((v) => v.id === id)?.id ?? 'listen'
 }
 
@@ -112,6 +114,9 @@ export default function App() {
       </main>
     )
   }
+
+  // The projector view takes the whole screen: no top bar, no sidebar.
+  if (view === 'onair') return <OnAir radio={radio} />
 
   const showMini = view !== 'listen' && radio.status !== 'idle' && radio.current !== null
   return (

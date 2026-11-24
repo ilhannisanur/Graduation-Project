@@ -56,7 +56,7 @@ class AuthSessionRow(Base):
 
 
 class UserProfileRow(Base):
-    """Listening preferences. Values come from app.users.options (artists and city are free)."""
+    """Music taste. Values come from app.users.options."""
 
     __tablename__ = "user_profiles"
 
@@ -64,10 +64,7 @@ class UserProfileRow(Base):
         ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     genres: Mapped[list[str]] = _text_list()
-    artists: Mapped[list[str]] = _text_list()
     languages: Mapped[list[str]] = _text_list()
-    news_topics: Mapped[list[str]] = _text_list()
-    weather_city: Mapped[str | None] = mapped_column(Text, default=None)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

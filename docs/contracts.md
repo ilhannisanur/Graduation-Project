@@ -136,20 +136,15 @@ Dinleyici profilinden türetilen, kişisel veri içermeyen bağlam. Ortak yayın
 ```json
 {
   "local_time": "2025-01-15T09:00:00+03:00",
-  "city": "Istanbul",
   "weather_summary": "Light rain, 8°C",
   "preferred_genres": [
     "jazz",
     "ambient"
-  ],
-  "news_topics": [
-    "technology",
-    "science"
   ]
 }
 ```
 
-Profilden `ListenerContext` yalnızca `app.users.context.listener_context()` ile üretilir. Fonksiyon hesabı değil profili alır; kullanıcı adı, kullanıcı kimliği ve sevilen sanatçılar bağlama girmez. Değer listeleri (`preferred_genres`, `news_topics`) `app/users/options.py`'deki sabit seçeneklerdendir.
+Profilden `ListenerContext` yalnızca `app.users.context.listener_context()` ile üretilir. Fonksiyon hesabı değil profili alır; kullanıcı adı ve kullanıcı kimliği bağlama girmez. `preferred_genres` `app/users/options.py`'deki sabit seçeneklerdendir. Şehir ve haber konuları kişiye değil istasyona aittir, bu yüzden bu modelde yoktur.
 
 ## Kullanıcı kimliği
 

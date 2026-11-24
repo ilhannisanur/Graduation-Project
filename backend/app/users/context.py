@@ -10,12 +10,10 @@ def listener_context(
     """The only way profile data reaches DJ Brain and the LLM.
 
     It takes the profile, not the account, so the username, user id and password hash cannot
-    end up in a prompt. Artists are left out too: names can be personal (a friend's band).
+    end up in a prompt.
     """
     return ListenerContext(
         local_time=local_time,
-        city=profile.weather_city,
         weather_summary=weather_summary,
         preferred_genres=list(profile.genres),
-        news_topics=list(profile.news_topics),
     )

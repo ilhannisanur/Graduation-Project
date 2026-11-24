@@ -11,17 +11,15 @@ export type Track = {
   source_url: string
 }
 
+/** Music taste; the broadcast is shared, so tastes count together when songs are picked. */
 export type Profile = {
   genres: string[]
-  artists: string[]
   languages: string[]
-  news_topics: string[]
-  weather_city: string | null
 }
 
 export type Option = { value: string; label: string }
 
-export type ProfileOptions = { genres: Option[]; languages: Option[]; news_topics: Option[] }
+export type ProfileOptions = { genres: Option[]; languages: Option[] }
 
 export type ConsentState = {
   description: string

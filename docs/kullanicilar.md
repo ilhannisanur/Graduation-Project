@@ -25,7 +25,7 @@ Bu belge #15'i (hesap, profil, izinler ve kişisel veri hakları) ve alınan kar
 
 - `users`: `id` (`usr_...`), `username` (benzersiz, küçük harf), `password_hash`, `created_at`
 - `auth_sessions`: `token_hash` (birincil anahtar), `user_id`, `created_at`, `expires_at`
-- `user_profiles`: `user_id`, `genres`, `artists`, `languages`, `news_topics`, `weather_city`, `updated_at`
+- `user_profiles`: `user_id`, `genres`, `languages`, `updated_at`. Yayın ortak olduğu için profilde yalnızca müzik zevki tutulur; haber ve hava durumu istasyonun ayarıdır, sevilen sanatçılar sorulmaz (Creative Commons kataloğunda bulunmazlar). Eski `artists`, `news_topics` ve `weather_city` sütunları 0009 migration'ıyla silindi.
 - `user_consents`: `id`, `user_id`, `kind`, `granted`, `notice_version`, `created_at`
 
 Kullanıcıya ait veri tutan her tablo `users.id`'ye `ON DELETE CASCADE` ile bağlıdır. `tests/test_privacy.py` bunu bütün tablolar için denetler: yeni bir tablo kullanıcı verisi tutup bu kuralı unutursa test kırılır. Süresi dolan oturumlar kullanıcı tekrar giriş yaptığında silinir.

@@ -6,7 +6,7 @@ from app.api.auth import clear_login_cookie, current_user, user_out
 from app.db.session import get_db
 from app.radio.planner import BroadcastPlanner, current_planner
 from app.users import UserRow, service
-from app.users.options import GENRES, LANGUAGES, NEWS_TOPICS
+from app.users.options import GENRES, LANGUAGES
 from app.users.privacy import CONSENT_KINDS, NOTICE, NOTICE_VERSION, PREFERENCE_LEARNING
 from app.users.schemas import (
     ConsentState,
@@ -50,9 +50,7 @@ def _options(choices: dict[str, str]) -> list[Option]:
 @router.get("/profile/options")
 def profile_options() -> ProfileOptions:
     """The fixed choices for the profile form; public, they contain nothing personal."""
-    return ProfileOptions(
-        genres=_options(GENRES), languages=_options(LANGUAGES), news_topics=_options(NEWS_TOPICS)
-    )
+    return ProfileOptions(genres=_options(GENRES), languages=_options(LANGUAGES))
 
 
 # ------------------------------------------------------- privacy and consent

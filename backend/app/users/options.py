@@ -1,6 +1,7 @@
 """Fixed choices a listener can pick in their profile.
 
-Values are stored in the database and sent in `ListenerContext`; labels are only for display.
+Values are stored in the database; genres are also sent in `ListenerContext`. Labels are only
+for display.
 Genre values follow Jamendo's genre tags so the catalog can be matched against them later.
 """
 
@@ -31,14 +32,4 @@ LANGUAGES: dict[str, str] = {
     "de": "German",
     "it": "Italian",
     "pt": "Portuguese",
-}
-
-NEWS_TOPICS: dict[str, str] = {
-    "world": "World",
-    "business": "Business",
-    "technology": "Technology",
-    "science": "Science",
-    "health": "Health",
-    "sports": "Sports",
-    "culture": "Culture",
 }

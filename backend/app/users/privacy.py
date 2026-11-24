@@ -4,15 +4,15 @@ Change NOTICE_VERSION whenever the text changes in meaning: every consent row re
 version it was given under, so we can show what the listener agreed to.
 """
 
-NOTICE_VERSION = "2026-11-23"
+NOTICE_VERSION = "2026-11-24"
 
 PREFERENCE_LEARNING = "preference_learning"
 
 # kind -> what the listener is agreeing to (shown next to the switch)
 CONSENT_KINDS: dict[str, str] = {
     PREFERENCE_LEARNING: (
-        "Learn from what I listen to: songs I play, like, skip or request again shape "
-        "what the radio picks for me."
+        "Learn from what I listen to: songs I play, like, skip or request again count, "
+        "together with other listeners, in what the radio picks."
     ),
 }
 
@@ -21,28 +21,30 @@ NOTICE: list[tuple[str, str]] = [
     (
         "What we store",
         "Your username and a scrambled (hashed) form of your password, which nobody can turn "
-        "back into the password. Your profile: genres, song languages, news topics, favourite "
-        "artists and the city for weather. The songs you request, with the text you wrote and "
+        "back into the password. Your profile: the genres and song languages you like. The "
+        "songs you request, with the name and message you wrote and "
         "whether you allowed us to read your message on air. When you signed in and until when "
         "that sign-in is valid. Your choices on this page and when you made them. We do not ask "
         "for your e-mail, phone number or real name.",
     ),
     (
         "Why",
-        "To run your personal radio: to choose music, news and weather that suit you. "
+        "To run one shared radio for everyone: the tastes of the people listening count "
+        "together when songs are picked, and your requests go into the shared queue. "
         "Nothing is sold or shared for advertising.",
     ),
     (
         "What the AI presenter sees",
-        "The presenter's words are written by an external AI service. It only receives your "
-        "genres, news topics, city and the local time. It never receives your username, "
-        "password or favourite artists.",
+        "The presenter's words are written by an external AI service. It receives the songs' "
+        "details and the time of day, and may receive the genres listeners like, combined. "
+        "It never receives your username, password, or the name and message you send with "
+        "a request: the presenter reads those from a fixed template.",
     ),
     (
         "Learning from your listening (optional)",
         "Off unless you turn it on. When on, the songs you play, like, skip or request again "
-        "help choose your music. You can turn it off at any time; from then on your "
-        "listening is no longer used for this.",
+        "count, together with other listeners, in what the radio picks. You can turn it off "
+        "at any time; from then on your listening is no longer used for this.",
     ),
     (
         "Your rights",

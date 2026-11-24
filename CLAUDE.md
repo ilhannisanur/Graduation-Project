@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Proje
-Emotion-Aware AI Radio: yapay zekâ DJ'in sunduğu, kullanıcı başına kişisel yayın akışı olan İngilizce radyo. Ayrıntılar için README.md.
+Emotion-Aware AI Radio: yapay zekâ DJ'in sunduğu, herkesin aynı yayını dinlediği (tek ortak yayın akışı) İngilizce radyo. Ayrıntılar için README.md.
 
 ## Klasörler
 - `backend/` FastAPI (Python 3.12): `app/api`, `app/core`, `app/db`, `app/radio`, `app/content` (LLM, haber, hava), `app/speech_client`

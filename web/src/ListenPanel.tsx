@@ -151,7 +151,7 @@ function Stage({ radio }: { radio: Radio }) {
           <p className="stage-lede">
             {failed
               ? radio.error
-              : 'Press start and your AI DJ takes it from here: songs picked for you, with a few words between them.'}
+              : 'Press start and your AI DJ takes it from here: songs picked for the moment, with a few words between them.'}
           </p>
           <div className="stage-actions">
             <button

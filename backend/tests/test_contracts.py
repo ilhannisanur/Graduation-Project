@@ -71,10 +71,8 @@ BULLETIN_SEGMENT = {
 
 LISTENER_CONTEXT = {
     "local_time": "2025-01-15T09:00:00+03:00",
-    "city": "Istanbul",
     "weather_summary": "Light rain, 8°C",
     "preferred_genres": ["jazz", "ambient"],
-    "news_topics": ["technology", "science"],
 }
 
 REQUEST_INTENT = {

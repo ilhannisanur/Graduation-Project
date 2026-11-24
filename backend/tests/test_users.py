@@ -68,57 +68,39 @@ def test_profile_accepts_only_known_choices():
         Profile(genres=["pop", "not-a-genre"])
     with pytest.raises(ValidationError):
         Profile(languages=["klingon"])
-    with pytest.raises(ValidationError):
-        Profile(news_topics=["gossip"])
-
-
-def test_profile_cleans_its_input():
-    profile = Profile(
-        genres=["jazz", "jazz", "pop"],
-        artists=[" Some Band ", "some band", "Other"],
-        weather_city="   ",
-    )
-
-    assert profile.genres == ["jazz", "pop"]
-    assert profile.artists == ["Some Band", "Other"]
-    assert profile.weather_city is None
 
 
 @pytest.mark.parametrize(
-    ("typed", "kept"),
-    [
-        (["Çağan Şengül", "ÇAĞAN ŞENGÜL"], ["Çağan Şengül"]),
-        (["Barış Manço", "BARIŞ MANÇO"], ["Barış Manço"]),
-        (["İlhan İrem", "ilhan irem"], ["İlhan İrem"]),
-        (["Sezen  Aksu", "Sezen Aksu"], ["Sezen Aksu"]),
-        (["Kevin MacLeod", "KEVIN MACLEOD"], ["Kevin MacLeod"]),
-        # NFD (decomposed, as some keyboards send it) and NFC forms of the same name
-        (["Şebnem Ferah", "Şebnem Ferah"], ["Şebnem Ferah"]),
-    ],
+    "removed",
+    [{"artists": ["Some Band"]}, {"news_topics": ["science"]}, {"weather_city": "Ankara"}],
 )
-def test_artist_duplicates_are_found_in_turkish_too(typed, kept):
-    assert Profile(artists=typed).artists == kept
+def test_profile_refuses_the_removed_fields(removed):
+    # The broadcast is shared: news and weather are station settings, artists are not asked.
+    with pytest.raises(ValidationError):
+        Profile(**removed)
+
+
+def test_profile_drops_duplicate_choices():
+    profile = Profile(genres=["jazz", "jazz", "pop"], languages=["en", "en"])
+
+    assert profile.genres == ["jazz", "pop"]
+    assert profile.languages == ["en"]
 
 
 def test_listener_context_carries_no_identity():
     profile = UserProfileRow(
         user_id="usr_secret123",
         genres=["jazz"],
-        artists=["My Friend's Band"],
         languages=["en"],
-        news_topics=["science"],
-        weather_city="Ankara",
     )
     now = datetime(2026, 10, 27, 9, 0, tzinfo=UTC)
 
     context = listener_context(profile, now, weather_summary="Sunny, 15°C")
     sent = context.model_dump_json()
 
-    assert context.city == "Ankara"
     assert context.preferred_genres == ["jazz"]
-    assert context.news_topics == ["science"]
+    assert context.weather_summary == "Sunny, 15°C"
     assert "usr_secret123" not in sent
-    assert "My Friend's Band" not in sent
 
 
 # ------------------------------------------------------------------------ database
@@ -185,13 +167,7 @@ def test_username_is_unique_ignoring_case(client: TestClient, name: str):
 def test_new_account_has_an_empty_profile(client: TestClient, name: str):
     register(client, name)
 
-    assert client.get("/api/me/profile").json() == {
-        "genres": [],
-        "artists": [],
-        "languages": [],
-        "news_topics": [],
-        "weather_city": None,
-    }
+    assert client.get("/api/me/profile").json() == {"genres": [], "languages": []}
 
 
 def test_login_and_wrong_login(client: TestClient, name: str):
@@ -256,18 +232,12 @@ def test_made_up_cookie_is_rejected(client: TestClient):
 
 def test_profile_can_be_saved_and_changed(client: TestClient, name: str):
     register(client, name)
-    profile = {
-        "genres": ["jazz", "ambient"],
-        "artists": ["Some Band"],
-        "languages": ["en", "tr"],
-        "news_topics": ["science"],
-        "weather_city": "Ankara",
-    }
+    profile = {"genres": ["jazz", "ambient"], "languages": ["en", "tr"]}
 
     assert client.put("/api/me/profile", json=profile).json() == profile
     assert client.get("/api/me/profile").json() == profile
 
-    changed = {**profile, "genres": ["rock"], "weather_city": None}
+    changed = {**profile, "genres": ["rock"], "languages": []}
     assert client.put("/api/me/profile", json=changed).status_code == 200
     assert client.get("/api/me/profile").json() == changed
 
@@ -282,11 +252,11 @@ def test_profile_rejects_unknown_choices(client: TestClient, name: str):
 
 def test_profiles_are_private_to_their_owner(client: TestClient):
     register(client, unique_name())
-    client.put("/api/me/profile", json={"weather_city": "Ankara"})
+    client.put("/api/me/profile", json={"genres": ["jazz"]})
     client.cookies.clear()
     register(client, unique_name())
 
-    assert client.get("/api/me/profile").json()["weather_city"] is None
+    assert client.get("/api/me/profile").json()["genres"] == []
 
 
 def test_profile_options_are_public():

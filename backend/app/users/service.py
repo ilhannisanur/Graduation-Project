@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.music.requests.models import SongRequestRow
 from app.users.models import AuthSessionRow, ConsentRow, UserProfileRow, UserRow
-from app.users.options import GENRES, LANGUAGES, NEWS_TOPICS
+from app.users.options import GENRES, LANGUAGES
 from app.users.privacy import CONSENT_KINDS, NOTICE_VERSION, PREFERENCE_LEARNING
 from app.users.schemas import Profile, normalize_username
 from app.users.security import (
@@ -112,20 +112,14 @@ def profile_from_row(row: UserProfileRow) -> Profile:
     # Choices that were later removed from the options are dropped instead of failing.
     return Profile(
         genres=[g for g in row.genres if g in GENRES],
-        artists=list(row.artists),
         languages=[lang for lang in row.languages if lang in LANGUAGES],
-        news_topics=[t for t in row.news_topics if t in NEWS_TOPICS],
-        weather_city=row.weather_city,
     )
 
 
 def update_profile(db: Session, user_id: str, profile: Profile) -> UserProfileRow:
     row = get_profile_row(db, user_id)
     row.genres = profile.genres
-    row.artists = profile.artists
     row.languages = profile.languages
-    row.news_topics = profile.news_topics
-    row.weather_city = profile.weather_city
     db.flush()
     return row
 

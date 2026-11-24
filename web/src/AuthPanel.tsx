@@ -50,9 +50,9 @@ export default function AuthPanel({ onLoggedIn }: { onLoggedIn: (user: User) => 
   return (
     <section className="auth-card" aria-labelledby="auth-title">
       <div style={{ display: 'grid', gap: 6 }}>
-        <h2 id="auth-title">{registering ? 'Start your station' : 'Welcome back'}</h2>
+        <h2 id="auth-title">{registering ? 'Join the station' : 'Welcome back'}</h2>
         <p className="muted">
-          {registering ? 'Pick a name and a password.' : 'Sign in to hear your radio.'}
+          {registering ? 'Pick a name and a password.' : 'Sign in to tune in.'}
         </p>
       </div>
       <form onSubmit={submit}>

@@ -111,7 +111,7 @@ def test_consents_need_a_login(client: TestClient):
 
 def test_download_contains_my_data_and_no_secrets(client: TestClient, db_session: Session):
     user = register(client, preference_learning=True)
-    client.put("/api/me/profile", json={"genres": ["jazz"], "weather_city": "Ankara"})
+    client.put("/api/me/profile", json={"genres": ["jazz"], "languages": ["tr"]})
     token = client.cookies[COOKIE_NAME]
 
     response = client.get("/api/me/data")
@@ -121,7 +121,7 @@ def test_download_contains_my_data_and_no_secrets(client: TestClient, db_session
     data = response.json()
     assert data["account"]["username"] == user["username"]
     assert data["profile"]["genres"] == ["jazz"]
-    assert data["profile"]["weather_city"] == "Ankara"
+    assert data["profile"]["languages"] == ["tr"]
     assert data["consents"][0]["kind"] == PREFERENCE_LEARNING
     assert len(data["sign_ins"]) == 1
     password_hash = db_session.get(UserRow, user["id"]).password_hash
@@ -131,14 +131,14 @@ def test_download_contains_my_data_and_no_secrets(client: TestClient, db_session
 
 def test_download_has_only_my_data(client: TestClient):
     register(client)
-    client.put("/api/me/profile", json={"weather_city": "Ankara"})
+    client.put("/api/me/profile", json={"genres": ["blues"]})
     client.cookies.clear()
     other = register(client)
 
     data = client.get("/api/me/data").json()
 
     assert data["account"]["id"] == other["id"]
-    assert "Ankara" not in str(data)
+    assert "blues" not in str(data)
 
 
 def test_delete_needs_the_password(client: TestClient):
@@ -152,7 +152,7 @@ def test_delete_needs_the_password(client: TestClient):
 
 def test_delete_removes_every_trace(client: TestClient, db_session: Session):
     user = register(client, preference_learning=True)
-    client.put("/api/me/profile", json={"genres": ["jazz"], "artists": ["Some Band"]})
+    client.put("/api/me/profile", json={"genres": ["jazz"], "languages": ["en"]})
     client.post("/api/auth/login", json={"username": user["username"], "password": PASSWORD})
 
     response = client.request("DELETE", "/api/me", json={"password": PASSWORD})

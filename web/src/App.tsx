@@ -90,8 +90,8 @@ export default function App() {
           <div style={{ alignSelf: 'end' }}>
             <h1 id="welcome-title">Radio that feels your mood.</h1>
             <p className="lede">
-              An AI DJ picks songs for how you feel and talks between them, with short news and
-              weather. One stream, made only for you.
+              An AI DJ picks songs for the mood of the moment and talks between them with real
+              feeling. One shared broadcast, with song requests from every listener.
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>

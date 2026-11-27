@@ -17,6 +17,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+from app.content import models as _content_models  # noqa: E402,F401  (registers tables)
 from app.core.config import get_settings  # noqa: E402
 from app.db.base import Base  # noqa: E402
 from app.music import models as _music_models  # noqa: E402,F401  (registers tables)

@@ -7,8 +7,14 @@ Not yet here: greetings by time of day, ``ListenerContext`` and other announceme
 """
 
 import asyncio
+import logging
+from collections.abc import Callable
 
-from app.content.dj.song_intro import generate_song_intro
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
+from app.content.dj.song_intro import fallback_song_intro, generate_song_intro
+from app.content.history import load_recent_announcements, save_announcement
 from app.content.llm import LLMClient
 from app.contracts import AnnouncementSpec, Track
 from app.music.source import HistoryLoader, SessionFactory, load_history
@@ -19,6 +25,12 @@ from app.radio.planner.models import (
     TrackInfo,
 )
 
+logger = logging.getLogger(__name__)
+
+# Same idea as HistoryLoader: tests can pass fakes instead of the database.
+RecentLoader = Callable[[Session], list[str]]
+AnnouncementSaver = Callable[[Session, AnnouncementSpec, str | None, bool], None]
+
 
 class SongIntroDirector:
     """Implements the planner's ``AnnouncementDirector``: one song intro per request."""
@@ -28,10 +40,14 @@ class SongIntroDirector:
         llm: LLMClient,
         session_factory: SessionFactory,
         track_loader: HistoryLoader = load_history,
+        recent_loader: RecentLoader = load_recent_announcements,
+        saver: AnnouncementSaver = save_announcement,
     ) -> None:
         self._llm = llm
         self._session_factory = session_factory
         self._track_loader = track_loader
+        self._recent_loader = recent_loader
+        self._saver = saver
 
     async def plan(self, request: AnnouncementRequest) -> AnnouncementPlan:
         # The LLM client and the database are synchronous: keep them off the event loop.
@@ -40,9 +56,14 @@ class SongIntroDirector:
     def _plan(self, request: AnnouncementRequest) -> AnnouncementPlan:
         nxt = request.next_track
         if nxt.request is not None:
+            # Not logged: the shout-out holds the listener's name and message.
             return shoutout_plan(nxt.request, nxt.title, nxt.artist)
         next_track, previous_track = self._load_tracks(request)
-        spec = generate_song_intro(self._llm, next_track, previous_track)
+        recent = self._load_recent()
+        spec = generate_song_intro(
+            self._llm, next_track, previous_track, recent_announcements=recent
+        )
+        self._save(spec, next_track)
         return plan_from_spec(spec)
 
     def _load_tracks(self, request: AnnouncementRequest) -> tuple[Track, Track | None]:
@@ -59,6 +80,24 @@ class SongIntroDirector:
 
         previous = request.previous_track
         return full_track(request.next_track), full_track(previous) if previous else None
+
+    def _load_recent(self) -> list[str]:
+        """The log only helps: without it the DJ still talks, it may just repeat itself."""
+        try:
+            with self._session_factory() as db:
+                return self._recent_loader(db)
+        except SQLAlchemyError:
+            logger.warning("Could not read the recent announcements", exc_info=True)
+            return []
+
+    def _save(self, spec: AnnouncementSpec, track: Track) -> None:
+        """A failed save must not stop the broadcast: the announcement still airs."""
+        used_fallback = spec == fallback_song_intro(track)
+        try:
+            with self._session_factory() as db:
+                self._saver(db, spec, track.id, used_fallback)
+        except SQLAlchemyError:
+            logger.warning("Could not save the announcement", exc_info=True)
 
 
 def track_from_info(info: TrackInfo) -> Track:

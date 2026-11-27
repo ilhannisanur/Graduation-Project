@@ -1,6 +1,8 @@
 import asyncio
 from contextlib import contextmanager
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.content.director import SongIntroDirector
 from app.content.llm import LLMClient, LLMError
 from app.contracts import Track
@@ -43,7 +45,8 @@ class FakeLLM(LLMClient):
 GOOD_ANSWER = {"emotion": "calm", "text": "Here's Song 1 by Artist 1, nice and easy."}
 
 
-def make_director(llm, catalog):
+def make_director(llm, catalog, recent=(), saved=None):
+    """``recent`` plays the announcement log; ``saved`` (a list) collects what is saved."""
     loaded_ids = []
 
     @contextmanager
@@ -55,7 +58,16 @@ def make_director(llm, catalog):
         by_id = {t.id: t for t in catalog}
         return [by_id[i] for i in ids if i in by_id]
 
-    director = SongIntroDirector(llm, session_factory, track_loader=track_loader)
+    def recent_loader(db):
+        return list(recent)
+
+    def saver(db, spec, next_track_id, used_fallback):
+        if saved is not None:
+            saved.append((spec.text, next_track_id, used_fallback))
+
+    director = SongIntroDirector(
+        llm, session_factory, track_loader=track_loader, recent_loader=recent_loader, saver=saver
+    )
     return director, loaded_ids
 
 
@@ -106,3 +118,46 @@ def test_llm_error_gives_the_template_intro():
     result = plan(director, song)
     assert result.text == "Up next, Song 1 by Artist 1."
     assert result.emotion == "neutral"
+
+
+def test_recent_announcements_go_into_the_prompt():
+    song = make_track(1)
+    llm = FakeLLM(GOOD_ANSWER)
+    director, _ = make_director(llm, [song], recent=["Older one.", "Newest one."])
+    plan(director, song)
+    assert "Your most recent announcements:\n1. Older one.\n2. Newest one." in llm.prompts[0]
+
+
+def test_announcement_is_saved_with_its_song():
+    song = make_track(1)
+    saved = []
+    director, _ = make_director(FakeLLM(GOOD_ANSWER), [song], saved=saved)
+    plan(director, song)
+    assert saved == [(GOOD_ANSWER["text"], "t1", False)]
+
+
+def test_template_intro_is_saved_as_fallback():
+    song = make_track(1)
+    saved = []
+    director, _ = make_director(FakeLLM(LLMError("down")), [song], saved=saved)
+    plan(director, song)
+    assert saved == [("Up next, Song 1 by Artist 1.", "t1", True)]
+
+
+def test_database_errors_do_not_stop_the_broadcast():
+    def broken(*args):
+        raise SQLAlchemyError("database is down")
+
+    @contextmanager
+    def session_factory():
+        yield object()
+
+    song = make_track(1)
+    director = SongIntroDirector(
+        FakeLLM(GOOD_ANSWER),
+        session_factory,
+        track_loader=lambda db, ids: [song],
+        recent_loader=broken,
+        saver=broken,
+    )
+    assert plan(director, song).text == GOOD_ANSWER["text"]

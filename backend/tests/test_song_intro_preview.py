@@ -98,10 +98,27 @@ def test_previous_track_is_accepted(post):
         {"next_track": {"title": "", "artist": "Someone"}},
         {"next_track": {"title": "Rain"}},
         {"next_track": {"title": "Rain", "artist": "Someone", "valence": 1.5}},
-        {**BODY, "recent_announcements": ["a", "b", "c", "d"]},
+        {**BODY, "recent_announcements": ["a", "b", "c", "d", "e", "f"]},
     ],
 )
 def test_invalid_request_is_rejected(post, body):
     llm = AnswerLLM({})
     assert post(llm, body).status_code == 422
     assert llm.calls == 0
+
+
+def test_opening_is_returned_and_given_to_the_llm(post):
+    llm = AnswerLLM({"text": "Rain is up next.", "emotion": "calm"})
+    data = post(llm).json()
+    # No previous song in BODY, so the "previous_track" style cannot be chosen.
+    allowed = {"artist_lead", "mood_lead", "listener", "direct", "time_of_day"}
+    assert data["opening_style"] in allowed
+    assert data["title_placement"] in {"start", "end", "none"}
+    assert "Opening style:" in data["prompt"]
+
+
+def test_last_opening_style_is_not_repeated(post):
+    body = {**BODY, "last_opening_style": "artist_lead"}
+    llm = AnswerLLM({"text": "Rain is up next.", "emotion": "calm"})
+    styles = {post(llm, body).json()["opening_style"] for _ in range(30)}
+    assert "artist_lead" not in styles

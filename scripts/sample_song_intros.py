@@ -1,11 +1,13 @@
 """Generate sample song intros with the real LLM and record how long each one took (#59).
 
 Calls POST /api/dj/song-intro-preview on a running backend, one song after another,
-like a broadcast: each request gets the song before it and the last 3 announcements.
+like a broadcast: each request gets the song before it, the last 5 announcements and the
+last opening style.
 Uses catalog songs from /api/tracks; fills up with made-up songs if the catalog is short.
 
 Usage (backend running, from the backend folder with the venv active):
-    python ../scripts/sample_song_intros.py
+    python ../scripts/sample_song_intros.py after-74
+The name (here "after-74") goes into the output file name, so old runs are kept.
 """
 
 import json
@@ -16,8 +18,11 @@ from pathlib import Path
 import httpx
 
 BASE_URL = "http://127.0.0.1:8000/api"
-COUNT = 20
-OUTPUT = Path(__file__).resolve().parent.parent / "docs" / "samples" / "song-intros-raw.json"
+COUNT = 40
+SAMPLES = Path(__file__).resolve().parent.parent / "docs" / "samples"
+# A name for each run, so a new run never overwrites an old one: e.g. "after-74".
+RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "raw"
+OUTPUT = SAMPLES / f"song-intros-{RUN_NAME}.json"
 
 # Made-up songs with different moods, used only when the catalog has too few songs.
 EXTRA_SONGS = [
@@ -71,8 +76,14 @@ def main() -> int:
         songs = load_songs(client)
         previous = None
         recent: list[str] = []
+        last_style = None
         for number, song in enumerate(songs, start=1):
-            body = {"next_track": song, "previous_track": previous, "recent_announcements": recent}
+            body = {
+                "next_track": song,
+                "previous_track": previous,
+                "recent_announcements": recent,
+                "last_opening_style": last_style,
+            }
             start = time.perf_counter()
             response = client.post(f"{BASE_URL}/dj/song-intro-preview", json=body)
             wall_ms = round((time.perf_counter() - start) * 1000)
@@ -83,9 +94,13 @@ def main() -> int:
             data.update(number=number, request=body, wall_ms=wall_ms)
             results.append(data)
             mark = "FALLBACK " if data["used_fallback"] else ""
-            print(f"{number:2}. {data['llm_ms']:6} ms  {mark}[{data['emotion']}] {data['text']}")
+            style = f"({data['opening_style']}/{data['title_placement']})"
+            head = f"{number:2}. {data['llm_ms']:6} ms  {mark}[{data['emotion']}] {style}"
+            print(f"{head} {data['text']}")
             previous = {"title": song["title"], "artist": song["artist"]}
-            recent = ([data["text"]] + recent)[:3]
+            # Oldest first, newest last: the order the director uses in the broadcast.
+            recent = (recent + [data["text"]])[-5:]
+            last_style = data["opening_style"]
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")

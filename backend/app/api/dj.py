@@ -1,10 +1,17 @@
+import random
 import time
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.content.dj.song_intro import fallback_song_intro, generate_song_intro
+from app.content.dj.song_intro import (
+    OpeningStyle,
+    TitlePlacement,
+    fallback_song_intro,
+    generate_song_intro,
+    opening_for,
+)
 from app.content.llm import LLMClient, LLMError, get_llm_client
 from app.contracts import Emotion, Track
 
@@ -63,7 +70,10 @@ class PreviewSong(BaseModel):
 class SongIntroPreviewRequest(BaseModel):
     next_track: PreviewSong
     previous_track: PreviewSong | None = None
-    recent_announcements: list[str] = Field(default_factory=list, max_length=3)
+    # Same number the director gives in the broadcast.
+    recent_announcements: list[str] = Field(default_factory=list, max_length=5)
+    # The caller keeps the last style, like the director does, so it is not repeated.
+    last_opening_style: OpeningStyle | None = None
 
 
 class LLMCall(BaseModel):
@@ -76,6 +86,8 @@ class SongIntroPreview(BaseModel):
     emotion: Emotion
     target_seconds: float
     used_fallback: bool
+    opening_style: OpeningStyle
+    title_placement: TitlePlacement
     prompt: str | None  # the per-request prompt; the fixed rules are in song_intro.txt
     llm_ms: int  # total time spent waiting for the LLM
     llm_calls: list[LLMCall]
@@ -131,12 +143,14 @@ def song_intro_preview(
         _preview_track(body.previous_track, "preview-previous") if body.previous_track else None
     )
     recorder = RecordingLLM(llm)
+    opening = opening_for(random.Random(), next_track, previous_track, body.last_opening_style)
 
     spec = generate_song_intro(
         recorder,
         next_track,
         previous_track=previous_track,
         recent_announcements=body.recent_announcements,
+        opening=opening,
     )
 
     return SongIntroPreview(
@@ -145,6 +159,8 @@ def song_intro_preview(
         target_seconds=spec.target_seconds,
         # generate_song_intro never raises; a fallback is recognised by its template.
         used_fallback=spec == fallback_song_intro(next_track),
+        opening_style=opening.style,
+        title_placement=opening.placement,
         prompt=recorder.prompts[0] if recorder.prompts else None,
         llm_ms=sum(call.duration_ms for call in recorder.calls),
         llm_calls=recorder.calls,

@@ -1,0 +1,1503 @@
+[
+  {
+    "text": "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+    "emotion": "neutral",
+    "target_seconds": 5.6,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "end",
+    "prompt": "Next song: \"A Drama Of Hope (Romantic, Dramatic)\" by Pal Zoltan Illes\nValence: 0.53, arousal: 0.50\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title at the very end.\nMaximum words: 14",
+    "llm_ms": 13325,
+    "llm_calls": [
+      {
+        "duration_ms": 13325,
+        "ok": true
+      }
+    ],
+    "number": 1,
+    "request": {
+      "next_track": {
+        "title": "A Drama Of Hope (Romantic, Dramatic)",
+        "artist": "Pal Zoltan Illes",
+        "valence": 0.525,
+        "arousal": 0.5
+      },
+      "previous_track": null,
+      "recent_announcements": [],
+      "last_opening_style": null
+    },
+    "wall_ms": 14709
+  },
+  {
+    "text": "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+    "emotion": "calm",
+    "target_seconds": 9.6,
+    "used_fallback": false,
+    "opening_style": "previous_track",
+    "title_placement": "end",
+    "prompt": "Next song: \"Here He Comes\" by Luno\nValence: 0.65, arousal: 0.12\nSong that just played: \"A Drama Of Hope (Romantic, Dramatic)\" by Pal Zoltan Illes\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Say the song title at the very end.\nMaximum words: 45\nYour most recent announcements:\n1. Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+    "llm_ms": 3647,
+    "llm_calls": [
+      {
+        "duration_ms": 3647,
+        "ok": true
+      }
+    ],
+    "number": 2,
+    "request": {
+      "next_track": {
+        "title": "Here He Comes",
+        "artist": "Luno",
+        "valence": 0.65,
+        "arousal": 0.12
+      },
+      "previous_track": {
+        "title": "A Drama Of Hope (Romantic, Dramatic)",
+        "artist": "Pal Zoltan Illes"
+      },
+      "recent_announcements": [
+        "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 4780
+  },
+  {
+    "text": "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+    "emotion": "sad",
+    "target_seconds": 10.8,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "start",
+    "prompt": "Next song: \"Abrazame\" by En 3 palabras\nValence: 0.20, arousal: 0.25\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 48\nYour most recent announcements:\n1. Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.\n2. Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+    "llm_ms": 2452,
+    "llm_calls": [
+      {
+        "duration_ms": 2452,
+        "ok": true
+      }
+    ],
+    "number": 3,
+    "request": {
+      "next_track": {
+        "title": "Abrazame",
+        "artist": "En 3 palabras",
+        "valence": 0.2,
+        "arousal": 0.25
+      },
+      "previous_track": {
+        "title": "Here He Comes",
+        "artist": "Luno"
+      },
+      "recent_announcements": [
+        "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+        "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 3740
+  },
+  {
+    "text": "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+    "emotion": "happy",
+    "target_seconds": 7.2,
+    "used_fallback": true,
+    "opening_style": "direct",
+    "title_placement": "end",
+    "prompt": "Next song: \"Sandbox Jingle (No Vocals)\" by Scott Holmes\nValence: 0.79, arousal: 0.64\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title at the very end.\nMaximum words: 17\nYour most recent announcements:\n1. Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.\n2. Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.\n3. Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+    "llm_ms": 38306,
+    "llm_calls": [
+      {
+        "duration_ms": 38306,
+        "ok": false
+      }
+    ],
+    "number": 4,
+    "request": {
+      "next_track": {
+        "title": "Sandbox Jingle (No Vocals)",
+        "artist": "Scott Holmes",
+        "valence": 0.79,
+        "arousal": 0.64
+      },
+      "previous_track": {
+        "title": "Abrazame",
+        "artist": "En 3 palabras"
+      },
+      "recent_announcements": [
+        "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+        "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+        "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 39486
+  },
+  {
+    "text": "It's Friday night. Let's drift into something by Aufklarung.",
+    "emotion": "sad",
+    "target_seconds": 3.6,
+    "used_fallback": false,
+    "opening_style": "time_of_day",
+    "title_placement": "none",
+    "prompt": "Next song: \"Monotony of Rain\" by Aufklarung\nValence: 0.29, arousal: 0.19\nDay and time of day: Friday night\nOpening style: Start by mentioning the day and the time of day.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 26\nYour most recent announcements:\n1. Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.\n2. Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.\n3. Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.\n4. This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+    "llm_ms": 2698,
+    "llm_calls": [
+      {
+        "duration_ms": 2698,
+        "ok": true
+      }
+    ],
+    "number": 5,
+    "request": {
+      "next_track": {
+        "title": "Monotony of Rain",
+        "artist": "Aufklarung",
+        "valence": 0.29,
+        "arousal": 0.193
+      },
+      "previous_track": {
+        "title": "Sandbox Jingle (No Vocals)",
+        "artist": "Scott Holmes"
+      },
+      "recent_announcements": [
+        "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+        "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+        "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+        "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 3827
+  },
+  {
+    "text": "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+    "emotion": "calm",
+    "target_seconds": 8.8,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "start",
+    "prompt": "Next song: \"Noticing You\" by Emorej\nValence: 0.60, arousal: 0.17\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 22\nYour most recent announcements:\n1. Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.\n2. Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.\n3. Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.\n4. This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.\n5. It's Friday night. Let's drift into something by Aufklarung.",
+    "llm_ms": 2269,
+    "llm_calls": [
+      {
+        "duration_ms": 2269,
+        "ok": true
+      }
+    ],
+    "number": 6,
+    "request": {
+      "next_track": {
+        "title": "Noticing You",
+        "artist": "Emorej",
+        "valence": 0.6,
+        "arousal": 0.175
+      },
+      "previous_track": {
+        "title": "Monotony of Rain",
+        "artist": "Aufklarung"
+      },
+      "recent_announcements": [
+        "Coming up, we have A Drama Of Hope (Romantic, Dramatic) by Pal Zoltan Illes.",
+        "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+        "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+        "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+        "It's Friday night. Let's drift into something by Aufklarung."
+      ],
+      "last_opening_style": "time_of_day"
+    },
+    "wall_ms": 3432
+  },
+  {
+    "text": "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+    "emotion": "serious",
+    "target_seconds": 6.0,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "start",
+    "prompt": "Next song: \"Taken Advice\" by Anitek\nValence: 0.15, arousal: 0.50\nOpening style: Start with the artist's name.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 43\nYour most recent announcements:\n1. Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.\n2. Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.\n3. This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.\n4. It's Friday night. Let's drift into something by Aufklarung.\n5. Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+    "llm_ms": 5996,
+    "llm_calls": [
+      {
+        "duration_ms": 5996,
+        "ok": true
+      }
+    ],
+    "number": 7,
+    "request": {
+      "next_track": {
+        "title": "Taken Advice",
+        "artist": "Anitek",
+        "valence": 0.15,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Noticing You",
+        "artist": "Emorej"
+      },
+      "recent_announcements": [
+        "Moving on from that dramatic piece, let's keep things mellow with a track that's smooth and steady. Here is Here He Comes by Luno.",
+        "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+        "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+        "It's Friday night. Let's drift into something by Aufklarung.",
+        "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 7180
+  },
+  {
+    "text": "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+    "emotion": "excited",
+    "target_seconds": 11.2,
+    "used_fallback": false,
+    "opening_style": "mood_lead",
+    "title_placement": "end",
+    "prompt": "Next song: \"Crash Of Night\" by StatueOfDiveo\nValence: 0.65, arousal: 0.90\nOpening style: Start by describing how the song feels.\nSong title placement: Say the song title at the very end.\nMaximum words: 37\nYour most recent announcements:\n1. Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.\n2. This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.\n3. It's Friday night. Let's drift into something by Aufklarung.\n4. Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.\n5. Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+    "llm_ms": 4153,
+    "llm_calls": [
+      {
+        "duration_ms": 4153,
+        "ok": true
+      }
+    ],
+    "number": 8,
+    "request": {
+      "next_track": {
+        "title": "Crash Of Night",
+        "artist": "StatueOfDiveo",
+        "valence": 0.65,
+        "arousal": 0.9
+      },
+      "previous_track": {
+        "title": "Taken Advice",
+        "artist": "Anitek"
+      },
+      "recent_announcements": [
+        "Hello, let's listen to Abrazame by En 3 palabras. It's a deep and quiet track that really captures a lonely feeling. I hope you enjoy this one.",
+        "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+        "It's Friday night. Let's drift into something by Aufklarung.",
+        "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+        "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 5342
+  },
+  {
+    "text": "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+    "emotion": "excited",
+    "target_seconds": 10.4,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "end",
+    "prompt": "Next song: \"Dawid Jaworski - Husaria na polu bitwy (Epic Music)\" by Dawid Jaworski\nValence: 0.50, arousal: 0.85\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title at the very end.\nMaximum words: 47\nYour most recent announcements:\n1. This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.\n2. It's Friday night. Let's drift into something by Aufklarung.\n3. Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.\n4. Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.\n5. This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+    "llm_ms": 2633,
+    "llm_calls": [
+      {
+        "duration_ms": 2633,
+        "ok": true
+      }
+    ],
+    "number": 9,
+    "request": {
+      "next_track": {
+        "title": "Dawid Jaworski - Husaria na polu bitwy (Epic Music)",
+        "artist": "Dawid Jaworski",
+        "valence": 0.5,
+        "arousal": 0.85
+      },
+      "previous_track": {
+        "title": "Crash Of Night",
+        "artist": "StatueOfDiveo"
+      },
+      "recent_announcements": [
+        "This one should put a little spring in your step. It's Sandbox Jingle (No Vocals), by Scott Holmes.",
+        "It's Friday night. Let's drift into something by Aufklarung.",
+        "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+        "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+        "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night."
+      ],
+      "last_opening_style": "mood_lead"
+    },
+    "wall_ms": 3796
+  },
+  {
+    "text": "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+    "emotion": "happy",
+    "target_seconds": 4.4,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "end",
+    "prompt": "Next song: \"Prospective Wife\" by Mtsabha\nValence: 0.73, arousal: 0.60\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title at the very end.\nMaximum words: 20\nYour most recent announcements:\n1. It's Friday night. Let's drift into something by Aufklarung.\n2. Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.\n3. Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.\n4. This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.\n5. Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+    "llm_ms": 2914,
+    "llm_calls": [
+      {
+        "duration_ms": 2914,
+        "ok": true
+      }
+    ],
+    "number": 10,
+    "request": {
+      "next_track": {
+        "title": "Prospective Wife",
+        "artist": "Mtsabha",
+        "valence": 0.733,
+        "arousal": 0.6
+      },
+      "previous_track": {
+        "title": "Dawid Jaworski - Husaria na polu bitwy (Epic Music)",
+        "artist": "Dawid Jaworski"
+      },
+      "recent_announcements": [
+        "It's Friday night. Let's drift into something by Aufklarung.",
+        "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+        "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+        "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+        "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 4079
+  },
+  {
+    "text": "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+    "emotion": "sad",
+    "target_seconds": 7.2,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"Origin of the Falls\" by Zeffon\nValence: 0.15, arousal: 0.50\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 36\nYour most recent announcements:\n1. Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.\n2. Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.\n3. This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.\n4. Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.\n5. Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+    "llm_ms": 2128,
+    "llm_calls": [
+      {
+        "duration_ms": 2128,
+        "ok": true
+      }
+    ],
+    "number": 11,
+    "request": {
+      "next_track": {
+        "title": "Origin of the Falls",
+        "artist": "Zeffon",
+        "valence": 0.15,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Prospective Wife",
+        "artist": "Mtsabha"
+      },
+      "recent_announcements": [
+        "Hi everyone, you are listening to Noticing You by Emorej. It is such a gentle, relaxing track for this time of day.",
+        "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+        "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+        "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+        "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 3272
+  },
+  {
+    "text": "It's Friday night. Let's head into a darker sound with A.n.K.h.",
+    "emotion": "serious",
+    "target_seconds": 4.4,
+    "used_fallback": false,
+    "opening_style": "time_of_day",
+    "title_placement": "none",
+    "prompt": "Next song: \"Le Repas De l'Ange Noir\" by A.n.K.h //\nValence: 0.15, arousal: 0.50\nDay and time of day: Friday night\nOpening style: Start by mentioning the day and the time of day.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 20\nYour most recent announcements:\n1. Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.\n2. This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.\n3. Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.\n4. Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.\n5. Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+    "llm_ms": 2738,
+    "llm_calls": [
+      {
+        "duration_ms": 2738,
+        "ok": true
+      }
+    ],
+    "number": 12,
+    "request": {
+      "next_track": {
+        "title": "Le Repas De l'Ange Noir",
+        "artist": "A.n.K.h //",
+        "valence": 0.15,
+        "arousal": 0.5
+      },
+      "previous_track": {
+        "title": "Origin of the Falls",
+        "artist": "Zeffon"
+      },
+      "recent_announcements": [
+        "Anitek brings us Taken Advice. It's a grounded track that feels quite honest. Let's listen.",
+        "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+        "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+        "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+        "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3882
+  },
+  {
+    "text": "Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+    "emotion": "sad",
+    "target_seconds": 6.4,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"Family\" by Jason Silver\nValence: 0.29, arousal: 0.19\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 24\nYour most recent announcements:\n1. This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.\n2. Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.\n3. Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.\n4. Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.\n5. It's Friday night. Let's head into a darker sound with A.n.K.h.",
+    "llm_ms": 2627,
+    "llm_calls": [
+      {
+        "duration_ms": 2627,
+        "ok": true
+      }
+    ],
+    "number": 13,
+    "request": {
+      "next_track": {
+        "title": "Family",
+        "artist": "Jason Silver",
+        "valence": 0.29,
+        "arousal": 0.193
+      },
+      "previous_track": {
+        "title": "Le Repas De l'Ange Noir",
+        "artist": "A.n.K.h //"
+      },
+      "recent_announcements": [
+        "This track has a massive surge of energy that is going to get your heart pumping. You are definitely going to love the intensity behind Crash Of Night.",
+        "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+        "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+        "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+        "It's Friday night. Let's head into a darker sound with A.n.K.h."
+      ],
+      "last_opening_style": "time_of_day"
+    },
+    "wall_ms": 3754
+  },
+  {
+    "text": "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+    "emotion": "happy",
+    "target_seconds": 8.4,
+    "used_fallback": true,
+    "opening_style": "previous_track",
+    "title_placement": "none",
+    "prompt": "Next song: \"Love is Everything (Instrumental)\" by Kara Square and Piero Peluche\nValence: 0.62, arousal: 0.59\nSong that just played: \"Family\" by Jason Silver\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 37\nYour most recent announcements:\n1. Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.\n2. Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.\n3. Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.\n4. It's Friday night. Let's head into a darker sound with A.n.K.h.\n5. Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+    "llm_ms": 30615,
+    "llm_calls": [
+      {
+        "duration_ms": 30615,
+        "ok": false
+      }
+    ],
+    "number": 14,
+    "request": {
+      "next_track": {
+        "title": "Love is Everything (Instrumental)",
+        "artist": "Kara Square and Piero Peluche",
+        "valence": 0.625,
+        "arousal": 0.592
+      },
+      "previous_track": {
+        "title": "Family",
+        "artist": "Jason Silver"
+      },
+      "recent_announcements": [
+        "Coming up next is a track that hits hard with an incredible, powerful sound. Prepare yourself for Husaria na polu bitwy (Epic Music) by Dawid Jaworski.",
+        "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+        "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+        "It's Friday night. Let's head into a darker sound with A.n.K.h.",
+        "Jason Silver brings a very quiet and reflective sound for us to listen to right now."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 31744
+  },
+  {
+    "text": "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+    "emotion": "calm",
+    "target_seconds": 8.4,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "start",
+    "prompt": "Next song: \"Dancing with Raindrops\" by Udo Vismann\nValence: 0.63, arousal: 0.16\nOpening style: Start with the artist's name.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 31\nYour most recent announcements:\n1. Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.\n2. Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.\n3. It's Friday night. Let's head into a darker sound with A.n.K.h.\n4. Jason Silver brings a very quiet and reflective sound for us to listen to right now.\n5. This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+    "llm_ms": 2130,
+    "llm_calls": [
+      {
+        "duration_ms": 2130,
+        "ok": true
+      }
+    ],
+    "number": 15,
+    "request": {
+      "next_track": {
+        "title": "Dancing with Raindrops",
+        "artist": "Udo Vismann",
+        "valence": 0.633,
+        "arousal": 0.157
+      },
+      "previous_track": {
+        "title": "Love is Everything (Instrumental)",
+        "artist": "Kara Square and Piero Peluche"
+      },
+      "recent_announcements": [
+        "Hello, everyone. Let's keep things moving with Prospective Wife by Mtsabha.",
+        "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+        "It's Friday night. Let's head into a darker sound with A.n.K.h.",
+        "Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+        "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 3260
+  },
+  {
+    "text": "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+    "emotion": "calm",
+    "target_seconds": 6.0,
+    "used_fallback": true,
+    "opening_style": "listener",
+    "title_placement": "none",
+    "prompt": "Next song: \"Love You\" by Carl-Friedrich von Steegen\nValence: 0.75, arousal: 0.30\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 30\nYour most recent announcements:\n1. Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.\n2. It's Friday night. Let's head into a darker sound with A.n.K.h.\n3. Jason Silver brings a very quiet and reflective sound for us to listen to right now.\n4. This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.\n5. Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+    "llm_ms": 18915,
+    "llm_calls": [
+      {
+        "duration_ms": 18915,
+        "ok": false
+      }
+    ],
+    "number": 16,
+    "request": {
+      "next_track": {
+        "title": "Love You",
+        "artist": "Carl-Friedrich von Steegen",
+        "valence": 0.75,
+        "arousal": 0.3
+      },
+      "previous_track": {
+        "title": "Dancing with Raindrops",
+        "artist": "Udo Vismann"
+      },
+      "recent_announcements": [
+        "Zeffon is up next. Their music carries such a deep, quiet weight that feels perfect for right now.",
+        "It's Friday night. Let's head into a darker sound with A.n.K.h.",
+        "Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+        "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+        "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 20083
+  },
+  {
+    "text": "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+    "emotion": "sad",
+    "target_seconds": 11.2,
+    "used_fallback": false,
+    "opening_style": "time_of_day",
+    "title_placement": "end",
+    "prompt": "Next song: \"Love Loss\" by Emorej\nValence: 0.37, arousal: 0.35\nDay and time of day: Friday night\nOpening style: Start by mentioning the day and the time of day.\nSong title placement: Say the song title at the very end.\nMaximum words: 34\nYour most recent announcements:\n1. It's Friday night. Let's head into a darker sound with A.n.K.h.\n2. Jason Silver brings a very quiet and reflective sound for us to listen to right now.\n3. This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.\n4. Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.\n5. Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+    "llm_ms": 2461,
+    "llm_calls": [
+      {
+        "duration_ms": 2461,
+        "ok": true
+      }
+    ],
+    "number": 17,
+    "request": {
+      "next_track": {
+        "title": "Love Loss",
+        "artist": "Emorej",
+        "valence": 0.367,
+        "arousal": 0.35
+      },
+      "previous_track": {
+        "title": "Love You",
+        "artist": "Carl-Friedrich von Steegen"
+      },
+      "recent_announcements": [
+        "It's Friday night. Let's head into a darker sound with A.n.K.h.",
+        "Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+        "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+        "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+        "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 3649
+  },
+  {
+    "text": "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+    "emotion": "excited",
+    "target_seconds": 9.2,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "end",
+    "prompt": "Next song: \"Nie ucz mnie żyć (feat Bezoczny)\" by Tymono\nValence: 0.65, arousal: 0.90\nOpening style: Start with the artist's name.\nSong title placement: Say the song title at the very end.\nMaximum words: 34\nYour most recent announcements:\n1. Jason Silver brings a very quiet and reflective sound for us to listen to right now.\n2. This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.\n3. Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.\n4. Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.\n5. It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+    "llm_ms": 2457,
+    "llm_calls": [
+      {
+        "duration_ms": 2457,
+        "ok": true
+      }
+    ],
+    "number": 18,
+    "request": {
+      "next_track": {
+        "title": "Nie ucz mnie żyć (feat Bezoczny)",
+        "artist": "Tymono",
+        "valence": 0.65,
+        "arousal": 0.9
+      },
+      "previous_track": {
+        "title": "Love Loss",
+        "artist": "Emorej"
+      },
+      "recent_announcements": [
+        "Jason Silver brings a very quiet and reflective sound for us to listen to right now.",
+        "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+        "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+        "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+        "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej."
+      ],
+      "last_opening_style": "time_of_day"
+    },
+    "wall_ms": 3635
+  },
+  {
+    "text": "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+    "emotion": "sad",
+    "target_seconds": 6.0,
+    "used_fallback": false,
+    "opening_style": "time_of_day",
+    "title_placement": "none",
+    "prompt": "Next song: \"Depression\" by Julien Lussiez\nValence: 0.21, arousal: 0.47\nDay and time of day: Friday night\nOpening style: Start by mentioning the day and the time of day.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 37\nYour most recent announcements:\n1. This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.\n2. Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.\n3. Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.\n4. It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.\n5. Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+    "llm_ms": 3270,
+    "llm_calls": [
+      {
+        "duration_ms": 3270,
+        "ok": true
+      }
+    ],
+    "number": 19,
+    "request": {
+      "next_track": {
+        "title": "Depression",
+        "artist": "Julien Lussiez",
+        "valence": 0.21,
+        "arousal": 0.475
+      },
+      "previous_track": {
+        "title": "Nie ucz mnie żyć (feat Bezoczny)",
+        "artist": "Tymono"
+      },
+      "recent_announcements": [
+        "This one should put a little spring in your step. It's Love is Everything (Instrumental), by Kara Square and Piero Peluche.",
+        "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+        "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+        "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+        "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny)."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 4397
+  },
+  {
+    "text": "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+    "emotion": "serious",
+    "target_seconds": 6.4,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "end",
+    "prompt": "Next song: \"Morning Thrill\" by Ostenvegr\nValence: 0.12, arousal: 0.62\nOpening style: Start with the artist's name.\nSong title placement: Say the song title at the very end.\nMaximum words: 42\nYour most recent announcements:\n1. Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.\n2. Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.\n3. It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.\n4. Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).\n5. It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+    "llm_ms": 2528,
+    "llm_calls": [
+      {
+        "duration_ms": 2528,
+        "ok": true
+      }
+    ],
+    "number": 20,
+    "request": {
+      "next_track": {
+        "title": "Morning Thrill",
+        "artist": "Ostenvegr",
+        "valence": 0.115,
+        "arousal": 0.625
+      },
+      "previous_track": {
+        "title": "Depression",
+        "artist": "Julien Lussiez"
+      },
+      "recent_announcements": [
+        "Udo Vismann brings us Dancing with Raindrops. It is a smooth, relaxing track that fits the vibe perfectly. Here it is.",
+        "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+        "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+        "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+        "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez."
+      ],
+      "last_opening_style": "time_of_day"
+    },
+    "wall_ms": 3656
+  },
+  {
+    "text": "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+    "emotion": "calm",
+    "target_seconds": 6.0,
+    "used_fallback": false,
+    "opening_style": "previous_track",
+    "title_placement": "end",
+    "prompt": "Next song: \"Life Goes on\" by Udo Vismann\nValence: 0.63, arousal: 0.16\nSong that just played: \"Morning Thrill\" by Ostenvegr\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Say the song title at the very end.\nMaximum words: 23\nYour most recent announcements:\n1. Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.\n2. It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.\n3. Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).\n4. It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.\n5. Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+    "llm_ms": 2549,
+    "llm_calls": [
+      {
+        "duration_ms": 2549,
+        "ok": true
+      }
+    ],
+    "number": 21,
+    "request": {
+      "next_track": {
+        "title": "Life Goes on",
+        "artist": "Udo Vismann",
+        "valence": 0.633,
+        "arousal": 0.157
+      },
+      "previous_track": {
+        "title": "Morning Thrill",
+        "artist": "Ostenvegr"
+      },
+      "recent_announcements": [
+        "Something soft and gentle for you now. This is Love You, by Carl-Friedrich von Steegen.",
+        "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+        "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+        "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+        "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3743
+  },
+  {
+    "text": "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+    "emotion": "calm",
+    "target_seconds": 10.0,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"Petit Couteau\" by Carl-Friedrich von Steegen\nValence: 0.75, arousal: 0.30\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 42\nYour most recent announcements:\n1. It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.\n2. Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).\n3. It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.\n4. Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.\n5. Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+    "llm_ms": 2078,
+    "llm_calls": [
+      {
+        "duration_ms": 2078,
+        "ok": true
+      }
+    ],
+    "number": 22,
+    "request": {
+      "next_track": {
+        "title": "Petit Couteau",
+        "artist": "Carl-Friedrich von Steegen",
+        "valence": 0.75,
+        "arousal": 0.3
+      },
+      "previous_track": {
+        "title": "Life Goes on",
+        "artist": "Udo Vismann"
+      },
+      "recent_announcements": [
+        "It is finally Friday night, and I have something raw and stripped back to share with you. Getting deep into the music, here is Love Loss by Emorej.",
+        "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+        "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+        "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+        "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 3213
+  },
+  {
+    "text": "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+    "emotion": "sad",
+    "target_seconds": 7.6,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "end",
+    "prompt": "Next song: \"Chance\" by Jason Silver\nValence: 0.29, arousal: 0.19\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title at the very end.\nMaximum words: 21\nYour most recent announcements:\n1. Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).\n2. It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.\n3. Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.\n4. Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.\n5. Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+    "llm_ms": 2115,
+    "llm_calls": [
+      {
+        "duration_ms": 2115,
+        "ok": true
+      }
+    ],
+    "number": 23,
+    "request": {
+      "next_track": {
+        "title": "Chance",
+        "artist": "Jason Silver",
+        "valence": 0.29,
+        "arousal": 0.193
+      },
+      "previous_track": {
+        "title": "Petit Couteau",
+        "artist": "Carl-Friedrich von Steegen"
+      },
+      "recent_announcements": [
+        "Tymono really turns the energy up with this next track. It's time to feel the beat with Nie ucz mnie żyć (feat Bezoczny).",
+        "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+        "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+        "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+        "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3245
+  },
+  {
+    "text": "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+    "emotion": "calm",
+    "target_seconds": 9.6,
+    "used_fallback": false,
+    "opening_style": "mood_lead",
+    "title_placement": "end",
+    "prompt": "Next song: \"Chill Theme 5\" by Alexander Lisenkov\nValence: 0.60, arousal: 0.12\nOpening style: Start by describing how the song feels.\nSong title placement: Say the song title at the very end.\nMaximum words: 44\nYour most recent announcements:\n1. It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.\n2. Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.\n3. Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.\n4. Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.\n5. Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+    "llm_ms": 2362,
+    "llm_calls": [
+      {
+        "duration_ms": 2362,
+        "ok": true
+      }
+    ],
+    "number": 24,
+    "request": {
+      "next_track": {
+        "title": "Chill Theme 5",
+        "artist": "Alexander Lisenkov",
+        "valence": 0.6,
+        "arousal": 0.125
+      },
+      "previous_track": {
+        "title": "Chance",
+        "artist": "Jason Silver"
+      },
+      "recent_announcements": [
+        "It is Friday night, and we're shifting gears. Here is the latest from Julien Lussiez.",
+        "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+        "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+        "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+        "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 3502
+  },
+  {
+    "text": "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+    "emotion": "calm",
+    "target_seconds": 11.2,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "end",
+    "prompt": "Next song: \"Intimate\" by Radio Interior Fusion\nValence: 0.65, arousal: 0.12\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title at the very end.\nMaximum words: 42\nYour most recent announcements:\n1. Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.\n2. Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.\n3. Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.\n4. Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.\n5. This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+    "llm_ms": 2039,
+    "llm_calls": [
+      {
+        "duration_ms": 2039,
+        "ok": true
+      }
+    ],
+    "number": 25,
+    "request": {
+      "next_track": {
+        "title": "Intimate",
+        "artist": "Radio Interior Fusion",
+        "valence": 0.65,
+        "arousal": 0.12
+      },
+      "previous_track": {
+        "title": "Chill Theme 5",
+        "artist": "Alexander Lisenkov"
+      },
+      "recent_announcements": [
+        "Ostenvegr captures a distinct intensity that feels quite heavy. Let's dive right into this, Morning Thrill.",
+        "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+        "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+        "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+        "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5."
+      ],
+      "last_opening_style": "mood_lead"
+    },
+    "wall_ms": 3275
+  },
+  {
+    "text": "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+    "emotion": "calm",
+    "target_seconds": 8.0,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "start",
+    "prompt": "Next song: \"Summer dream\" by CARMELO CAMERA\nValence: 0.65, arousal: 0.12\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 22\nYour most recent announcements:\n1. Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.\n2. Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.\n3. Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.\n4. This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.\n5. Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+    "llm_ms": 2695,
+    "llm_calls": [
+      {
+        "duration_ms": 2695,
+        "ok": true
+      }
+    ],
+    "number": 26,
+    "request": {
+      "next_track": {
+        "title": "Summer dream",
+        "artist": "CARMELO CAMERA",
+        "valence": 0.65,
+        "arousal": 0.12
+      },
+      "previous_track": {
+        "title": "Intimate",
+        "artist": "Radio Interior Fusion"
+      },
+      "recent_announcements": [
+        "Moving from that intensity, let's keep things steady with Life Goes on by Udo Vismann.",
+        "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+        "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+        "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+        "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 3827
+  },
+  {
+    "text": "Something soft and gentle for you now. This is random -, by softspace.",
+    "emotion": "calm",
+    "target_seconds": 5.2,
+    "used_fallback": true,
+    "opening_style": "time_of_day",
+    "title_placement": "start",
+    "prompt": "Next song: \"random -\" by softspace\nValence: 0.60, arousal: 0.15\nDay and time of day: Friday night\nOpening style: Start by mentioning the day and the time of day.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 16\nYour most recent announcements:\n1. Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.\n2. Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.\n3. This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.\n4. Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.\n5. Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+    "llm_ms": 30637,
+    "llm_calls": [
+      {
+        "duration_ms": 30637,
+        "ok": false
+      }
+    ],
+    "number": 27,
+    "request": {
+      "next_track": {
+        "title": "random -",
+        "artist": "softspace",
+        "valence": 0.6,
+        "arousal": 0.15
+      },
+      "previous_track": {
+        "title": "Summer dream",
+        "artist": "CARMELO CAMERA"
+      },
+      "recent_announcements": [
+        "Carl-Friedrich von Steegen has a unique sound that feels just right for this moment. I hope you enjoy this one as much as I do.",
+        "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+        "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+        "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+        "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 31834
+  },
+  {
+    "text": "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+    "emotion": "sad",
+    "target_seconds": 7.6,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "start",
+    "prompt": "Next song: \"Cold\" by Yusuke Tsutsumi\nValence: 0.16, arousal: 0.25\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 50\nYour most recent announcements:\n1. Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.\n2. This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.\n3. Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.\n4. Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.\n5. Something soft and gentle for you now. This is random -, by softspace.",
+    "llm_ms": 2080,
+    "llm_calls": [
+      {
+        "duration_ms": 2080,
+        "ok": true
+      }
+    ],
+    "number": 28,
+    "request": {
+      "next_track": {
+        "title": "Cold",
+        "artist": "Yusuke Tsutsumi",
+        "valence": 0.16,
+        "arousal": 0.25
+      },
+      "previous_track": {
+        "title": "random -",
+        "artist": "softspace"
+      },
+      "recent_announcements": [
+        "Hey everyone, I want to share this quiet, thoughtful melody with you all. It is Chance by Jason Silver.",
+        "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+        "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+        "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+        "Something soft and gentle for you now. This is random -, by softspace."
+      ],
+      "last_opening_style": "time_of_day"
+    },
+    "wall_ms": 3214
+  },
+  {
+    "text": "Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+    "emotion": "sad",
+    "target_seconds": 4.8,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "start",
+    "prompt": "Next song: \"The Cabin In The Wood (Suite)\" by Marc Teichert\nValence: 0.25, arousal: 0.45\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 14\nYour most recent announcements:\n1. This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.\n2. Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.\n3. Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.\n4. Something soft and gentle for you now. This is random -, by softspace.\n5. Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+    "llm_ms": 3367,
+    "llm_calls": [
+      {
+        "duration_ms": 3367,
+        "ok": true
+      }
+    ],
+    "number": 29,
+    "request": {
+      "next_track": {
+        "title": "The Cabin In The Wood (Suite)",
+        "artist": "Marc Teichert",
+        "valence": 0.254,
+        "arousal": 0.45
+      },
+      "previous_track": {
+        "title": "Cold",
+        "artist": "Yusuke Tsutsumi"
+      },
+      "recent_announcements": [
+        "This track brings such a gentle and balanced vibe to the airwaves. I think you'll really appreciate the peaceful rhythm of Chill Theme 5.",
+        "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+        "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+        "Something soft and gentle for you now. This is random -, by softspace.",
+        "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 4512
+  },
+  {
+    "text": "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+    "emotion": "neutral",
+    "target_seconds": 8.8,
+    "used_fallback": false,
+    "opening_style": "previous_track",
+    "title_placement": "start",
+    "prompt": "Next song: \"Sencillo y humano (flute)\" by BrunoXe\nValence: 0.47, arousal: 0.60\nSong that just played: \"The Cabin In The Wood (Suite)\" by Marc Teichert\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 33\nYour most recent announcements:\n1. Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.\n2. Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.\n3. Something soft and gentle for you now. This is random -, by softspace.\n4. Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.\n5. Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+    "llm_ms": 2426,
+    "llm_calls": [
+      {
+        "duration_ms": 2426,
+        "ok": true
+      }
+    ],
+    "number": 30,
+    "request": {
+      "next_track": {
+        "title": "Sencillo y humano (flute)",
+        "artist": "BrunoXe",
+        "valence": 0.475,
+        "arousal": 0.6
+      },
+      "previous_track": {
+        "title": "The Cabin In The Wood (Suite)",
+        "artist": "Marc Teichert"
+      },
+      "recent_announcements": [
+        "Hello everyone. It's time to settle into a smooth and relaxing mood. We have something special coming up that really fits this vibe, Intimate by Radio Interior Fusion.",
+        "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+        "Something soft and gentle for you now. This is random -, by softspace.",
+        "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+        "Coming up is The Cabin In The Wood (Suite) by Marc Teichert."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 3640
+  },
+  {
+    "text": "Anitek is taking over our speakers right now. Let's keep it going.",
+    "emotion": "excited",
+    "target_seconds": 4.8,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"07 This Party is Fuckin' Awsome (feat. Tab)\" by Anitek\nValence: 0.80, arousal: 0.75\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 12\nYour most recent announcements:\n1. Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.\n2. Something soft and gentle for you now. This is random -, by softspace.\n3. Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.\n4. Coming up is The Cabin In The Wood (Suite) by Marc Teichert.\n5. Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+    "llm_ms": 2852,
+    "llm_calls": [
+      {
+        "duration_ms": 2852,
+        "ok": true
+      }
+    ],
+    "number": 31,
+    "request": {
+      "next_track": {
+        "title": "07 This Party is Fuckin' Awsome (feat. Tab)",
+        "artist": "Anitek",
+        "valence": 0.8,
+        "arousal": 0.75
+      },
+      "previous_track": {
+        "title": "Sencillo y humano (flute)",
+        "artist": "BrunoXe"
+      },
+      "recent_announcements": [
+        "Coming up next is Summer dream by CARMELO CAMERA. It's a really mellow track to help you unwind right now.",
+        "Something soft and gentle for you now. This is random -, by softspace.",
+        "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+        "Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+        "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 3971
+  },
+  {
+    "text": "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+    "emotion": "calm",
+    "target_seconds": 7.2,
+    "used_fallback": false,
+    "opening_style": "listener",
+    "title_placement": "end",
+    "prompt": "Next song: \"Anna's Theme\" by Marc Teichert\nValence: 0.58, arousal: 0.30\nOpening style: Start by talking to the listeners, without assuming where they are or what they are doing.\nSong title placement: Say the song title at the very end.\nMaximum words: 30\nYour most recent announcements:\n1. Something soft and gentle for you now. This is random -, by softspace.\n2. Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.\n3. Coming up is The Cabin In The Wood (Suite) by Marc Teichert.\n4. Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.\n5. Anitek is taking over our speakers right now. Let's keep it going.",
+    "llm_ms": 2529,
+    "llm_calls": [
+      {
+        "duration_ms": 2529,
+        "ok": true
+      }
+    ],
+    "number": 32,
+    "request": {
+      "next_track": {
+        "title": "Anna's Theme",
+        "artist": "Marc Teichert",
+        "valence": 0.583,
+        "arousal": 0.3
+      },
+      "previous_track": {
+        "title": "07 This Party is Fuckin' Awsome (feat. Tab)",
+        "artist": "Anitek"
+      },
+      "recent_announcements": [
+        "Something soft and gentle for you now. This is random -, by softspace.",
+        "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+        "Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+        "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+        "Anitek is taking over our speakers right now. Let's keep it going."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3647
+  },
+  {
+    "text": "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+    "emotion": "neutral",
+    "target_seconds": 7.2,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "end",
+    "prompt": "Next song: \"Nature\" by Dawid Jaworski\nValence: 0.57, arousal: 0.53\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title at the very end.\nMaximum words: 37\nYour most recent announcements:\n1. Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.\n2. Coming up is The Cabin In The Wood (Suite) by Marc Teichert.\n3. Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.\n4. Anitek is taking over our speakers right now. Let's keep it going.\n5. Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+    "llm_ms": 2389,
+    "llm_calls": [
+      {
+        "duration_ms": 2389,
+        "ok": true
+      }
+    ],
+    "number": 33,
+    "request": {
+      "next_track": {
+        "title": "Nature",
+        "artist": "Dawid Jaworski",
+        "valence": 0.575,
+        "arousal": 0.525
+      },
+      "previous_track": {
+        "title": "Anna's Theme",
+        "artist": "Marc Teichert"
+      },
+      "recent_announcements": [
+        "Hi everyone, I'm playing Cold by Yusuke Tsutsumi for you right now. It's a very moody and reflective piece.",
+        "Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+        "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+        "Anitek is taking over our speakers right now. Let's keep it going.",
+        "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert."
+      ],
+      "last_opening_style": "listener"
+    },
+    "wall_ms": 3554
+  },
+  {
+    "text": "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+    "emotion": "happy",
+    "target_seconds": 7.6,
+    "used_fallback": false,
+    "opening_style": "mood_lead",
+    "title_placement": "end",
+    "prompt": "Next song: \"First Thing\" by Oleg Serkov\nValence: 0.80, arousal: 0.75\nOpening style: Start by describing how the song feels.\nSong title placement: Say the song title at the very end.\nMaximum words: 21\nYour most recent announcements:\n1. Coming up is The Cabin In The Wood (Suite) by Marc Teichert.\n2. Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.\n3. Anitek is taking over our speakers right now. Let's keep it going.\n4. Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.\n5. Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+    "llm_ms": 2264,
+    "llm_calls": [
+      {
+        "duration_ms": 2264,
+        "ok": true
+      }
+    ],
+    "number": 34,
+    "request": {
+      "next_track": {
+        "title": "First Thing",
+        "artist": "Oleg Serkov",
+        "valence": 0.8,
+        "arousal": 0.75
+      },
+      "previous_track": {
+        "title": "Nature",
+        "artist": "Dawid Jaworski"
+      },
+      "recent_announcements": [
+        "Coming up is The Cabin In The Wood (Suite) by Marc Teichert.",
+        "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+        "Anitek is taking over our speakers right now. Let's keep it going.",
+        "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+        "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 3422
+  },
+  {
+    "text": "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+    "emotion": "neutral",
+    "target_seconds": 8.8,
+    "used_fallback": false,
+    "opening_style": "direct",
+    "title_placement": "start",
+    "prompt": "Next song: \"The Past Does Not Come Back\" by Aufklarung\nValence: 0.53, arousal: 0.53\nOpening style: Start by simply saying what is coming up next.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 38\nYour most recent announcements:\n1. Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.\n2. Anitek is taking over our speakers right now. Let's keep it going.\n3. Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.\n4. Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.\n5. This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+    "llm_ms": 2143,
+    "llm_calls": [
+      {
+        "duration_ms": 2143,
+        "ok": true
+      }
+    ],
+    "number": 35,
+    "request": {
+      "next_track": {
+        "title": "The Past Does Not Come Back",
+        "artist": "Aufklarung",
+        "valence": 0.533,
+        "arousal": 0.533
+      },
+      "previous_track": {
+        "title": "First Thing",
+        "artist": "Oleg Serkov"
+      },
+      "recent_announcements": [
+        "Moving from that cinematic sound, here is Sencillo y humano (flute) by BrunoXe. It's a great piece to keep our flow going.",
+        "Anitek is taking over our speakers right now. Let's keep it going.",
+        "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+        "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+        "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov."
+      ],
+      "last_opening_style": "mood_lead"
+    },
+    "wall_ms": 3346
+  },
+  {
+    "text": "Up next, Greensleeves (Piano) by Oursvince.",
+    "emotion": "neutral",
+    "target_seconds": 3.0,
+    "used_fallback": true,
+    "opening_style": "previous_track",
+    "title_placement": "end",
+    "prompt": "Next song: \"Greensleeves (Piano)\" by Oursvince\nValence: 0.54, arousal: 0.38\nSong that just played: \"The Past Does Not Come Back\" by Aufklarung\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Say the song title at the very end.\nMaximum words: 29\nYour most recent announcements:\n1. Anitek is taking over our speakers right now. Let's keep it going.\n2. Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.\n3. Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.\n4. This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.\n5. Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+    "llm_ms": 30633,
+    "llm_calls": [
+      {
+        "duration_ms": 30633,
+        "ok": false
+      }
+    ],
+    "number": 36,
+    "request": {
+      "next_track": {
+        "title": "Greensleeves (Piano)",
+        "artist": "Oursvince",
+        "valence": 0.54,
+        "arousal": 0.383
+      },
+      "previous_track": {
+        "title": "The Past Does Not Come Back",
+        "artist": "Aufklarung"
+      },
+      "recent_announcements": [
+        "Anitek is taking over our speakers right now. Let's keep it going.",
+        "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+        "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+        "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+        "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along."
+      ],
+      "last_opening_style": "direct"
+    },
+    "wall_ms": 31780
+  },
+  {
+    "text": "Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.",
+    "emotion": "calm",
+    "target_seconds": 5.6,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"Tears of the Sky\" by Nastyl Crooks\nValence: 0.62, arousal: 0.15\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 46\nYour most recent announcements:\n1. Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.\n2. Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.\n3. This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.\n4. Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.\n5. Up next, Greensleeves (Piano) by Oursvince.",
+    "llm_ms": 13940,
+    "llm_calls": [
+      {
+        "duration_ms": 13940,
+        "ok": true
+      }
+    ],
+    "number": 37,
+    "request": {
+      "next_track": {
+        "title": "Tears of the Sky",
+        "artist": "Nastyl Crooks",
+        "valence": 0.625,
+        "arousal": 0.15
+      },
+      "previous_track": {
+        "title": "Greensleeves (Piano)",
+        "artist": "Oursvince"
+      },
+      "recent_announcements": [
+        "Hello there. Let's shift our focus to something new. Coming up next is Anna's Theme by Marc Teichert.",
+        "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+        "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+        "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+        "Up next, Greensleeves (Piano) by Oursvince."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 15077
+  },
+  {
+    "text": "Moving on from that last track, here is You had to go in the basement by osaeris. It brings a completely different weight to the air.",
+    "emotion": "serious",
+    "target_seconds": 10.4,
+    "used_fallback": false,
+    "opening_style": "previous_track",
+    "title_placement": "start",
+    "prompt": "Next song: \"You had to go in the basement\" by osaeris\nValence: 0.12, arousal: 0.62\nSong that just played: \"Tears of the Sky\" by Nastyl Crooks\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Say the song title in your first sentence.\nMaximum words: 48\nYour most recent announcements:\n1. Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.\n2. This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.\n3. Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.\n4. Up next, Greensleeves (Piano) by Oursvince.\n5. Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.",
+    "llm_ms": 2200,
+    "llm_calls": [
+      {
+        "duration_ms": 2200,
+        "ok": true
+      }
+    ],
+    "number": 38,
+    "request": {
+      "next_track": {
+        "title": "You had to go in the basement",
+        "artist": "osaeris",
+        "valence": 0.115,
+        "arousal": 0.625
+      },
+      "previous_track": {
+        "title": "Tears of the Sky",
+        "artist": "Nastyl Crooks"
+      },
+      "recent_announcements": [
+        "Coming up next is a track that captures a nice steady vibe. Here is Nature by Dawid Jaworski.",
+        "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+        "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+        "Up next, Greensleeves (Piano) by Oursvince.",
+        "Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3321
+  },
+  {
+    "text": "Celestial Aeon Project is up next with some great sound. Let's get right into it.",
+    "emotion": "neutral",
+    "target_seconds": 6.0,
+    "used_fallback": false,
+    "opening_style": "artist_lead",
+    "title_placement": "none",
+    "prompt": "Next song: \"Far away\" by Celestial Aeon Project\nValence: 0.45, arousal: 0.55\nOpening style: Start with the artist's name.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 18\nYour most recent announcements:\n1. This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.\n2. Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.\n3. Up next, Greensleeves (Piano) by Oursvince.\n4. Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.\n5. Moving on from that last track, here is You had to go in the basement by osaeris. It brings a completely different weight to the air.",
+    "llm_ms": 38485,
+    "llm_calls": [
+      {
+        "duration_ms": 38485,
+        "ok": true
+      }
+    ],
+    "number": 39,
+    "request": {
+      "next_track": {
+        "title": "Far away",
+        "artist": "Celestial Aeon Project",
+        "valence": 0.45,
+        "arousal": 0.55
+      },
+      "previous_track": {
+        "title": "You had to go in the basement",
+        "artist": "osaeris"
+      },
+      "recent_announcements": [
+        "This track has such a bright, uplifting energy that really catches your ear. It's First Thing by Oleg Serkov.",
+        "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+        "Up next, Greensleeves (Piano) by Oursvince.",
+        "Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.",
+        "Moving on from that last track, here is You had to go in the basement by osaeris. It brings a completely different weight to the air."
+      ],
+      "last_opening_style": "previous_track"
+    },
+    "wall_ms": 39610
+  },
+  {
+    "text": "Following that last piece, we are picking up the energy with The.madpix.project. Let's get right into it.",
+    "emotion": "excited",
+    "target_seconds": 6.8,
+    "used_fallback": false,
+    "opening_style": "previous_track",
+    "title_placement": "none",
+    "prompt": "Next song: \"Feel\" by The.madpix.project\nValence: 0.65, arousal: 0.90\nSong that just played: \"Far away\" by Celestial Aeon Project\nOpening style: Start by connecting it to the song that just played.\nSong title placement: Do not say the song title. Name only the artist.\nMaximum words: 36\nYour most recent announcements:\n1. Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.\n2. Up next, Greensleeves (Piano) by Oursvince.\n3. Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.\n4. Moving on from that last track, here is You had to go in the basement by osaeris. It brings a completely different weight to the air.\n5. Celestial Aeon Project is up next with some great sound. Let's get right into it.",
+    "llm_ms": 2317,
+    "llm_calls": [
+      {
+        "duration_ms": 2317,
+        "ok": true
+      }
+    ],
+    "number": 40,
+    "request": {
+      "next_track": {
+        "title": "Feel",
+        "artist": "The.madpix.project",
+        "valence": 0.65,
+        "arousal": 0.9
+      },
+      "previous_track": {
+        "title": "Far away",
+        "artist": "Celestial Aeon Project"
+      },
+      "recent_announcements": [
+        "Coming up next is The Past Does Not Come Back by Aufklarung. It's a solid choice to keep us moving right along.",
+        "Up next, Greensleeves (Piano) by Oursvince.",
+        "Nastyl Crooks has a gentle sound that fits perfectly for this moment. Let's listen.",
+        "Moving on from that last track, here is You had to go in the basement by osaeris. It brings a completely different weight to the air.",
+        "Celestial Aeon Project is up next with some great sound. Let's get right into it."
+      ],
+      "last_opening_style": "artist_lead"
+    },
+    "wall_ms": 3659
+  }
+]

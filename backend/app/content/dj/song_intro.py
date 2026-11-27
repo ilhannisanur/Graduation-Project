@@ -28,29 +28,29 @@ PREVIOUS_SONG_PROBABILITY = 0.5
 # Written like full spoken sentences: short shouted lines sound rushed and robotic in TTS.
 MOOD_TEMPLATES: dict[Emotion, tuple[str, ...]] = {
     Emotion.EXCITED: (
-        "Okay, I have a really fun one for you now. This is {t} by {a}, so turn it up a little.",
-        "Time to bring the energy back up. Here is {t} by {a}, and it is a great one.",
-        "If you need a little push today, this is it. Coming up, {t} by {a}.",
+        "Okay, I've got a really fun one for you. This is {t} by {a}, so go ahead and turn it up.",
+        "Let's bring the energy back up. Here's {t} by {a}, and it's a great one.",
+        "If you need a little push right now, this is it. Coming up, {t} by {a}.",
     ),
     Emotion.HAPPY: (
-        "Here is something that always makes me smile. This is {t} by {a}.",
+        "Here's something that always makes me smile. This is {t} by {a}.",
         "A bright, happy one for you now. Enjoy {t} by {a}.",
-        "I hope your day is going well, and this should make it even better. {t}, by {a}.",
+        "This one should put a little spring in your step. It's {t}, by {a}.",
     ),
     Emotion.CALM: (
-        "Let's slow things down for a moment. This is {t} by {a}.",
-        "Take a breath and settle in. Here is {t} by {a}.",
+        "Let's take it easy for a moment. This is {t} by {a}.",
+        "Take a breath and settle in. Here's {t} by {a}.",
         "Something soft and gentle for you now. This is {t}, by {a}.",
     ),
     Emotion.SAD: (
-        "A quieter moment now, for anyone carrying something heavy today. This is {t} by {a}.",
-        "For everyone missing someone tonight, here is {t} by {a}.",
-        "This next one has a heavy heart, but it is beautiful. {t}, by {a}.",
+        "A quieter moment now. This is {t} by {a}.",
+        "Here's a tender one, with a lot of heart. This is {t} by {a}.",
+        "This next one has a heavy heart, but it's beautiful. {t}, by {a}.",
     ),
     Emotion.SERIOUS: (
         "The mood gets a little darker now. Listen closely to {t} by {a}.",
-        "Here is something more intense and dramatic. This is {t} by {a}.",
-        "Let's turn the lights down for this one. Coming up, {t} by {a}.",
+        "Here's something more intense and dramatic. This is {t} by {a}.",
+        "Things get a little heavier now. Coming up, {t} by {a}.",
     ),
 }
 

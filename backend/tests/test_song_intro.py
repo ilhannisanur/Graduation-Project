@@ -2,6 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from app.content.dj.song_intro import (
+    MOOD_TEMPLATES,
     build_song_intro_prompt,
     describe_day_part,
     fallback_song_intro,
@@ -229,3 +230,14 @@ def test_day_parts():
 def test_emotion_case_and_spaces_are_accepted():
     spec = generate(FakeLLM({"emotion": " Happy", "text": "Here's Rain."}))
     assert spec.emotion == Emotion.HAPPY
+
+
+BANNED_PHRASES = ("slow things down", "sit back", "wash over you")
+
+
+def test_fallback_templates_follow_the_dj_rules():
+    for templates in MOOD_TEMPLATES.values():
+        for template in templates:
+            lowered = template.lower()
+            assert not any(phrase in lowered for phrase in BANNED_PHRASES), template
+            assert "tonight" not in lowered, template

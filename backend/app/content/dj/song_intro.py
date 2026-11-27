@@ -97,6 +97,18 @@ def choose_opening(
     return Opening(style, rng.choice(placements))
 
 
+def opening_for(
+    rng: random.Random,
+    next_track: Track,
+    previous_track: Track | None = None,
+    last_style: OpeningStyle | None = None,
+) -> Opening:
+    """choose_opening with the facts read from the songs."""
+    # The planner replays the same song when the music source is down: not a real previous.
+    has_previous = previous_track is not None and previous_track.id != next_track.id
+    return choose_opening(rng, last_style, has_previous, track_has_mood(next_track))
+
+
 # Template intros by the song's mood, used when the LLM is unavailable, so the DJ still sounds
 # like the music. {t} is the title, {a} the artist.
 # Written like full spoken sentences: short shouted lines sound rushed and robotic in TTS.
@@ -210,11 +222,7 @@ def generate_song_intro(
     """
     rng = rng or random.Random()
     now = now or datetime.now(DEFAULT_TIMEZONE)
-    # The planner replays the same song when the music source is down: not a real previous.
-    has_previous = previous_track is not None and previous_track.id != next_track.id
-    opening = opening or choose_opening(
-        rng, has_previous=has_previous, has_mood=track_has_mood(next_track)
-    )
+    opening = opening or opening_for(rng, next_track, previous_track)
 
     max_words = rng.randint(MIN_WORDS, MAX_WORDS)
     # Only the style that needs it gets the extra information. Given every time, the LLM used

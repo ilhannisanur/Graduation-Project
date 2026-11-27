@@ -43,6 +43,16 @@ class FakeLLM(LLMClient):
 GOOD_ANSWER = {"emotion": "calm", "text": "Here's Song 1 by Artist 1, nice and easy."}
 
 
+class FirstChoice:
+    """Fixed "random" choices: always the first allowed option, a word limit of 20."""
+
+    def choice(self, options):
+        return options[0]
+
+    def randint(self, low, high):
+        return 20
+
+
 def make_director(llm, catalog, recent=(), saved=None):
     """``recent`` plays the announcement log; ``saved`` (a list) collects what is saved."""
     loaded_ids = []
@@ -59,12 +69,17 @@ def make_director(llm, catalog, recent=(), saved=None):
     def recent_loader(db):
         return list(recent)
 
-    def saver(db, spec, next_track_id, used_fallback):
+    def saver(db, spec, next_track_id, used_fallback, opening_style):
         if saved is not None:
-            saved.append((spec.text, next_track_id, used_fallback))
+            saved.append((spec.text, next_track_id, used_fallback, opening_style))
 
     director = SongIntroDirector(
-        llm, session_factory, track_loader=track_loader, recent_loader=recent_loader, saver=saver
+        llm,
+        session_factory,
+        track_loader=track_loader,
+        recent_loader=recent_loader,
+        saver=saver,
+        rng=FirstChoice(),
     )
     return director, loaded_ids
 
@@ -131,7 +146,7 @@ def test_announcement_is_saved_with_its_song():
     saved = []
     director, _ = make_director(FakeLLM(GOOD_ANSWER), [song], saved=saved)
     plan(director, song)
-    assert saved == [(GOOD_ANSWER["text"], "t1", False)]
+    assert saved == [(GOOD_ANSWER["text"], "t1", False, "artist_lead")]
 
 
 def test_template_intro_is_saved_as_fallback():
@@ -139,7 +154,7 @@ def test_template_intro_is_saved_as_fallback():
     saved = []
     director, _ = make_director(FakeLLM(LLMError("down")), [song], saved=saved)
     plan(director, song)
-    assert saved == [("Up next, Song 1 by Artist 1.", "t1", True)]
+    assert saved == [("Up next, Song 1 by Artist 1.", "t1", True, "artist_lead")]
 
 
 def test_database_errors_do_not_stop_the_broadcast():
@@ -159,3 +174,23 @@ def test_database_errors_do_not_stop_the_broadcast():
         saver=broken,
     )
     assert plan(director, song).text == GOOD_ANSWER["text"]
+
+
+def test_opening_style_is_saved_and_given_to_the_llm():
+    song = make_track(1)
+    llm = FakeLLM(GOOD_ANSWER)
+    saved = []
+    director, _ = make_director(llm, [song], saved=saved)
+    plan(director, song)
+    assert "Opening style: Start with the artist's name." in llm.prompts[0]
+    assert saved[0][3] == "artist_lead"
+
+
+def test_the_same_style_is_not_used_twice_in_a_row():
+    first, second = make_track(1), make_track(2)
+    saved = []
+    director, _ = make_director(FakeLLM(GOOD_ANSWER), [first, second], saved=saved)
+    plan(director, first)
+    plan(director, second, first)
+    # FirstChoice would pick the artist style again; the director must not allow it.
+    assert [entry[3] for entry in saved] == ["artist_lead", "previous_track"]

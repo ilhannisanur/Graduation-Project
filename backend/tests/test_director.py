@@ -1,8 +1,6 @@
 import asyncio
 from contextlib import contextmanager
 
-from sqlalchemy.exc import SQLAlchemyError
-
 from app.content.director import SongIntroDirector
 from app.content.llm import LLMClient, LLMError
 from app.contracts import Track
@@ -146,7 +144,7 @@ def test_template_intro_is_saved_as_fallback():
 
 def test_database_errors_do_not_stop_the_broadcast():
     def broken(*args):
-        raise SQLAlchemyError("database is down")
+        raise RuntimeError("anything can go wrong in the log")
 
     @contextmanager
     def session_factory():

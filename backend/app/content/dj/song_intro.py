@@ -1,6 +1,8 @@
 import random
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import datetime
+from enum import StrEnum
 
 from app.content.dj.common import (
     DEFAULT_TIMEZONE,
@@ -17,10 +19,82 @@ from app.contracts import AnnouncementKind, AnnouncementSpec, Emotion, Track
 # Each announcement gets a random word limit in this range, so lengths vary.
 MIN_WORDS = 12
 MAX_WORDS = 50
-# How often the day/time and the previous song are given to the LLM.
-# Giving them every time makes every announcement mention them.
-DAY_PART_PROBABILITY = 0.5
-PREVIOUS_SONG_PROBABILITY = 0.5
+
+
+class OpeningStyle(StrEnum):
+    """How the DJ starts the intro (#74). Python picks one, the LLM follows it."""
+
+    ARTIST_LEAD = "artist_lead"
+    MOOD_LEAD = "mood_lead"
+    PREVIOUS_TRACK = "previous_track"
+    LISTENER = "listener"
+    DIRECT = "direct"
+    TIME_OF_DAY = "time_of_day"
+
+
+class TitlePlacement(StrEnum):
+    """Where the song title goes: varied so most intros do not end with "Title by Artist"."""
+
+    START = "start"
+    END = "end"
+    NONE = "none"
+
+
+STYLE_INSTRUCTIONS: dict[OpeningStyle, str] = {
+    OpeningStyle.ARTIST_LEAD: "Start with the artist's name.",
+    OpeningStyle.MOOD_LEAD: "Start by describing how the song feels.",
+    OpeningStyle.PREVIOUS_TRACK: "Start by connecting it to the song that just played.",
+    OpeningStyle.LISTENER: (
+        "Start by talking to the listeners, without assuming where they are or what they are doing."
+    ),
+    OpeningStyle.DIRECT: "Start by simply saying what is coming up next.",
+    OpeningStyle.TIME_OF_DAY: "Start by mentioning the day and the time of day.",
+}
+
+PLACEMENT_INSTRUCTIONS: dict[TitlePlacement, str] = {
+    TitlePlacement.START: "Say the song title in your first sentence.",
+    TitlePlacement.END: "Say the song title at the very end.",
+    TitlePlacement.NONE: "Do not say the song title. Name only the artist.",
+}
+
+
+@dataclass(frozen=True)
+class Opening:
+    style: OpeningStyle
+    placement: TitlePlacement
+
+
+def track_has_mood(track: Track) -> bool:
+    """True when the catalog gives the song's valence and arousal."""
+    return track.valence is not None and track.arousal is not None
+
+
+def choose_opening(
+    rng: random.Random,
+    last_style: OpeningStyle | None = None,
+    has_previous: bool = False,
+    has_mood: bool = False,
+) -> Opening:
+    """Pick the opening at random. Every allowed choice is equally likely.
+
+    Not allowed: the same style twice in a row; connecting to a previous song that is not
+    given; describing a feeling without valence/arousal (the LLM would invent it); a direct
+    intro without the title (there would be almost nothing left to say).
+    """
+    styles = [
+        style
+        for style in OpeningStyle
+        if style != last_style
+        and (has_previous or style != OpeningStyle.PREVIOUS_TRACK)
+        and (has_mood or style != OpeningStyle.MOOD_LEAD)
+    ]
+    style = rng.choice(styles)
+    placements = [
+        placement
+        for placement in TitlePlacement
+        if not (style == OpeningStyle.DIRECT and placement == TitlePlacement.NONE)
+    ]
+    return Opening(style, rng.choice(placements))
 
 
 # Template intros by the song's mood, used when the LLM is unavailable, so the DJ still sounds
@@ -94,6 +168,7 @@ def build_song_intro_prompt(
     previous_track: Track | None = None,
     day_part: str | None = None,
     recent_announcements: Sequence[str] = (),
+    opening: Opening | None = None,
 ) -> str:
     """Build the per-request prompt for a song intro.
 
@@ -109,6 +184,10 @@ def build_song_intro_prompt(
     if day_part:
         lines.append(f"Day and time of day: {day_part}")
 
+    if opening is not None:
+        lines.append(f"Opening style: {STYLE_INSTRUCTIONS[opening.style]}")
+        lines.append(f"Song title placement: {PLACEMENT_INSTRUCTIONS[opening.placement]}")
+
     lines.append(f"Maximum words: {max_words}")
 
     lines.extend(recent_lines(recent_announcements))
@@ -121,6 +200,7 @@ def generate_song_intro(
     next_track: Track,
     previous_track: Track | None = None,
     recent_announcements: Sequence[str] = (),
+    opening: Opening | None = None,
     now: datetime | None = None,
     rng: random.Random | None = None,
 ) -> AnnouncementSpec:
@@ -130,10 +210,17 @@ def generate_song_intro(
     """
     rng = rng or random.Random()
     now = now or datetime.now(DEFAULT_TIMEZONE)
+    # The planner replays the same song when the music source is down: not a real previous.
+    has_previous = previous_track is not None and previous_track.id != next_track.id
+    opening = opening or choose_opening(
+        rng, has_previous=has_previous, has_mood=track_has_mood(next_track)
+    )
 
     max_words = rng.randint(MIN_WORDS, MAX_WORDS)
-    give_day_part = rng.random() < DAY_PART_PROBABILITY
-    give_previous = rng.random() < PREVIOUS_SONG_PROBABILITY
+    # Only the style that needs it gets the extra information. Given every time, the LLM used
+    # it every time ("Tuesday afternoon" in 8 of 10 intros in #72).
+    give_previous = opening.style == OpeningStyle.PREVIOUS_TRACK
+    give_day_part = opening.style == OpeningStyle.TIME_OF_DAY
 
     prompt = build_song_intro_prompt(
         next_track,
@@ -141,6 +228,7 @@ def generate_song_intro(
         previous_track=previous_track if give_previous else None,
         day_part=describe_day_part(now) if give_day_part else None,
         recent_announcements=recent_announcements,
+        opening=opening,
     )
     system = load_prompt("song_intro")
 

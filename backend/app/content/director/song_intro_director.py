@@ -10,7 +10,6 @@ import asyncio
 import logging
 from collections.abc import Callable
 
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.content.dj.song_intro import fallback_song_intro, generate_song_intro
@@ -86,7 +85,7 @@ class SongIntroDirector:
         try:
             with self._session_factory() as db:
                 return self._recent_loader(db)
-        except SQLAlchemyError:
+        except Exception:  # the log is a side job: no error in it may silence the DJ
             logger.warning("Could not read the recent announcements", exc_info=True)
             return []
 
@@ -96,7 +95,7 @@ class SongIntroDirector:
         try:
             with self._session_factory() as db:
                 self._saver(db, spec, track.id, used_fallback)
-        except SQLAlchemyError:
+        except Exception:  # the log is a side job: no error in it may silence the DJ
             logger.warning("Could not save the announcement", exc_info=True)
 
 

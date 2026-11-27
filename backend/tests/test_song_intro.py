@@ -1,9 +1,14 @@
+import random
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from app.content.dj.song_intro import (
     MOOD_TEMPLATES,
+    Opening,
+    OpeningStyle,
+    TitlePlacement,
     build_song_intro_prompt,
+    choose_opening,
     describe_day_part,
     fallback_song_intro,
     generate_song_intro,
@@ -140,25 +145,24 @@ class FakeLLM(LLMClient):
 
 
 class FakeRandom:
-    """Fixed "random" choices: the word limit and whether extras are given."""
+    """Fixed "random" choices: the word limit, and always the first allowed option."""
 
-    def __init__(self, words=20, give_extras=True):
+    def __init__(self, words=20):
         self.words = words
-        self.value = 0.0 if give_extras else 0.99
 
     def randint(self, low, high):
         return self.words
 
-    def random(self):
-        return self.value
+    def choice(self, options):
+        return options[0]
 
 
-def generate(llm, give_extras=True, **kwargs):
+def generate(llm, **kwargs):
     return generate_song_intro(
         llm,
         make_track(),
         now=FRIDAY_EVENING,
-        rng=FakeRandom(give_extras=give_extras),
+        rng=FakeRandom(),
         **kwargs,
     )
 
@@ -199,21 +203,80 @@ def test_llm_error_gives_fallback_without_retry():
     assert spec == fallback_song_intro(make_track())
 
 
-def test_extras_are_given_when_chosen():
+PREVIOUS = make_track(title="Sun", artist="Leo", track_id="trk_prev")
+
+
+def test_previous_song_is_given_only_for_its_style():
     llm = FakeLLM(GOOD_ANSWER)
-    previous = make_track(title="Sun", artist="Leo", track_id="trk_prev")
-    generate(llm, previous_track=previous, give_extras=True)
-    assert "Maximum words: 20" in llm.calls[0]
-    assert "Day and time of day: Friday evening" in llm.calls[0]
+    opening = Opening(OpeningStyle.PREVIOUS_TRACK, TitlePlacement.END)
+    generate(llm, previous_track=PREVIOUS, opening=opening)
     assert 'Song that just played: "Sun" by Leo' in llm.calls[0]
+    assert "Day and time of day" not in llm.calls[0]
 
 
-def test_extras_are_left_out_when_not_chosen():
+def test_day_part_is_given_only_for_its_style():
     llm = FakeLLM(GOOD_ANSWER)
-    previous = make_track(title="Sun", artist="Leo", track_id="trk_prev")
-    generate(llm, previous_track=previous, give_extras=False)
+    opening = Opening(OpeningStyle.TIME_OF_DAY, TitlePlacement.END)
+    generate(llm, previous_track=PREVIOUS, opening=opening)
+    assert "Day and time of day: Friday evening" in llm.calls[0]
+    assert "just played" not in llm.calls[0]
+
+
+def test_other_styles_get_neither():
+    llm = FakeLLM(GOOD_ANSWER)
+    opening = Opening(OpeningStyle.ARTIST_LEAD, TitlePlacement.END)
+    generate(llm, previous_track=PREVIOUS, opening=opening)
     assert "Day and time of day" not in llm.calls[0]
     assert "just played" not in llm.calls[0]
+
+
+def test_opening_lines_go_into_the_prompt():
+    llm = FakeLLM(GOOD_ANSWER)
+    generate(llm, opening=Opening(OpeningStyle.ARTIST_LEAD, TitlePlacement.NONE))
+    assert "Opening style: Start with the artist's name." in llm.calls[0]
+    placement = "Song title placement: Do not say the song title. Name only the artist."
+    assert placement in llm.calls[0]
+    assert "Maximum words: 20" in llm.calls[0]
+
+
+def test_an_opening_is_chosen_when_none_is_given():
+    llm = FakeLLM(GOOD_ANSWER)
+    generate(llm)
+    assert "Opening style:" in llm.calls[0]
+
+
+def choose_many(times=600, **kwargs):
+    return [choose_opening(random.Random(seed), **kwargs) for seed in range(times)]
+
+
+def test_every_style_and_placement_is_chosen_about_equally():
+    openings = choose_many(has_previous=True, has_mood=True)
+    for style in OpeningStyle:
+        assert 60 < sum(o.style == style for o in openings) < 140  # ~100 each
+    assert {o.placement for o in openings} == set(TitlePlacement)
+
+
+def test_the_last_style_is_not_repeated():
+    for style in OpeningStyle:
+        openings = choose_many(last_style=style, has_previous=True, has_mood=True)
+        assert all(o.style != style for o in openings)
+
+
+def test_previous_track_style_needs_a_previous_song():
+    openings = choose_many(has_mood=True)
+    assert all(o.style != OpeningStyle.PREVIOUS_TRACK for o in openings)
+
+
+def test_mood_style_needs_valence_and_arousal():
+    openings = choose_many(has_previous=True)
+    assert all(o.style != OpeningStyle.MOOD_LEAD for o in openings)
+
+
+def test_direct_style_always_says_the_title():
+    openings = choose_many(has_previous=True, has_mood=True)
+    direct = [o for o in openings if o.style == OpeningStyle.DIRECT]
+    assert direct
+    assert all(o.placement != TitlePlacement.NONE for o in direct)
 
 
 def test_day_parts():

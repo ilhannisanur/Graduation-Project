@@ -5,6 +5,16 @@ import { api, ApiError, type Track } from './api.ts'
  * open a session, ask for the next segment whenever one ends, close it when done.
  */
 
+/** How to play a song, from the catalog's audio analysis (backend app/music/audio_analysis.py). */
+export type TrackPlayback = {
+  /** Added to the song's level so every song sounds equally loud. */
+  gain_db: number
+  /** Silence before this is skipped. */
+  start_s: number
+  /** The music ends here (before any trailing silence); transitions are timed from it. */
+  end_s: number | null
+}
+
 export type TrackSegment = {
   kind: 'track'
   segment_id: string
@@ -19,6 +29,8 @@ export type TrackSegment = {
   requested_by?: string[] | null
   /** The listeners' messages that may be read on air. */
   request_messages?: string[] | null
+  /** Missing for songs not analysed yet: then the whole file plays at its own level. */
+  playback?: TrackPlayback | null
 }
 
 export type AnnouncementSegment = {

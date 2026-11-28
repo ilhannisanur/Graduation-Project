@@ -1,14 +1,17 @@
 /**
  * The radio's mixing desk, built on Web Audio:
  *
- *   voice   <audio> → level → high-pass 90 Hz → presence +2.5 dB @ 3 kHz → compressor 3:1 ─┐
- *   music A <audio> → level ────────────────────────────────────────────────────────────────┤
- *   music B <audio> → level ────────────────────────────────────────────────────────────────┤
+ *   voice   <audio> → trim → level → high-pass 90 Hz → presence +2.5 dB @ 3 kHz → comp 3:1 ─┐
+ *   music A <audio> → trim → level ─────────────────────────────────────────────────────────┤
+ *   music B <audio> → trim → level ─────────────────────────────────────────────────────────┤
  *                                       master: compressor/limiter → listener volume → out ◄┘
  *
  * Two music channels let one song fade out while the next fades in; the voice channel lets
  * the DJ talk over a song intro. Without Web Audio the elements play directly and levels
  * change at once instead of fading.
+ *
+ * "trim" is the song's own correction to a common loudness (gain_db from the catalog's audio
+ * analysis); "level" is the fade the radio is doing (ducking, crossfades).
  */
 
 /** The song's level while the DJ talks over its intro: about −18 dB. */
@@ -21,6 +24,8 @@ export type Channel = {
   fade: (to: number, seconds?: number, from?: number) => void
   /** Stops the sound and forgets the file. */
   silence: () => void
+  /** The channel's correction to the common loudness, in dB (0 = as recorded). */
+  setTrim: (db: number) => void
 }
 
 /** Steps used to draw an equal-power curve with cancellable linear ramps. */
@@ -33,6 +38,8 @@ export class Mixer {
   private output: GainNode | null = null
   private readonly gains = new Map<HTMLAudioElement, GainNode>()
   private readonly levels = new Map<HTMLAudioElement, number>()
+  private readonly trims = new Map<HTMLAudioElement, number>() // linear factor
+  private readonly trimNodes = new Map<HTMLAudioElement, GainNode>()
   private volume: number
 
   constructor(volume: number) {
@@ -70,10 +77,12 @@ export class Mixer {
     const el = new Audio()
     el.preload = 'auto'
     this.levels.set(el, 1)
+    this.trims.set(el, 1)
     this.applyFallback(el)
     return {
       el,
       fade: (to, seconds = 0, from) => this.fade(el, to, seconds, from),
+      setTrim: (db) => this.setTrim(el, db),
       silence: () => {
         el.pause()
         el.removeAttribute('src')
@@ -124,9 +133,12 @@ export class Mixer {
     for (const channel of this.channels) {
       const el = channel.el
       el.volume = 1 // levels now live in the graph
+      const trim = ctx.createGain()
+      trim.gain.value = this.trims.get(el) ?? 1
       const gain = ctx.createGain()
       gain.gain.value = this.levels.get(el) ?? 1
-      ctx.createMediaElementSource(el).connect(gain)
+      ctx.createMediaElementSource(el).connect(trim).connect(gain)
+      this.trimNodes.set(el, trim)
       gain.connect(channel === this.voice ? highPass : master)
       this.gains.set(el, gain)
     }
@@ -161,8 +173,18 @@ export class Mixer {
     }
   }
 
+  private setTrim(el: HTMLAudioElement, db: number): void {
+    const factor = Number.isFinite(db) ? 10 ** (db / 20) : 1
+    this.trims.set(el, factor)
+    const node = this.trimNodes.get(el)
+    if (node && this.ctx) node.gain.setValueAtTime(factor, this.ctx.currentTime)
+    else this.applyFallback(el)
+  }
+
   private applyFallback(el: HTMLAudioElement): void {
     if (this.gains.size > 0) return
-    el.volume = Math.min(1, Math.max(0, (this.levels.get(el) ?? 1) * this.volume))
+    // An <audio> element cannot go above 1, so without Web Audio quiet songs stay quiet.
+    const trim = Math.min(1, this.trims.get(el) ?? 1)
+    el.volume = Math.min(1, Math.max(0, (this.levels.get(el) ?? 1) * trim * this.volume))
   }
 }

@@ -346,6 +346,7 @@ class BroadcastPlanner:
             audio_url=self.settings.track_audio_url.format(track_id=track.track_id),
             requested_by=track.request.on_air_names if track.request else None,
             request_messages=track.request.messages if track.request else None,
+            playback=track.playback,
         )
 
     def _report_started(self, track: TrackInfo) -> None:

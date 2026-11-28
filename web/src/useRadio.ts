@@ -117,12 +117,31 @@ function readVolume(): number {
   }
 }
 
-/** Seconds left in what a channel plays, from the file if it knows, else from the planner. */
-function remaining(playing: Playing): number {
+/** Where the music of a segment ends: before a song's trailing silence when it is known. */
+function musicEnd(playing: Playing): number {
   const el = playing.channel.el
-  const total =
+  const file =
     Number.isFinite(el.duration) && el.duration > 0 ? el.duration : playing.next.segment.duration_s
-  return total - el.currentTime
+  const segment = playing.next.segment
+  const end = segment.kind === 'track' ? segment.playback?.end_s : null
+  return end && end > 0 ? Math.min(file, end) : file
+}
+
+/** Seconds of music left in what a channel plays. */
+function remaining(playing: Playing): number {
+  return musicEnd(playing) - playing.channel.el.currentTime
+}
+
+/**
+ * Loads a segment on a channel at the song's own level, starting after its leading silence.
+ * The start is a media fragment (#t=), which browsers apply before the first sound.
+ */
+function load(channel: Channel, next: NextSegment): void {
+  const segment = next.segment
+  const playback = segment.kind === 'track' ? segment.playback : null
+  channel.setTrim(playback?.gain_db ?? 0)
+  const start = playback?.start_s ?? 0
+  channel.el.src = start > 0.05 ? `${segment.audio_url}#t=${start.toFixed(2)}` : segment.audio_url
 }
 
 export function useRadio(): Radio {
@@ -133,6 +152,8 @@ export function useRadio(): Radio {
   const [current, setCurrent] = useState<NextSegment | null>(null)
   const [track, setTrack] = useState<Track | null>(null)
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  // The segment already moved on from at its music end (see onTime), so it happens once.
+  const endedEarlyRef = useRef<string | null>(null)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [volume, setVolumeState] = useState(readVolume)
@@ -319,7 +340,7 @@ export function useRadio(): Radio {
 
     const channel = channelFor(next)
     channel.fade(1)
-    channel.el.src = next.segment.audio_url
+    load(channel, next)
     record({ next, channel })
     void play(channel, generation)
   }, [stopFading, promote, silenceAll, fetchNext, channelFor, record, play])
@@ -357,7 +378,7 @@ export function useRadio(): Radio {
       }, DUCK_DOWN_S * 1000)
       const channel = channelFor(next)
       channel.fade(1)
-      channel.el.src = next.segment.audio_url
+      load(channel, next)
       record({ next, channel })
       void play(channel, generation)
       return
@@ -371,7 +392,7 @@ export function useRadio(): Radio {
       overlapRef.current = true
       const channel = channelFor(next)
       channel.fade(DUCK_LEVEL)
-      channel.el.src = next.segment.audio_url
+      load(channel, next)
       incomingRef.current = { next, channel }
       void play(channel, generation)
       return
@@ -391,7 +412,7 @@ export function useRadio(): Radio {
       },
       CROSSFADE_S * 1000 + 300,
     )
-    channel.el.src = next.segment.audio_url
+    load(channel, next)
     record({ next, channel })
     channel.fade(1, CROSSFADE_S, 0)
     void play(channel, generation)
@@ -485,8 +506,22 @@ export function useRadio(): Radio {
       const onTime = () => {
         if (!onAir()) return
         setTime(el.currentTime)
-        if (Number.isFinite(el.duration) && el.duration > 0) setDuration(el.duration)
+        const playing = activeRef.current
+        if (playing) setDuration(musicEnd(playing))
         checkAhead()
+        // Past the end of the music with nothing taking over yet: move on now instead of
+        // playing the song's trailing silence. Once per segment (timeupdate keeps firing).
+        if (
+          playing &&
+          activeRef.current === playing &&
+          playing.next.segment.kind === 'track' &&
+          el.currentTime >= musicEnd(playing) - 0.05 &&
+          musicEnd(playing) < el.duration - 0.5 &&
+          endedEarlyRef.current !== playing.next.segment.segment_id
+        ) {
+          endedEarlyRef.current = playing.next.segment.segment_id
+          onEnded()
+        }
       }
       const onError = () => {
         const failed = onAir() ? activeRef.current : isIncoming() ? incomingRef.current : null

@@ -35,6 +35,17 @@ class RequestNote(BaseModel):
     messages: list[str] = Field(default_factory=list)  # only those with read-out permission
 
 
+class TrackPlayback(BaseModel):
+    """How the player should play a song, measured from its audio (app.music.audio_analysis).
+
+    Optional everywhere: without it the player plays the whole file at its own level.
+    """
+
+    gain_db: float = 0.0  # added to the song's level so all songs sound equally loud
+    start_s: float = Field(default=0.0, ge=0)  # skip the silence before this
+    end_s: float | None = Field(default=None, gt=0)  # the music ends here; transitions use it
+
+
 class TrackInfo(BaseModel):
     """A song chosen by Music & Platform (#11)."""
 
@@ -46,6 +57,7 @@ class TrackInfo(BaseModel):
     reason: str | None = None  # "why this song?" (filled from S5 on)
     # Set when the song comes from the listener request queue (#16).
     request: RequestNote | None = None
+    playback: TrackPlayback | None = None
 
 
 class AnnouncementRequest(BaseModel):
@@ -91,6 +103,7 @@ class QueuedTrack(BaseModel):
     audio_url: str
     requested_by: list[str] | None = None  # on-air names; [] = a request without names
     request_messages: list[str] | None = None  # messages allowed to be read on air
+    playback: TrackPlayback | None = None  # level and real start/end; None: play the file as is
 
 
 class QueuedAnnouncement(BaseModel):

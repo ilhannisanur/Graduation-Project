@@ -48,6 +48,7 @@ def make_source(catalog: list[Track]) -> tuple[CatalogMusicSource, FakeSelector]
         session_factory,
         selector_factory=lambda db: selector,
         history_loader=lambda db, ids: [by_id[i] for i in ids if i in by_id],
+        playback_loader=lambda db, track_id: None,
     )
     return source, selector
 

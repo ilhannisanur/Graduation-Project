@@ -106,9 +106,24 @@ python -m app.music.curate prune --apply
 python -m app.music.download --popular --add 200
 python -m app.music.import_catalog
 python -m app.music.fill_valence_energy
+python -m app.music.curate analyze
 ```
 
-Toplam boyut yaklaşık 0,85 GB. Jamendo'nun popüler listeleri zamanla değiştiği için başka bir günde birkaç farklı şarkı gelebilir.
+Toplam boyut yaklaşık 0,85 GB.
+
+### Ses seviyesi ve sessizlikler (`curate analyze`)
+
+Ölçüm (2026-11-28, 40 şarkı): şarkıların ses seviyeleri arasında 16 dB'e varan fark vardı ve %40'ı 3 saniyeden uzun bir sessizlikle bitiyordu (en uzunu 17 sn). DJ şarkının son saniyelerinde konuşmaya başladığı için, çoğu zaman müziğin değil sessizliğin üstüne konuşuyordu.
+
+`python -m app.music.curate analyze` her şarkının ses dosyasını bir kez çözer (`soundfile`, ffmpeg gerekmez; şarkı başına ~0,3 sn) ve veritabanına üç değer yazar (migration 0011, `app/music/audio_analysis.py`):
+
+- `gain_db`: şarkıyı ortak seviyeye (-16 dBFS, kapılı RMS) getirmek için gereken düzeltme. Kısma en fazla -12 dB, yükseltme en fazla +6 dB (sessiz kayıtlar bozulmasın diye).
+- `start_s`: ilk duyulan ses; öncesindeki sessizlik atlanır.
+- `end_s`: müziğin bittiği an; şarkının kendi seviyesinin 30 dB altında kalan kuyruk ve sessizlik sayılmaz.
+
+Dosyalar değiştirilmez. Planlayıcı bu değerleri `QueuedTrack.playback` alanıyla oynatıcıya verir; oynatıcı şarkıyı bu seviyede ve `start_s`'den çalar, DJ'in girişini ve şarkı geçişlerini `end_s`'e göre zamanlar. Ölçülmemiş şarkılar eskisi gibi tam dosya olarak çalar. Varsayılan olarak yalnızca ölçülmemiş şarkılar ölçülür; `--all` hepsini yeniden ölçer.
+
+Katalogdaki sonuç (335 şarkı): düzeltme ortancası -0,6 dB (en kısık -7,1, en yüksek +6; 31 şarkı +6 sınırında). 143 şarkının sonundan 3 saniyeden uzun sessizlik/kuyruk kırpıldı (ortanca 2,7 sn, en uzun 34 sn); 46 şarkının başındaki yarım saniyeden uzun sessizlik atlanıyor. Jamendo'nun popüler listeleri zamanla değiştiği için başka bir günde birkaç farklı şarkı gelebilir.
 
 ## 6. Sonraki adımlar
 

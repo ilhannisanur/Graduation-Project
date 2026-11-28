@@ -17,7 +17,12 @@ from app.music.convert import track_from_row
 from app.music.models import TrackRow
 from app.music.mood_target import current_target, pick_for_target
 from app.music.requests import service as requests
-from app.music.source import CatalogMusicSource, SessionFactory, track_info_from_track
+from app.music.source import (
+    CatalogMusicSource,
+    SessionFactory,
+    playback_from_row,
+    track_info_from_track,
+)
 from app.radio.planner.models import RequestNote, TrackInfo
 
 
@@ -50,13 +55,17 @@ class BroadcastMusicSource:
                 row = db.get(TrackRow, group[0].track_id)
                 if row is not None:
                     self._on_deck.add(row.id)
-                    return self._request_info(track_from_row(row), group)
+                    info = self._request_info(track_from_row(row), group)
+                    info.playback = playback_from_row(row)
+                    return info
 
             target = current_target()
             if target is not None:
                 track = pick_for_target(db, recent_track_ids, target, self._rng)
                 if track is not None:
-                    info = track_info_from_track(track)
+                    info = track_info_from_track(
+                        track, playback_from_row(db.get(TrackRow, track.id))
+                    )
                     info.reason = target.reason.capitalize()
                     return info
         return None

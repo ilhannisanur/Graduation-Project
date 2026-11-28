@@ -63,6 +63,10 @@ class TrackRow(Base):
     popularity: Mapped[float | None] = mapped_column(Float, default=None)
     # True: sung, False: instrumental, None: unknown.
     has_vocals: Mapped[bool | None] = mapped_column(Boolean, default=None)
+    # From the audio (app.music.audio_analysis); None: not analysed yet.
+    gain_db: Mapped[float | None] = mapped_column(Float, default=None)  # to the target level
+    start_s: Mapped[float | None] = mapped_column(Float, default=None)  # first audible sound
+    end_s: Mapped[float | None] = mapped_column(Float, default=None)  # end of the music
     # The source's genre tags (e.g. Jamendo's "pop", "rock").
     genres: Mapped[list[str]] = mapped_column(
         ARRAY(Text), server_default=text("'{}'::text[]"), default=list

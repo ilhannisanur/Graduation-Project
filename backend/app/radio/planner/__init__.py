@@ -10,6 +10,7 @@ from .models import (
     RequestNote,
     SpeechAudio,
     TrackInfo,
+    TrackPlayback,
 )
 from .planner import (
     BroadcastPlanner,
@@ -40,6 +41,7 @@ __all__ = [
     "SpeechSynthesizer",
     "TooManySessions",
     "TrackInfo",
+    "TrackPlayback",
     "configure_planner",
     "current_planner",
     "get_planner",

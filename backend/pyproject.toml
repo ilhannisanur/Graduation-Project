@@ -13,6 +13,9 @@ dependencies = [
     "httpx",
     "google-genai",
     "argon2-cffi",
+    # Audio analysis of the catalog (loudness, silences): app.music.audio_analysis
+    "numpy",
+    "soundfile",
 ]
 
 [project.optional-dependencies]

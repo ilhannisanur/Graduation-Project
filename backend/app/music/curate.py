@@ -4,6 +4,7 @@ Run from the backend folder:
     python -m app.music.curate enrich              # listens, sung/instrumental, genres
     python -m app.music.curate prune               # list what would be removed
     python -m app.music.curate prune --apply       # remove it
+    python -m app.music.curate analyze [--all]     # loudness and silences of the audio
 
 `enrich` asks the Jamendo API about every track of the manifest and writes what it learns into
 the manifest; `python -m app.music.import_catalog` then copies it to the database.
@@ -14,6 +15,9 @@ known stay.
 A removed track leaves the manifest, the audio folder and the database, and is listed under
 "removed" in the manifest so a later download does not bring it back. Old song requests for it
 keep their text; their link to the track becomes empty.
+
+`analyze` measures every track's audio file (app.music.audio_analysis) and writes gain_db,
+start_s and end_s straight to the database; by default only tracks not measured yet.
 """
 
 import argparse
@@ -22,11 +26,12 @@ from collections.abc import Callable
 from pathlib import Path
 
 import httpx
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.db.session import get_engine
+from app.music.audio_analysis import Playback, analyse_file
 from app.music.download import (
     BATCH_SIZE,
     DownloadError,
@@ -106,10 +111,43 @@ def prune(
     return chosen
 
 
+def analyze(
+    session: Session,
+    music_dir: Path,
+    everything: bool = False,
+    measure: Callable[[Path], Playback] = analyse_file,
+    out: Callable[[str], None] = print,
+) -> int:
+    """Measure the audio of the tracks (all, or only those not measured yet) and store the
+    result on the rows. Returns how many were measured. The caller commits."""
+    query = select(TrackRow).where(TrackRow.file_path.is_not(None))
+    if not everything:
+        query = query.where(TrackRow.gain_db.is_(None))
+    rows = list(session.scalars(query))
+    measured = 0
+    for i, row in enumerate(rows, start=1):
+        path = music_dir / row.file_path
+        try:
+            playback = measure(path)
+        except Exception as exc:  # a broken file must not stop the others
+            out(f"  {row.source_track_id}: could not read {path.name} ({type(exc).__name__})")
+            continue
+        row.gain_db, row.start_s, row.end_s = playback.gain_db, playback.start_s, playback.end_s
+        measured += 1
+        if i % 25 == 0 or i == len(rows):
+            out(f"Measured {i}/{len(rows)}")
+    session.flush()
+    return measured
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Keep the catalog worth listening to.")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("enrich", help="fill listens, sung/instrumental and genres from Jamendo")
+    analyze_parser = sub.add_parser("analyze", help="measure loudness and silences of the audio")
+    analyze_parser.add_argument(
+        "--all", action="store_true", help="measure every track again, not only new ones"
+    )
     prune_parser = sub.add_parser("prune", help="remove little-listened tracks")
     prune_parser.add_argument("--apply", action="store_true", help="really remove them")
     prune_parser.add_argument(
@@ -139,6 +177,13 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"Stopped: {exc}", file=sys.stderr)
                 return 1
         print(f"Filled {filled} tracks. Now run: python -m app.music.import_catalog")
+        return 0
+
+    if args.command == "analyze":
+        with Session(get_engine()) as session:
+            measured = analyze(session, music_dir, everything=args.all)
+            session.commit()
+        print(f"Measured {measured} tracks.")
         return 0
 
     if not args.apply:

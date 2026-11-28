@@ -36,6 +36,8 @@ Bağlantı `backend/app/radio/integration.py` dosyasında yapılır. Backend aç
    ```
 
    `kind` ya `track` (ek alanlar: `title`, `artist`, `license`, `track_id`) ya da `announcement` olur. İki türde de `audio_url` doğrudan `<audio>` ile çalınabilir.
+
+   Şarkılarda isteğe bağlı `playback` alanı olabilir: `{"gain_db": -2.5, "start_s": 0.4, "end_s": 171.2}`. Oynatıcı şarkıyı `gain_db` kadar kısar ya da yükseltir, `start_s`'den başlatır, DJ'in girişini ve şarkı geçişlerini `end_s`'e göre zamanlar (bkz. `docs/muzik-kaynagi.md`, `curate analyze`). Alan yoksa ya da `null` ise dosya baştan sona kendi seviyesinde çalınır.
 3. Parça bitince (`ended`) yeniden `/next` çağrılır. Cevap beklemez; sıradaki parça arka planda hazırlanmıştır.
 4. Dinleme bitince `DELETE /api/sessions/{session_id}`. Kapatılmayan oturum 2 saat sonra kendiliğinden silinir.
 

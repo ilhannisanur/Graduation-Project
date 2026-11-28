@@ -14,11 +14,12 @@ from app.contracts import Track
 from app.music.convert import track_from_row
 from app.music.models import TrackRow
 from app.music.selection import RandomSelector, TrackSelector
-from app.radio.planner.models import TrackInfo
+from app.radio.planner.models import TrackInfo, TrackPlayback
 
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 SelectorFactory = Callable[[Session], TrackSelector]
 HistoryLoader = Callable[[Session, Sequence[str]], list[Track]]
+PlaybackLoader = Callable[[Session, str], "TrackPlayback | None"]
 
 
 def load_history(db: Session, track_ids: Sequence[str]) -> list[Track]:
@@ -27,13 +28,25 @@ def load_history(db: Session, track_ids: Sequence[str]) -> list[Track]:
     return [track_from_row(row) for row in rows if row is not None]
 
 
-def track_info_from_track(track: Track) -> TrackInfo:
+def playback_from_row(row: TrackRow | None) -> TrackPlayback | None:
+    """How to play the song, if its audio has been measured (`curate analyze`)."""
+    if row is None or row.gain_db is None:
+        return None
+    return TrackPlayback(gain_db=row.gain_db, start_s=row.start_s or 0.0, end_s=row.end_s)
+
+
+def load_playback(db: Session, track_id: str) -> TrackPlayback | None:
+    return playback_from_row(db.get(TrackRow, track_id))
+
+
+def track_info_from_track(track: Track, playback: TrackPlayback | None = None) -> TrackInfo:
     return TrackInfo(
         track_id=track.id,
         title=track.title,
         artist=track.artist,
         duration_s=track.duration_seconds,
         license=track.license,
+        playback=playback,
     )
 
 
@@ -53,10 +66,12 @@ class CatalogMusicSource:
         session_factory: SessionFactory,
         selector_factory: SelectorFactory = RandomSelector,
         history_loader: HistoryLoader = load_history,
+        playback_loader: PlaybackLoader | None = None,
     ) -> None:
         self._session_factory = session_factory
         self._selector_factory = selector_factory
         self._history_loader = history_loader
+        self._playback_loader = playback_loader or load_playback
 
     async def next_track(self, *, user_id: str, recent_track_ids: Sequence[str]) -> TrackInfo:
         # The database and the selector are synchronous: keep them off the event loop.
@@ -66,4 +81,5 @@ class CatalogMusicSource:
         with self._session_factory() as db:
             history = self._history_loader(db, recent_track_ids)
             track = self._selector_factory(db).next_track(history)
-        return track_info_from_track(track)
+            playback = self._playback_loader(db, track.id)
+        return track_info_from_track(track, playback)

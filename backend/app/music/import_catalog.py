@@ -20,6 +20,7 @@ from app.core.config import get_settings
 from app.db.session import get_engine
 from app.music.download import load_manifest
 from app.music.models import TrackRow
+from app.music.selection.quality import popularity_from_listens
 
 # Manifest keys copied to the matching TrackRow columns.
 SYNCED_FIELDS = (
@@ -65,6 +66,10 @@ def import_catalog(
         # Relative to the music folder, so the catalog still works if the folder moves.
         values = {name: entry[name] for name in SYNCED_FIELDS}
         values["file_path"] = f"audio/{entry['file']}"
+        # Added by #107; entries written before it have none of these yet.
+        values["popularity"] = popularity_from_listens(entry.get("listens"))
+        values["has_vocals"] = entry.get("has_vocals")
+        values["genres"] = list(entry.get("genres") or [])
 
         row = existing.get((source, source_id))
         if row is None:

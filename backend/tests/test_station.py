@@ -61,7 +61,7 @@ def empty_queue(request):
 
 def test_target_picks_one_of_the_closest_songs():
     calm = PRESETS["calm"]
-    near = [track(i, calm.valence + i / 100, calm.energy) for i in range(6)]
+    near = [track(i, calm.valence + i / 100, calm.energy) for i in range(8)]
     far = [track(10 + i, 0.1, 0.95) for i in range(10)]
 
     for seed in range(20):

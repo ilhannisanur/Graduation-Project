@@ -72,11 +72,49 @@ NC (ticari olmayan) lisanslılar kabul edilir, çünkü proje ticari değildir. 
 - **Boyut (ölçüldü, #33):** `mp31` ile 5 şarkı indirildi: toplam 9,9 MB, ortalama 2,0 MB ve 172 sn (süreler 32–320 sn arası, bit hızı 96–99 kbps). 400 şarkı için **yaklaşık 0,8 GB**. Örnek küçük olduğundan 400'lük indirmeden sonra gerçek toplam bu belgeye işlenebilir. 60 saniyeden kısa parçalar artık elenir (bkz. 3. bölüm). Not: MTG'nin kendi rakamları (320 kbps için 152 GB) bizim indirmemize uygulanmaz, çünkü biz sesi API'den indireceğiz.
 - Ses dosyaları commit'lenmez (`CLAUDE.md` kuralı).
 
-## 5. Sonraki adımlar
+## 5. Katalog kalitesi: popülerlik ve sözlü şarkılar (#107)
+
+25 Kasım'daki danışman sunumundan sonra katalog incelendi (2026-11-28). İlk 400 şarkı yalnızca ruh hâli etiketine göre rastgele seçildiği için radyo "arka plan müziği" gibi duyuluyordu:
+
+| | İlk katalog (400) | Yeni katalog (335) |
+|---|---|---|
+| Sözlü / enstrümantal | 98 / 301 (%25 sözlü) | **188 / 146 (%56 sözlü)** |
+| Ortanca dinlenme (Jamendo) | ~4.700 | **~310.000** (popülerlik ortancası 0,87); hepsi en az 10.000 |
+| En sık türler | electronic, filmscore, pop, rock, ambient | **pop**, rock, electronic, filmscore, folk |
+| Ruh hâli bölgeleri (mutlu-hareketli / mutlu-sakin / hüzünlü-sakin / hüzünlü-hareketli) | 121 / 129 / 94 / 56 | 122 / 103 / 77 / 30 |
+
+Yapılanlar:
+
+1. **Bilgi tamamlama:** `python -m app.music.curate enrich` her şarkı için Jamendo API'sinden (`include=stats musicinfo`) dinlenme sayısını, sözlü/enstrümantal bilgisini ve türleri manifest'e yazar; `import_catalog` bunları `tracks.popularity`, `has_vocals` ve `genres` alanlarına aktarır (migration 0010). Popülerlik dinlenme sayısının logaritmasıdır: 1 bin → 0,48, 10 bin → 0,64, 100 bin → 0,80, 2 milyon ve üstü → 1.
+2. **Ayıklama:** `python -m app.music.curate prune --apply`, Jamendo'da **10.000'den az dinlenmiş şarkıları** çıkarır; dinlenme sayısı bilinmeyenler kalır. İlk turda 5.000'in altındaki enstrümantaller (161 şarkı), popüler şarkılar eklendikten sonra 10.000'in altındaki bütün şarkılar (104 şarkı, 55'i sözlü) çıkarıldı. 10.000 sınırı, "hüzünlü-hareketli" bölgede yeterli şarkı (30) bırakmak için seçildi; 50.000'de bu sayı 17'ye düşüyordu. Çıkarılan şarkılar manifest'te `removed` listesine yazılır; sonraki indirmeler onları geri getirmez.
+3. **Popüler şarkılar:** `python -m app.music.download --popular --add 200`, Jamendo'nun en çok dinlenen 2.000 sözlü ve 1.000 enstrümantal şarkısından **MTG ruh hâli listesinde de bulunanları** popülerlik sırasıyla indirir. MTG şartı, değerlik/enerjinin (#75) aynı yöntemle hesaplanabilmesi içindir. Eleme kuralları (3. bölüm) aynen uygulanır: 530 adaydan 222'si ND lisanslı olduğu için elendi, 200 şarkı eklendi. Ekledikten sonra `import_catalog` ve `fill_valence_energy` çalıştırılır (3 şarkının etiketinden değer çıkmadı; mood seçicisi onları atlar).
+
+Seçici kuralları (`app/music/selection/quality.py`; hem ruh hâli seçicisi hem rastgele seçici kullanır):
+
+- Ruh hâline en yakın 8 şarkı arasından seçilir; **popüler şarkının seçilme olasılığı en fazla 2,5 kattır**, popülerliği bilinmeyen şarkı ortalama sayılır. Az dinlenen şarkılar da çalmaya devam eder.
+- **Arka arkaya 2 enstrümantalden sonra** uygun bir sözlü şarkı varsa o seçilir.
+- Bir şarkı **yaklaşık 1 saat (son 18 şarkı)** içinde tekrar çalmaz.
+- Popülerlik #23'teki dört bileşenli seçim puanının parçası değildir; yalnızca ruh hâline uyan adaylar arasında tercih yapar.
+
+Kendi bilgisayarında kataloğu güncellemek için (backend klasöründe, `JAMENDO_CLIENT_ID` dolu olmalı):
+
+```powershell
+alembic upgrade head
+python -m app.music.curate enrich
+python -m app.music.import_catalog
+python -m app.music.curate prune --apply
+python -m app.music.download --popular --add 200
+python -m app.music.import_catalog
+python -m app.music.fill_valence_energy
+```
+
+Toplam boyut yaklaşık 0,85 GB. Jamendo'nun popüler listeleri zamanla değiştiği için başka bir günde birkaç farklı şarkı gelebilir.
+
+## 6. Sonraki adımlar
 
 - #33 (yapıldı): `backend/app/music/download.py`; `JAMENDO_CLIENT_ID` ve `music_dir` `Settings`'te, alan adları ve boyut canlı ölçüldü.
 - #34 (yapıldı): `python -m app.music.import_catalog` (backend klasöründen) `manifest.json`'u `tracks` tablosuna aktarır. Tekrar çalıştırmak güvenlidir; yeni şarkıyı ekler, değişeni günceller, dosyası diskte olmayanı atlar.
 - #35 (yapıldı): `GET /api/tracks` (`limit`, `offset`, `mood`) ve `GET /api/tracks/{id}`; yanıtta dosya yolu yoktur.
 - #42 (yapıldı): `GET /api/tracks/{id}/audio` ses dosyasını `audio/mpeg` olarak sunar, `Range` isteklerini destekler. Dosya yolu veritabanından okunur ve `music_dir` dışına çıkamaz; şarkı ya da dosya yoksa 404.
-- #34: elenmiş listeyi `tracks` tablosuna aktarır.
-- #35: katalog API ucu.
+- #107 (yapıldı): popülerlik, sözlü/enstrümantal bilgisi; az dinlenen enstrümantallerin ayıklanması; popüler şarkıların eklenmesi (5. bölüm).
+- #48 (kısmen): tür bilgisi `tracks.genres` alanında. Kalanlar: `Track` sözleşmesine eklemek ve Jamendo türlerini profildeki tür değerleriyle (`app/users/options.py`) eşleştirmek.

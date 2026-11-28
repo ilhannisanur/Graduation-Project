@@ -209,7 +209,7 @@ def test_request_sends_limit_equal_to_id_count(tmp_path):
     params = fake.api_requests[0].url.params
     assert params["limit"] == "7"
     assert params["audioformat"] == "mp31"
-    assert params["include"] == "licenses"
+    assert params["include"] == "licenses stats musicinfo"
 
 
 def test_stops_at_target(tmp_path):

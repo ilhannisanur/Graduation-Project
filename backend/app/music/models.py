@@ -1,7 +1,17 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Float, String, Text, UniqueConstraint, func, text
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    Float,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -25,6 +35,10 @@ class TrackRow(Base):
         CheckConstraint(
             "arousal IS NULL OR (arousal >= 0 AND arousal <= 1)", name="ck_tracks_arousal_range"
         ),
+        CheckConstraint(
+            "popularity IS NULL OR (popularity >= 0 AND popularity <= 1)",
+            name="ck_tracks_popularity_range",
+        ),
     )
 
     # Contract fields
@@ -45,6 +59,14 @@ class TrackRow(Base):
     # Internal fields (never leave the database layer)
     # Where valence/arousal came from: "tags" (mood tags) or later "audio" (#20); None if empty.
     affect_source: Mapped[str | None] = mapped_column(String, default=None)
+    # From the source's listen counts (0..1, see app.music.selection.quality); None: unknown.
+    popularity: Mapped[float | None] = mapped_column(Float, default=None)
+    # True: sung, False: instrumental, None: unknown.
+    has_vocals: Mapped[bool | None] = mapped_column(Boolean, default=None)
+    # The source's genre tags (e.g. Jamendo's "pop", "rock").
+    genres: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), server_default=text("'{}'::text[]"), default=list
+    )
     file_path: Mapped[str | None] = mapped_column(Text, default=None)
     source: Mapped[str] = mapped_column(String)  # e.g. "jamendo"
     source_track_id: Mapped[str] = mapped_column(String)

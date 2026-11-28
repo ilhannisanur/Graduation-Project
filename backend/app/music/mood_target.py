@@ -19,11 +19,18 @@ from sqlalchemy.orm import Session
 from app.contracts import Track
 from app.music.convert import track_from_row
 from app.music.models import TrackRow
+from app.music.selection.quality import (
+    RECENT_ONE_HOUR,
+    Qualities,
+    TrackQuality,
+    prefer_vocals,
+    weighted_choice,
+)
 
-# Pick among this many of the closest songs.
-CLOSEST = 6
-# These many latest songs may not come back.
-RECENT_LIMIT = 12
+# Pick among this many of the closest songs (popular ones more likely, see quality.py).
+CLOSEST = 8
+# These many latest songs may not come back: about an hour of radio.
+RECENT_LIMIT = RECENT_ONE_HOUR
 
 
 @dataclass(frozen=True)
@@ -75,21 +82,31 @@ def choose_for_target(
     recent_ids: Sequence[str],
     target: MoodTarget,
     rng: random.Random,
+    qualities: Qualities | None = None,
 ) -> Track | None:
-    """One of the songs closest to the target, not played recently. None if none has values."""
+    """One of the songs closest to the target, not played recently. None if none has values.
+
+    With `qualities`, popular songs are more likely and a sung song follows two instrumentals
+    when one of the closest is sung.
+    """
+    qualities = qualities or {}
     recent = set(recent_ids[-RECENT_LIMIT:])
     scored = [t for t in candidates if t.valence is not None and t.arousal is not None]
     fresh = [t for t in scored if t.id not in recent] or scored
     if not fresh:
         return None
     fresh.sort(key=lambda t: distance(t, target))
-    return rng.choice(fresh[:CLOSEST])
+    closest = prefer_vocals(fresh[:CLOSEST], recent_ids, qualities, lambda t: t.id)
+    return weighted_choice(closest, qualities, lambda t: t.id, rng)
 
 
 def pick_for_target(
     db: Session, recent_ids: Sequence[str], target: MoodTarget, rng: random.Random
 ) -> Track | None:
-    rows = db.scalars(
-        select(TrackRow).where(TrackRow.valence.is_not(None), TrackRow.arousal.is_not(None))
+    rows = list(
+        db.scalars(
+            select(TrackRow).where(TrackRow.valence.is_not(None), TrackRow.arousal.is_not(None))
+        )
     )
-    return choose_for_target([track_from_row(r) for r in rows], recent_ids, target, rng)
+    qualities = {r.id: TrackQuality(r.popularity, r.has_vocals) for r in rows}
+    return choose_for_target([track_from_row(r) for r in rows], recent_ids, target, rng, qualities)

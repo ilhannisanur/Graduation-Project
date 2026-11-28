@@ -2,10 +2,13 @@
 
 Run from the backend folder:
     python -m app.music.download [--target 400] [--candidates 1500] [--dry-run]
+    python -m app.music.download --popular [--add 200] [--dry-run]
 
 Candidates come from the MTG-Jamendo mood/theme list; every candidate is re-checked against the
-Jamendo API (see docs/muzik-kaynagi.md). The run is repeatable: files and manifest entries that
-already exist are kept, so an interrupted run continues where it stopped.
+Jamendo API (see docs/muzik-kaynagi.md). With --popular they are Jamendo's most listened tracks
+that are also on that list (#107). The run is repeatable: files and manifest entries that
+already exist are kept, so an interrupted run continues where it stopped. Tracks listed under
+"removed" in the manifest (see app.music.curate) are never downloaded again.
 """
 
 import argparse
@@ -40,6 +43,7 @@ MAX_ATTEMPTS = 6  # the empty-answer glitch below can last several tries in a ro
 EMPTY_IS_SUSPICIOUS_FROM = 6
 # Shorter pieces are jingles rather than songs and sound odd on air.
 MIN_DURATION_SECONDS = 60
+POPULAR_PAGE = 200  # tracks per page of the popular list (the API maximum)
 
 # Tags used for candidate selection (see docs/muzik-kaynagi.md, section 4).
 SELECT_TAGS = (
@@ -146,6 +150,22 @@ def select_candidates(
     return chosen
 
 
+def popular_candidates(tracks: list[MtgTrack], popular_ids: list[int]) -> list[MtgTrack]:
+    """The MTG tracks among Jamendo's popular ones, in popularity order.
+
+    Only tracks of the MTG mood list are taken: their mood tags give valence/energy (#75),
+    which the mood picker needs. The same id is never listed twice.
+    """
+    by_id = {t.jamendo_id: t for t in tracks}
+    chosen: list[MtgTrack] = []
+    seen: set[int] = set()
+    for jamendo_id in popular_ids:
+        if jamendo_id in by_id and jamendo_id not in seen:
+            seen.add(jamendo_id)
+            chosen.append(by_id[jamendo_id])
+    return chosen
+
+
 # ------------------------------------------------------------------- license
 
 
@@ -191,8 +211,24 @@ def evaluate(item: dict) -> tuple[dict | None, str | None]:
         "license_url": license_url,
         "source_url": source_url,
         "download_url": download_url,
+        **listening_info(item),
     }
     return fields, None
+
+
+def listening_info(item: dict) -> dict:
+    """Listen count, sung or instrumental, and genres from a result asked with
+    include=stats musicinfo. Missing parts come back as None / []."""
+    stats = item.get("stats") or {}
+    music = item.get("musicinfo") or {}
+    listens = stats.get("rate_listened_total")
+    kind = music.get("vocalinstrumental")
+    genres = (music.get("tags") or {}).get("genres") or []
+    return {
+        "listens": int(listens) if isinstance(listens, int | float) else None,
+        "has_vocals": {"vocal": True, "instrumental": False}.get(kind),
+        "genres": [str(g) for g in genres],
+    }
 
 
 # ------------------------------------------------------------------- network
@@ -239,7 +275,7 @@ class JamendoClient:
             "format": "json",
             # A space is sent as "+", which is how the API separates ids.
             "id": " ".join(str(i) for i in ids),
-            "include": "licenses",
+            "include": "licenses stats musicinfo",
             "audioformat": AUDIO_FORMAT,
             "limit": len(ids),  # the default limit is small and would cut results silently
         }
@@ -261,6 +297,44 @@ class JamendoClient:
             return self._retry(call)
         except DownloadError as exc:
             raise DownloadError(f"Jamendo request for {len(ids)} ids {exc}") from None
+
+    def popular_ids(self, vocalinstrumental: str, count: int) -> list[int]:
+        """Ids of Jamendo's most listened tracks, most popular first.
+
+        `vocalinstrumental` is "vocal" or "instrumental". Licenses are not checked here; the
+        normal per-track check does that later.
+        """
+        ids: list[int] = []
+        for offset in range(0, count, POPULAR_PAGE):
+            if self._made_request:
+                self.sleep(self.delay)
+            self._made_request = True
+            params = {
+                "client_id": self.client_id,
+                "format": "json",
+                "order": "popularity_total",
+                "vocalinstrumental": vocalinstrumental,
+                "limit": POPULAR_PAGE,
+                "offset": offset,
+            }
+
+            def call(params=params) -> list[dict]:
+                response = self.http.get(JAMENDO_TRACKS_URL, params=params)
+                response.raise_for_status()
+                body = response.json()
+                if (body.get("headers") or {}).get("status") != "success":
+                    raise ValueError("API error on the popular list")
+                results = body.get("results") or []
+                if not results:
+                    raise ValueError("API returned an empty page of the popular list")
+                return results
+
+            try:
+                page = self._retry(call)
+            except DownloadError as exc:
+                raise DownloadError(f"Jamendo popular list at {offset} {exc}") from None
+            ids.extend(int(item["id"]) for item in page)
+        return ids
 
     def download_audio(self, url: str, dest: Path) -> int:
         """Stream a file to `dest` via a temporary name; returns its size in bytes."""
@@ -314,10 +388,28 @@ def load_manifest(path: Path) -> dict[str, dict]:
     return {entry["source_track_id"]: entry for entry in data.get("tracks", [])}
 
 
-def save_manifest(path: Path, entries: dict[str, dict]) -> None:
-    """Write the manifest through a temporary file so a crash never leaves a broken one."""
+def load_removed(path: Path) -> dict[str, str]:
+    """Tracks taken out of the catalog on purpose (source_track_id -> reason). Downloads skip
+    them, so a later run does not bring them back."""
+    if not path.exists():
+        return {}
+    return dict(json.loads(path.read_text(encoding="utf-8")).get("removed", {}))
+
+
+def save_manifest(
+    path: Path, entries: dict[str, dict], removed: dict[str, str] | None = None
+) -> None:
+    """Write the manifest through a temporary file so a crash never leaves a broken one.
+    `removed` replaces the list of removed tracks; None keeps the one on disk."""
+    if removed is None:
+        removed = load_removed(path)
     tmp = path.with_name(path.name + ".tmp")
-    payload = {"version": 1, "source": "jamendo", "tracks": list(entries.values())}
+    payload = {
+        "version": 1,
+        "source": "jamendo",
+        "tracks": list(entries.values()),
+        "removed": removed,
+    }
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     os.replace(tmp, path)
 
@@ -347,7 +439,12 @@ def run(
             save_manifest(manifest_path, entries)
 
     summary = Summary(candidates=len(candidates))
-    todo = [c for c in candidates if str(c.jamendo_id) not in entries]
+    removed = load_removed(manifest_path)
+    todo = [
+        c
+        for c in candidates
+        if str(c.jamendo_id) not in entries and str(c.jamendo_id) not in removed
+    ]
     summary.already_have = len(candidates) - len(todo)
     summary.accepted = len(entries) if not dry_run else 0
     if summary.already_have:
@@ -394,6 +491,9 @@ def run(
                     "source_url": fields["source_url"],
                     "mood_tags": list(candidate.tags),
                     "file": filename,
+                    "listens": fields["listens"],
+                    "has_vocals": fields["has_vocals"],
+                    "genres": fields["genres"],
                 }
                 save_manifest(manifest_path, entries)
             summary.accepted += 1
@@ -437,6 +537,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--dry-run", action="store_true", help="check licenses only; write no audio or manifest"
     )
+    parser.add_argument(
+        "--popular",
+        action="store_true",
+        help="add Jamendo's most listened tracks that have MTG mood tags (instead of --target)",
+    )
+    parser.add_argument(
+        "--add", type=int, default=200, help="with --popular: tracks to add at most (default 200)"
+    )
+    parser.add_argument(
+        "--depth",
+        type=int,
+        default=2000,
+        help="with --popular: how far down the popular lists to look (default 2000 sung, "
+        "half as many instrumental)",
+    )
     args = parser.parse_args(argv)
 
     if hasattr(sys.stdout, "reconfigure"):
@@ -452,10 +567,19 @@ def main(argv: list[str] | None = None) -> int:
         try:
             tsv_path = ensure_tsv(http, music_dir / "cache")
             tracks = parse_tsv(tsv_path.read_text(encoding="utf-8"))
-            candidates = select_candidates(tracks, args.candidates)
-            print(f"Selected {len(candidates)} candidates from {len(tracks)} MTG tracks.")
             jamendo = JamendoClient(http, settings.jamendo_client_id)
-            summary = run(jamendo, music_dir, candidates, args.target, args.dry_run)
+            target = args.target
+            if args.popular:
+                # Sung songs first: the catalog had too many instrumentals (#107).
+                ids = jamendo.popular_ids("vocal", args.depth)
+                ids += jamendo.popular_ids("instrumental", args.depth // 2)
+                candidates = popular_candidates(tracks, ids)
+                target = len(load_manifest(music_dir / "manifest.json")) + args.add
+                print(f"{len(candidates)} of {len(ids)} popular tracks have MTG mood tags.")
+            else:
+                candidates = select_candidates(tracks, args.candidates)
+                print(f"Selected {len(candidates)} candidates from {len(tracks)} MTG tracks.")
+            summary = run(jamendo, music_dir, candidates, target, args.dry_run)
         except DownloadError as exc:
             print(f"Stopped: {exc}", file=sys.stderr)
             print("Run the same command again to continue.", file=sys.stderr)

@@ -7,6 +7,7 @@ Not yet here: greetings by time of day, ``ListenerContext`` and other announceme
 """
 
 import asyncio
+import random
 
 from app.content.dj.song_intro import generate_song_intro
 from app.content.llm import LLMClient
@@ -74,23 +75,58 @@ def track_from_info(info: TrackInfo) -> Track:
     )
 
 
-def shoutout_text(note: RequestNote) -> str:
+# Shout-out openings. One is picked at random so the DJ does not say the same line every time.
+SHOUTOUT_ANONYMOUS = (
+    "This one is a listener request.",
+    "A listener asked for this one.",
+    "Next up, a song one of you requested.",
+    "This one comes straight from our request line.",
+    "Somebody out there wanted to hear this one.",
+    "Here is a request from one of our listeners.",
+)
+SHOUTOUT_ONE = (
+    "This one goes out to {name}, who asked for it.",
+    "{name}, this one is for you.",
+    "{name} asked for this one, so here it comes.",
+    "A request from {name} is up next.",
+    "Big hello to {name}, this one is your pick.",
+    "This next song is for {name}.",
+)
+SHOUTOUT_MANY = (
+    "This one goes out to {names}.",
+    "{names}, this one is for you.",
+    "{names} all asked for this one.",
+    "A shout-out to {names}, who requested this one.",
+    "This next song is for {names}.",
+    "Hello to {names}, this one is your pick.",
+)
+SHOUTOUT_MESSAGE = (
+    ' The message says: "{message}."',
+    ' And the message reads: "{message}."',
+    ' They wrote: "{message}."',
+)
+
+
+def shoutout_text(note: RequestNote, rng: random.Random | None = None) -> str:
     """The request shout-out, written here from a template, not by the LLM: names and
     messages are the listener's personal data and never go to the LLM."""
+    pick = (rng or random).choice
     names = note.on_air_names
     if not names:
-        opening = "This one is a listener request."
+        opening = pick(SHOUTOUT_ANONYMOUS)
     elif len(names) == 1:
-        opening = f"This one goes out to {names[0]}, who asked for it."
+        opening = pick(SHOUTOUT_ONE).format(name=names[0])
     else:
-        opening = f"This one goes out to {', '.join(names[:-1])} and {names[-1]}."
+        opening = pick(SHOUTOUT_MANY).format(names=f"{', '.join(names[:-1])} and {names[-1]}")
     if note.messages:
         message = note.messages[0].strip().rstrip(".!?")
-        opening += f' The message says: "{message}."'
+        opening += pick(SHOUTOUT_MESSAGE).format(message=message)
     return opening
 
 
-def shoutout_plan(note: RequestNote, title: str, artist: str) -> AnnouncementPlan:
+def shoutout_plan(
+    note: RequestNote, title: str, artist: str, rng: random.Random | None = None
+) -> AnnouncementPlan:
     """A request is announced with the shout-out and a short intro, without the LLM.
 
     Short on purpose: on a laptop GPU every word adds voicing time, and the listener who
@@ -98,7 +134,7 @@ def shoutout_plan(note: RequestNote, title: str, artist: str) -> AnnouncementPla
     there, which sounded squeaky in our tests.
     """
     return AnnouncementPlan(
-        text=f"{shoutout_text(note)} Here is {title} by {artist}.",
+        text=f"{shoutout_text(note, rng)} Here is {title} by {artist}.",
         emotion="happy",
         intensity=0.4,
     )

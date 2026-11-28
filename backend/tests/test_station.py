@@ -76,19 +76,42 @@ def test_target_skips_recent_songs_and_songs_without_values():
     assert choose_for_target([track(3, None, None)], [], calm, random.Random(0)) is None
 
 
+class FirstChoice(random.Random):
+    """Always picks the first template, so the expected text is known."""
+
+    def choice(self, seq):
+        return seq[0]
+
+
 def test_shoutout_names_and_message():
-    one = shoutout_text(RequestNote(on_air_names=["Hakan"], messages=["Good luck, team!"]))
-    many = shoutout_text(RequestNote(on_air_names=["Ada", "Can", "Ece"]))
+    rng = FirstChoice()
+    one = shoutout_text(RequestNote(on_air_names=["Hakan"], messages=["Good luck, team!"]), rng)
+    many = shoutout_text(RequestNote(on_air_names=["Ada", "Can", "Ece"]), rng)
 
     assert one == (
         'This one goes out to Hakan, who asked for it. The message says: "Good luck, team."'
     )
     assert many == "This one goes out to Ada, Can and Ece."
-    assert shoutout_text(RequestNote()) == "This one is a listener request."
+    assert shoutout_text(RequestNote(), rng) == "This one is a listener request."
+
+
+@pytest.mark.parametrize(
+    ("names", "expected"),
+    [([], []), (["Hakan"], ["Hakan"]), (["Ada", "Can", "Ece"], ["Ada, Can and Ece"])],
+)
+def test_shoutout_varies_and_every_template_keeps_names_and_message(names, expected):
+    note = RequestNote(on_air_names=names, messages=["Good luck!"])
+    texts = {shoutout_text(note, random.Random(seed)) for seed in range(200)}
+
+    assert len(texts) >= 5  # not the same line every time
+    for text in texts:
+        assert all(name in text for name in expected)
+        assert '"Good luck."' in text
+        assert "{" not in text
 
 
 def test_request_is_announced_with_a_short_happy_shoutout():
-    out = shoutout_plan(RequestNote(on_air_names=["Hakan"]), "Song 1", "Artist 1")
+    out = shoutout_plan(RequestNote(on_air_names=["Hakan"]), "Song 1", "Artist 1", FirstChoice())
 
     assert out == AnnouncementPlan(
         text="This one goes out to Hakan, who asked for it. Here is Song 1 by Artist 1.",
